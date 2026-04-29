@@ -291,7 +291,8 @@ function UserRow({
           {user.actif ? "Actif" : "Inactif"}
         </span>
       </div>
-      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
+        <PasswordResetButton email={user.email} nom={user.nom} />
         <button
           onClick={onEdit}
           style={{
@@ -314,6 +315,200 @@ function UserRow({
         >
           {user.actif ? "Désactiver" : "Réactiver"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   PASSWORD RESET — bouton + modal
+   ===================================================================== */
+function PasswordResetButton({ email, nom }: { email: string; nom: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        title={`Réinitialiser le mot de passe de ${nom}`}
+        style={{
+          padding: "5px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer",
+          background: COLORS.blanc, border: `1px solid ${COLORS.dore}66`, color: COLORS.dore,
+        }}
+      >🔑 Mot de passe</button>
+      {open && <PasswordResetModal email={email} nom={nom} onClose={() => setOpen(false)} />}
+    </>
+  );
+}
+
+function PasswordResetModal({
+  email, nom, onClose,
+}: {
+  email: string;
+  nom: string;
+  onClose: () => void;
+}) {
+  const [mode, setMode] = useState<"email" | "direct">("email");
+  const [newPassword, setNewPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+
+  async function submit() {
+    setSubmitting(true);
+    setResult(null);
+    try {
+      const body =
+        mode === "email"
+          ? { email, sendEmail: true }
+          : { email, newPassword };
+      const r = await fetch("/api/admin/users/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        setResult({ ok: false, message: data.error ?? "Erreur" });
+      } else {
+        setResult({ ok: true, message: data.message ?? "Opération réussie" });
+      }
+    } catch (e) {
+      setResult({
+        ok: false,
+        message: e instanceof Error ? e.message : "Erreur réseau",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 100, padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: COLORS.blanc, borderRadius: 16, padding: 24,
+          width: "100%", maxWidth: 480,
+          boxShadow: "0 24px 80px rgba(0,0,0,0.3)",
+        }}
+      >
+        <h2 style={{
+          fontFamily: "var(--font-dm-serif-display), Georgia, serif",
+          fontSize: 22, color: COLORS.noir, margin: "0 0 4px",
+        }}>Réinitialiser le mot de passe</h2>
+        <p style={{ fontSize: 13, color: COLORS.grisMoyen, marginBottom: 20 }}>
+          Pour <strong style={{ color: COLORS.noir }}>{nom}</strong>{" "}
+          <span style={{ fontFamily: "monospace" }}>({email})</span>
+        </p>
+
+        {/* Choix du mode */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <button
+            onClick={() => { setMode("email"); setResult(null); }}
+            style={{
+              flex: 1, padding: "10px",
+              borderRadius: 8,
+              border: `2px solid ${mode === "email" ? COLORS.dore : COLORS.grisBorder}`,
+              background: mode === "email" ? COLORS.dorePale : COLORS.blanc,
+              color: mode === "email" ? COLORS.dore : COLORS.grisMoyen,
+              fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: 18, marginBottom: 4 }}>✉</div>
+            Envoyer un email
+            <div style={{ fontSize: 10, fontWeight: 400, color: COLORS.grisMoyen, marginTop: 2 }}>
+              L&apos;utilisateur définit son MDP
+            </div>
+          </button>
+          <button
+            onClick={() => { setMode("direct"); setResult(null); }}
+            style={{
+              flex: 1, padding: "10px",
+              borderRadius: 8,
+              border: `2px solid ${mode === "direct" ? COLORS.dore : COLORS.grisBorder}`,
+              background: mode === "direct" ? COLORS.dorePale : COLORS.blanc,
+              color: mode === "direct" ? COLORS.dore : COLORS.grisMoyen,
+              fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: 18, marginBottom: 4 }}>🔑</div>
+            Définir directement
+            <div style={{ fontSize: 10, fontWeight: 400, color: COLORS.grisMoyen, marginTop: 2 }}>
+              Vous tapez le MDP
+            </div>
+          </button>
+        </div>
+
+        {/* Input password si mode direct */}
+        {mode === "direct" && (
+          <div style={{ marginBottom: 16 }}>
+            <label style={{
+              display: "block", fontSize: 10, fontWeight: 600, color: COLORS.grisMoyen,
+              textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
+            }}>Nouveau mot de passe (8 car. min)</label>
+            <input
+              type="text"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="ex: cafe-lune-42"
+              style={{
+                width: "100%", padding: "8px 10px",
+                border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
+                fontSize: 13, color: COLORS.noir, background: COLORS.blanc,
+                outline: "none", fontFamily: "monospace",
+              }}
+            />
+            <p style={{ fontSize: 10, color: COLORS.grisMoyen, marginTop: 4, lineHeight: 1.4 }}>
+              ⚠ À transmettre à l&apos;utilisateur en main propre ou par téléphone
+              (pas par email en clair).
+            </p>
+          </div>
+        )}
+
+        {/* Résultat */}
+        {result && (
+          <div style={{
+            padding: "10px 14px", marginBottom: 16,
+            background: result.ok ? COLORS.vertBg : COLORS.rougeBg,
+            border: `1px solid ${result.ok ? COLORS.vert + "55" : COLORS.rouge + "55"}`,
+            borderRadius: 8,
+            color: result.ok ? "#1B5E20" : COLORS.rouge,
+            fontSize: 12, fontWeight: 600,
+          }}>
+            {result.ok ? "✓ " : "✗ "}{result.message}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <button
+            onClick={onClose}
+            disabled={submitting}
+            style={{
+              padding: "9px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
+              background: "transparent", border: `1px solid ${COLORS.grisBorder}`, color: COLORS.grisMoyen,
+            }}
+          >{result?.ok ? "Fermer" : "Annuler"}</button>
+          {!result?.ok && (
+            <button
+              onClick={submit}
+              disabled={submitting || (mode === "direct" && newPassword.length < 8)}
+              style={{
+                padding: "9px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600,
+                cursor: submitting ? "wait" : "pointer",
+                background: COLORS.noir, border: "none", color: COLORS.dore,
+                opacity: submitting || (mode === "direct" && newPassword.length < 8) ? 0.5 : 1,
+              }}
+            >{submitting ? "..." : (mode === "email" ? "Envoyer l'email" : "Définir le mot de passe")}</button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,24 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/auth-server";
+import { getServerSession } from "@/lib/supabase-server";
 
 /**
  * GET /api/auth/me
- * Renvoie l'utilisateur connecté ou 401.
+ * Renvoie le profil collaborateur connecté ou 401.
  */
 export async function GET() {
-  const user = await getServerSession();
-  if (!user) {
+  const profile = await getServerSession();
+  if (!profile) {
     return NextResponse.json({ user: null }, { status: 401 });
   }
   return NextResponse.json({
     user: {
-      id: user.id,
-      email: user.email,
-      nom: user.nom,
-      role: user.role,
-      pole: user.pole,
-      avatar: user.avatar,
-      color: user.color,
-      base: user.base,
+      email: profile.email,
+      nom: profile.nom,
+      pole: profile.pole,
+      avatar: profile.avatar,
+      color: profile.color,
+      role: profile.role,
+      base: profile.base,
     },
   });
 }

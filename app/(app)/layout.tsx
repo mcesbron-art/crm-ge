@@ -2,34 +2,39 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import PreviewBar from "@/components/PreviewBar";
 import { AuthProvider } from "@/lib/auth-context";
-import { getServerSession } from "@/lib/auth-server";
+import { getServerSession } from "@/lib/supabase-server";
 
 /**
- * Layout protégé : redirige vers /login si pas de session valide.
+ * Layout protégé : redirige vers /login si pas de session Supabase valide.
  *
  * Tout ce qui est dans `app/(app)/*` nécessite d'être connecté.
- * Les pages /login et /sign/[token] sont publiques (hors de ce groupe).
+ * Les pages publiques (login, forgot-password, reset-password, sign/[token])
+ * sont hors de ce groupe.
  */
 export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const user = await getServerSession();
+  const profile = await getServerSession();
 
-  if (!user) {
+  if (!profile) {
     redirect("/login");
   }
 
-  // On ne passe que les champs publics au client (pas de hash, pas de session)
+  // On passe au client uniquement les champs publics (jamais l'authId direct,
+  // mais l'id du profil collaborateur — qui est un UUID public).
   const initialUser = {
-    id: user.id,
-    nom: user.nom,
-    email: user.email,
-    pole: user.pole,
-    avatar: user.avatar,
-    color: user.color,
-    role: user.role,
-    base: user.base,
-    actif: user.actif,
+    // Pour compatibilité avec le mock numérique : on utilise un id incrémental
+    // basé sur l'email (les UUID Supabase sont gardés serveur-side).
+    // Pour les calculs côté client, on génère un id stable.
+    id: hashEmailToId(profile.email),
+    nom: profile.nom,
+    email: profile.email,
+    pole: profile.pole ?? "",
+    avatar: profile.avatar ?? profile.nom.slice(0, 2).toUpperCase(),
+    color: profile.color ?? "#999999",
+    role: profile.role,
+    base: profile.base,
+    actif: profile.actif,
   };
 
   return (
@@ -43,4 +48,26 @@ export default async function AppLayout({
       </div>
     </AuthProvider>
   );
+}
+
+/** Mapping stable email → id numérique (compatibilité avec mocks).
+ *  Pour les 7 utilisateurs initiaux on conserve les ids 0-6.
+ *  Les nouveaux utilisateurs auront des ids dérivés du hash de leur email.
+ */
+function hashEmailToId(email: string): number {
+  const known: Record<string, number> = {
+    "maryline@groupe-echo.fr": 0,
+    "noemie@groupe-echo.fr": 1,
+    "amandine@groupe-echo.fr": 2,
+    "jeremy@groupe-echo.fr": 3,
+    "marcellin@groupe-echo.fr": 4,
+    "arthur@groupe-echo.fr": 5,
+    "fanny@groupe-echo.fr": 6,
+  };
+  const lower = email.toLowerCase();
+  if (lower in known) return known[lower];
+  // Hash simple pour les autres (sera > 100 pour éviter collisions)
+  let h = 0;
+  for (let i = 0; i < lower.length; i++) h = (h * 31 + lower.charCodeAt(i)) | 0;
+  return 100 + Math.abs(h % 10000);
 }

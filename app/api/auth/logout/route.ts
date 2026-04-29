@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { getIronSession } from "iron-session";
-import { sessionOptions, type SessionData } from "@/lib/session";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 /**
  * POST /api/auth/logout
- * Détruit la session courante.
+ * Détruit la session Supabase.
  */
 export async function POST() {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-  session.destroy();
+  const supabase = createSupabaseServerClient();
+  await supabase.auth.signOut();
   return NextResponse.json({ ok: true });
 }
 
