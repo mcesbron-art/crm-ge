@@ -7,6 +7,7 @@ import {
   STATUT_LABELS, STATUT_COLORS,
   type Opportunite, type Client, type Commercial, type OpportunityStatus,
 } from "@/lib/opportunites-types";
+import type { AxonautQuotation } from "@/lib/axonaut";
 
 /**
  * Page Opportunités — vrai pipeline commercial branché sur Supabase.
@@ -26,8 +27,10 @@ export default function OpportunitesPage() {
   const [opportunites, setOpportunites] = useState<Opportunite[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [commerciaux, setCommerciaux] = useState<Commercial[]>([]);
+  const [axonautQuotations, setAxonautQuotations] = useState<AxonautQuotation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [axonautError, setAxonautError] = useState<string | null>(null);
   const [filterCommercial, setFilterCommercial] = useState<string | null>(null);
   const [filterClient, setFilterClient] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -35,21 +38,30 @@ export default function OpportunitesPage() {
   async function loadAll() {
     setLoading(true);
     setError(null);
+    setAxonautError(null);
     try {
-      const [oRes, cRes, mRes] = await Promise.all([
+      const [oRes, cRes, mRes, aRes] = await Promise.all([
         fetch("/api/opportunites", { cache: "no-store" }),
         fetch("/api/clients", { cache: "no-store" }),
         fetch("/api/commerciaux", { cache: "no-store" }),
+        fetch("/api/axonaut/quotations", { cache: "no-store" }),
       ]);
       const oData = await oRes.json();
       const cData = await cRes.json();
       const mData = await mRes.json();
+      const aData = await aRes.json();
       if (!oRes.ok) throw new Error(oData.error || "Chargement opportunités impossible");
       if (!cRes.ok) throw new Error(cData.error || "Chargement clients impossible");
       if (!mRes.ok) throw new Error(mData.error || "Chargement commerciaux impossible");
       setOpportunites(oData.opportunites ?? []);
       setClients(cData.clients ?? []);
       setCommerciaux(mData.commerciaux ?? []);
+      // Devis Axonaut : on n'arrête pas tout en cas d'erreur — juste un message
+      if (!aRes.ok) {
+        setAxonautError(aData.error ?? "Erreur Axonaut");
+      } else {
+        setAxonautQuotations(aData.quotations ?? []);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur réseau");
     } finally {
@@ -201,6 +213,13 @@ export default function OpportunitesPage() {
         </div>
       )}
 
+      {/* SECTION AXONAUT — devis en cours (source de vérité commerciale) */}
+      <AxonautDevisSection
+        quotations={axonautQuotations}
+        error={axonautError}
+        canSeeMoney={canSeeMoney}
+      />
+
       {loading ? (
         <div style={{ padding: 40, textAlign: "center", color: COLORS.grisMoyen }}>
           Chargement…
@@ -226,6 +245,122 @@ export default function OpportunitesPage() {
           onClientCreated={(client) => setClients((prev) => [...prev, client].sort((a, b) => a.nom.localeCompare(b.nom)))}
         />
       )}
+    </div>
+  );
+}
+
+/* =====================================================================
+   SECTION AXONAUT — devis "draft" et "sent" (= encore en opportunité)
+   ===================================================================== */
+function AxonautDevisSection({
+  quotations, error, canSeeMoney,
+}: {
+  quotations: AxonautQuotation[];
+  error: string | null;
+  canSeeMoney: boolean;
+}) {
+  const AXONAUT_STATUS: Record<string, { label: string; bg: string; color: string }> = {
+    draft:     { label: "Brouillon",     bg: "#ECEFF1",       color: "#546E7A" },
+    sent:      { label: "Envoyé client", bg: "#E1F5FE",       color: "#0277BD" },
+    validated: { label: "Validé",        bg: COLORS.dorePale, color: COLORS.dore },
+    accepted:  { label: "Accepté",       bg: COLORS.vertBg,   color: COLORS.vert },
+    refused:   { label: "Refusé",        bg: COLORS.rougeBg,  color: COLORS.rouge },
+  };
+
+  // On n'affiche que les devis encore en opportunité (= pas encore validés)
+  const enCours = quotations
+    .filter((q) => ["draft", "sent"].includes(q.status))
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+
+  if (error) {
+    return (
+      <div style={{
+        padding: "12px 16px", marginBottom: 16,
+        background: COLORS.rougeBg, border: `1px solid ${COLORS.rouge}55`,
+        borderRadius: 10, color: COLORS.rouge, fontSize: 13, fontWeight: 600,
+      }}>
+        Axonaut : {error}
+        <div style={{ fontSize: 11, fontWeight: 400, marginTop: 4 }}>
+          Vérifiez que <code>AXONAUT_API_KEY</code> est bien configurée dans Vercel.
+        </div>
+      </div>
+    );
+  }
+
+  if (enCours.length === 0) return null;
+
+  return (
+    <div style={{
+      background: COLORS.blanc, borderRadius: 14,
+      border: `1px solid ${COLORS.grisBorder}`, padding: 16, marginBottom: 20,
+    }}>
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        marginBottom: 12, flexWrap: "wrap", gap: 8,
+      }}>
+        <div>
+          <div style={{
+            fontSize: 11, fontWeight: 700, color: COLORS.dore,
+            textTransform: "uppercase", letterSpacing: 0.5,
+          }}>📋 Devis Axonaut en cours</div>
+          <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 2 }}>
+            {enCours.length} devis non encore validé{enCours.length > 1 ? "s" : ""} · source Axonaut
+          </div>
+        </div>
+        <a
+          href="/projets"
+          style={{
+            fontSize: 11, color: COLORS.dore, fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >Voir tous les devis →</a>
+      </div>
+
+      <div style={{
+        display: "grid", gap: 8,
+        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+      }}>
+        {enCours.map((q) => {
+          const st = AXONAUT_STATUS[q.status] ?? { label: q.status, bg: "#ECEFF1", color: "#546E7A" };
+          return (
+            <div key={q.id} style={{
+              padding: 10, borderRadius: 8,
+              border: `1px solid ${COLORS.grisBorder}`,
+              borderLeft: `4px solid ${st.color}`,
+              background: COLORS.blanc,
+            }}>
+              <div style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, marginBottom: 4,
+              }}>
+                <span style={{ fontFamily: "monospace", fontSize: 10, color: COLORS.grisMoyen }}>
+                  #{q.number}
+                </span>
+                <span style={{
+                  padding: "2px 8px", borderRadius: 10, fontSize: 9, fontWeight: 700,
+                  background: st.bg, color: st.color,
+                }}>{st.label}</span>
+              </div>
+              <div style={{ fontWeight: 600, fontSize: 12.5, color: COLORS.noir, lineHeight: 1.3, marginBottom: 4 }}>
+                {q.title || "(sans titre)"}
+              </div>
+              <div style={{ fontSize: 11, color: COLORS.grisMoyen }}>
+                {q.company?.name ?? "—"}
+              </div>
+              <div style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                marginTop: 6, fontSize: 10, color: COLORS.grisMoyen,
+              }}>
+                <span>{q.date ? new Date(q.date).toLocaleDateString("fr-FR") : "—"}</span>
+                {canSeeMoney && q.pre_tax_amount > 0 && (
+                  <span style={{ fontWeight: 700, color: COLORS.dore }}>
+                    {q.pre_tax_amount.toLocaleString("fr-FR")} €
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

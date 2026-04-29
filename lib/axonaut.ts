@@ -141,6 +141,16 @@ export async function listValidatedQuotations(): Promise<AxonautQuotation[]> {
   return all.filter((q) => ["validated", "accepted"].includes(q.status));
 }
 
+/** Récupère TOUS les devis (quotations) — tout statut confondu. */
+export async function listAllQuotations(): Promise<AxonautQuotation[]> {
+  return axonautFetch<AxonautQuotation[]>("/quotations?per_page=200");
+}
+
+/** Récupère toutes les entreprises (clients). */
+export async function listCompanies(): Promise<AxonautCompany[]> {
+  return axonautFetch<AxonautCompany[]>("/companies?per_page=200");
+}
+
 /** Récupère 1 devis avec ses lignes. */
 export async function getQuotation(id: number): Promise<AxonautQuotation> {
   return axonautFetch<AxonautQuotation>(`/quotations/${id}`);

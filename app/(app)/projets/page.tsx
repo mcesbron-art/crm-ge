@@ -1,279 +1,246 @@
 "use client";
 
-import { useState } from "react";
-import Avatar from "@/components/ui/Avatar";
-import StatutBadge from "@/components/ui/StatutBadge";
-import ProgressBar from "@/components/ui/ProgressBar";
-import {
-  PROJETS, COLLABORATEURS, COLORS, getRentabiliteColor,
-  type Projet,
-} from "@/lib/mock-data";
+import { useEffect, useState } from "react";
+import { COLORS } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
+import type { AxonautQuotation } from "@/lib/axonaut";
+
+/**
+ * Page Projets — affiche les devis Axonaut "validated" et "accepted"
+ * comme projets en cours de production.
+ *
+ * Lecture directe Axonaut. Les tâches/timer/BAT sont gérés ailleurs (Kanban).
+ */
+
+const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
+  draft:       { label: "Brouillon",      bg: "#ECEFF1",       color: "#546E7A" },
+  sent:        { label: "Envoyé client",  bg: "#E1F5FE",       color: "#0277BD" },
+  validated:   { label: "Validé",         bg: COLORS.dorePale, color: COLORS.dore },
+  accepted:    { label: "Accepté",        bg: COLORS.vertBg,   color: COLORS.vert },
+  refused:     { label: "Refusé",         bg: COLORS.rougeBg,  color: COLORS.rouge },
+  in_progress: { label: "En production",  bg: COLORS.vertBg,   color: COLORS.vert },
+};
+
+const PROJET_STATUSES = ["validated", "accepted", "in_progress"];
 
 export default function ProjetsPage() {
   const { canSeeMoney } = useAuth();
+  const [quotations, setQuotations] = useState<AxonautQuotation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statutFilter, setStatutFilter] = useState<string>("");
-  const [typeFilter, setTypeFilter] = useState<string>("");
-  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [showAll, setShowAll] = useState(false);
+  const [syncedAt, setSyncedAt] = useState<string | null>(null);
 
-  const toggle = (id: number) => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  useEffect(() => {
+    loadQuotations();
+  }, []);
 
-  const filtered = PROJETS.filter((p) => {
-    if (search && !`${p.nom} ${p.client}`.toLowerCase().includes(search.toLowerCase())) return false;
-    if (statutFilter && p.statut !== statutFilter) return false;
-    if (typeFilter && p.type !== typeFilter) return false;
-    return true;
-  });
+  async function loadQuotations() {
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/axonaut/quotations", { cache: "no-store" });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "Chargement impossible");
+      setQuotations(data.quotations ?? []);
+      setSyncedAt(data.synced_at ?? null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur réseau");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  const allStatuts = [...new Set(PROJETS.map((p) => p.statut))];
+  // Par défaut on affiche que les devis validés/acceptés/en prod ; sinon tous
+  const filtered = quotations
+    .filter((q) => showAll || PROJET_STATUSES.includes(q.status))
+    .filter((q) =>
+      !search ||
+      `${q.title ?? ""} ${q.number} ${q.company?.name ?? ""}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+
+  const totalCA   = filtered.reduce((s, q) => s + (q.pre_tax_amount ?? 0), 0);
+  const totalEnCours = filtered.filter((q) => PROJET_STATUSES.includes(q.status)).length;
 
   return (
     <div className="animate-fadeIn">
-      {/* HEADER */}
-      <div style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <div style={{ marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
         <div>
           <h1 style={{
             fontFamily: "var(--font-dm-serif-display), Georgia, serif",
             fontSize: 30, color: COLORS.noir, margin: "0 0 4px", fontWeight: 400,
           }}>Projets</h1>
           <p style={{ color: COLORS.grisMoyen, fontSize: 14, margin: 0 }}>
-            {filtered.length} projet{filtered.length > 1 ? "s" : ""} {filtered.length !== PROJETS.length && `(sur ${PROJETS.length})`}
+            Devis Axonaut validés / acceptés · {filtered.length} projet{filtered.length > 1 ? "s" : ""}
+            {syncedAt && (
+              <span style={{ marginLeft: 8, fontSize: 11 }}>
+                · maj {new Date(syncedAt).toLocaleTimeString("fr-FR")}
+              </span>
+            )}
           </p>
         </div>
-        <button style={{
-          padding: "10px 20px", background: COLORS.noir, border: "none",
-          borderRadius: 10, fontSize: 13, fontWeight: 600, color: COLORS.dore, cursor: "pointer",
-        }}>+ Nouveau projet</button>
+        <button
+          onClick={loadQuotations}
+          disabled={loading}
+          style={{
+            padding: "8px 14px", borderRadius: 8, border: `1px solid ${COLORS.grisBorder}`,
+            background: COLORS.blanc, color: COLORS.noir, fontSize: 12, fontWeight: 600, cursor: "pointer",
+          }}
+        >{loading ? "Chargement…" : "↻ Rafraîchir"}</button>
       </div>
 
-      {/* FILTERS */}
+      {error && (
+        <div style={{
+          padding: "12px 16px", marginBottom: 16,
+          background: COLORS.rougeBg, border: `1px solid ${COLORS.rouge}55`,
+          borderRadius: 10, color: COLORS.rouge, fontSize: 13, fontWeight: 600,
+        }}>
+          {error}
+          <div style={{ fontSize: 11, fontWeight: 400, marginTop: 4 }}>
+            Vérifiez que <code>AXONAUT_API_KEY</code> est bien configurée dans Vercel + redéployé.
+          </div>
+        </div>
+      )}
+
+      {canSeeMoney && (
+        <div className="grid-kpi-4" style={{ marginBottom: 24 }}>
+          <Kpi label="Projets actifs"  value={String(totalEnCours)} accent />
+          <Kpi label="CA en cours"     value={`${(totalCA / 1000).toFixed(1)}k€`} color={COLORS.dore} />
+          <Kpi label="Total devis"     value={String(quotations.length)} sub="tout statut confondu" />
+          <Kpi label="Acceptés"        value={String(quotations.filter((q) => q.status === "accepted").length)} color={COLORS.vert} />
+        </div>
+      )}
+
+      {/* Toolbar */}
       <div style={{
         background: COLORS.blanc, borderRadius: 12,
-        border: `1px solid ${COLORS.grisBorder}`, padding: "12px 16px",
-        display: "flex", gap: 12, alignItems: "center", marginBottom: 20, flexWrap: "wrap",
+        border: `1px solid ${COLORS.grisBorder}`, padding: "10px 14px",
+        marginBottom: 16, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center",
       }}>
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher un projet ou client…"
+          placeholder="Rechercher (numéro, titre, client)…"
           style={{
-            flex: 1, minWidth: 240,
-            padding: "8px 12px", border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-            fontSize: 13, color: COLORS.noir, outline: "none", fontFamily: "inherit",
+            flex: 1, minWidth: 220, padding: "6px 10px",
+            border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
+            fontSize: 12, outline: "none",
           }}
         />
-        <select
-          value={statutFilter}
-          onChange={(e) => setStatutFilter(e.target.value)}
-          style={{
-            padding: "8px 12px", border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-            fontSize: 13, color: COLORS.noir, background: COLORS.blanc, cursor: "pointer",
-          }}
-        >
-          <option value="">Tous statuts</option>
-          {allStatuts.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          style={{
-            padding: "8px 12px", border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-            fontSize: 13, color: COLORS.noir, background: COLORS.blanc, cursor: "pointer",
-          }}
-        >
-          <option value="">Tous types</option>
-          <option value="Standard">Standard</option>
-          <option value="Abonnement">Abonnement</option>
-        </select>
-        {(search || statutFilter || typeFilter) && (
-          <button
-            onClick={() => { setSearch(""); setStatutFilter(""); setTypeFilter(""); }}
-            style={{
-              padding: "8px 14px", background: "transparent",
-              border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-              fontSize: 12, fontWeight: 600, color: COLORS.grisMoyen, cursor: "pointer",
-            }}
-          >Réinitialiser</button>
+        <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: COLORS.grisMoyen, cursor: "pointer" }}>
+          <input
+            type="checkbox"
+            checked={showAll}
+            onChange={(e) => setShowAll(e.target.checked)}
+            style={{ accentColor: COLORS.dore }}
+          />
+          Voir TOUS les devis (incluant brouillons / refusés)
+        </label>
+      </div>
+
+      {/* Liste */}
+      <div className="responsive-table-wrapper" style={{
+        background: COLORS.blanc, borderRadius: 16,
+        border: `1px solid ${COLORS.grisBorder}`, overflow: "hidden",
+      }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: canSeeMoney
+            ? "1fr 2fr 1.5fr 1fr 1fr 1fr"
+            : "1fr 2fr 1.5fr 1fr 1fr",
+          padding: "10px 16px", background: COLORS.gris,
+          borderBottom: `1px solid ${COLORS.grisBorder}`,
+          fontSize: 10, fontWeight: 700, color: COLORS.grisMoyen,
+          textTransform: "uppercase", letterSpacing: 0.5,
+        }}>
+          <div>N° devis</div>
+          <div>Titre</div>
+          <div>Client</div>
+          <div style={{ textAlign: "center" }}>Date</div>
+          {canSeeMoney && <div style={{ textAlign: "right" }}>Montant HT</div>}
+          <div style={{ textAlign: "center" }}>Statut</div>
+        </div>
+
+        {loading ? (
+          <div style={{ padding: 40, textAlign: "center", color: COLORS.grisMoyen }}>
+            Chargement des devis Axonaut…
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ padding: 40, textAlign: "center", color: COLORS.grisMoyen, fontStyle: "italic" }}>
+            {quotations.length === 0
+              ? "Aucun devis dans Axonaut."
+              : "Aucun projet dans cette sélection. Cochez 'Voir TOUS les devis' pour les afficher tous."}
+          </div>
+        ) : (
+          filtered.map((q) => {
+            const status = STATUS_LABELS[q.status] ?? { label: q.status, bg: "#ECEFF1", color: "#546E7A" };
+            return (
+              <div key={q.id} style={{
+                display: "grid",
+                gridTemplateColumns: canSeeMoney
+                  ? "1fr 2fr 1.5fr 1fr 1fr 1fr"
+                  : "1fr 2fr 1.5fr 1fr 1fr",
+                padding: "12px 16px", borderBottom: `1px solid ${COLORS.grisBorder}`,
+                alignItems: "center", fontSize: 13,
+              }}>
+                <div style={{ fontFamily: "monospace", fontSize: 12, color: COLORS.grisMoyen }}>
+                  #{q.number}
+                </div>
+                <div style={{ fontWeight: 600, color: COLORS.noir }}>{q.title || "(sans titre)"}</div>
+                <div>{q.company?.name ?? "—"}</div>
+                <div style={{ textAlign: "center", fontSize: 12, color: COLORS.grisMoyen }}>
+                  {q.date ? new Date(q.date).toLocaleDateString("fr-FR") : "—"}
+                </div>
+                {canSeeMoney && (
+                  <div style={{ textAlign: "right", fontWeight: 700, color: COLORS.noir }}>
+                    {q.pre_tax_amount.toLocaleString("fr-FR")} €
+                  </div>
+                )}
+                <div style={{ textAlign: "center" }}>
+                  <span style={{
+                    padding: "3px 10px", borderRadius: 12, fontSize: 10, fontWeight: 700,
+                    background: status.bg, color: status.color,
+                  }}>{status.label}</span>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
 
-      {/* LIST */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {filtered.length === 0 && (
-          <div style={{
-            padding: "48px 20px", textAlign: "center",
-            background: COLORS.blanc, borderRadius: 16,
-            border: `1px solid ${COLORS.grisBorder}`,
-            color: COLORS.grisMoyen, fontStyle: "italic",
-          }}>Aucun projet ne correspond aux filtres.</div>
-        )}
-
-        {filtered.map((projet) => (
-          <ProjetRow key={projet.id} projet={projet} expanded={expanded.has(projet.id)} onToggle={() => toggle(projet.id)} canSeeMoney={canSeeMoney} />
-        ))}
-      </div>
+      <p style={{ marginTop: 12, fontSize: 11, color: COLORS.grisMoyen, textAlign: "center", fontStyle: "italic" }}>
+        Lecture directe Axonaut · les tâches de production sont dans le Kanban.
+      </p>
     </div>
   );
 }
 
-function ProjetRow({ projet, expanded, onToggle, canSeeMoney }: {
-  projet: Projet; expanded: boolean; onToggle: () => void; canSeeMoney: boolean;
+function Kpi({
+  label, value, sub, accent, color,
+}: {
+  label: string; value: string; sub?: string;
+  accent?: boolean; color?: string;
 }) {
-  const marge = projet.montantHT - projet.coutRevient;
-  const margePercent = Math.round((marge / projet.montantHT) * 100);
-  const totalAlloue = projet.taches.reduce((s, t) => s + t.tempsAlloue, 0);
-  const totalConsomme = projet.taches.reduce((s, t) => s + t.tempsConsomme, 0);
-  const ratioTemps = totalAlloue > 0 ? (totalConsomme / totalAlloue) * 100 : 0;
-  const rentaInfo = getRentabiliteColor(ratioTemps);
-
   return (
     <div style={{
-      background: COLORS.blanc, borderRadius: 16,
-      border: `1px solid ${COLORS.grisBorder}`, overflow: "hidden",
-      transition: "all 0.2s",
+      background: accent ? COLORS.noir : COLORS.blanc,
+      border: accent ? "none" : `1px solid ${COLORS.grisBorder}`,
+      borderRadius: 14, padding: 18,
     }}>
-      <div
-        onClick={onToggle}
-        style={{
-          display: "grid",
-          gridTemplateColumns: canSeeMoney
-            ? "auto 2fr 1fr 1fr 1fr 1.2fr 0.8fr"
-            : "auto 2fr 1fr 1fr 1.2fr 0.8fr",
-          alignItems: "center", gap: 16, padding: "16px 20px",
-          cursor: "pointer", transition: "background 0.15s",
-        }}
-      >
-        <span style={{
-          width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center",
-          color: COLORS.grisMoyen, fontSize: 14, transform: expanded ? "rotate(90deg)" : "rotate(0)",
-          transition: "transform 0.2s",
-        }}>▶</span>
-
-        <div>
-          <div style={{ fontWeight: 600, color: COLORS.noir, fontSize: 14, marginBottom: 2, display: "flex", alignItems: "center", gap: 8 }}>
-            {projet.nom}
-            {projet.type === "Abonnement" && (
-              <span style={{
-                fontSize: 9, padding: "2px 6px", borderRadius: 4,
-                background: COLORS.dorePale, color: COLORS.dore, fontWeight: 700,
-              }}>ABO</span>
-            )}
-          </div>
-          <div style={{ fontSize: 12, color: COLORS.grisMoyen }}>
-            {projet.client} · {projet.taches.length} tâche{projet.taches.length > 1 ? "s" : ""}
-          </div>
-        </div>
-
-        <div><StatutBadge statut={projet.statut} type="projet" /></div>
-
-        {canSeeMoney && (
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontWeight: 600, color: COLORS.noir, fontSize: 14 }}>
-              {projet.montantHT.toLocaleString("fr-FR")} €
-            </div>
-            <div style={{ fontSize: 12, color: rentaInfo.color, fontWeight: 500 }}>
-              Marge {margePercent}%
-            </div>
-          </div>
-        )}
-
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 14, color: COLORS.noir }}>
-            <span style={{ fontWeight: 600 }}>{totalConsomme.toFixed(1)}h</span>
-            <span style={{ color: COLORS.grisMoyen }}> / {totalAlloue.toFixed(1)}h</span>
-          </div>
-        </div>
-
-        <div style={{ padding: "0 8px" }}><ProgressBar consumed={totalConsomme} allocated={totalAlloue} /></div>
-
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          {[...new Set(projet.taches.map((t) => t.collab).filter(Boolean))].slice(0, 3).map((cid) => (
-            <div key={cid} style={{ marginLeft: -6 }}>
-              <Avatar collab={COLLABORATEURS.find((c) => c.id === cid)} size={28} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {expanded && (
-        <div className="animate-fadeIn" style={{ borderTop: `1px solid ${COLORS.grisBorder}`, background: COLORS.gris }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: canSeeMoney ? "2fr 1fr 0.8fr 1.2fr 1fr" : "2fr 1fr 0.8fr 1.2fr",
-            padding: "10px 20px",
-            fontSize: 10, fontWeight: 700, color: COLORS.grisMoyen,
-            textTransform: "uppercase", letterSpacing: 0.5,
-            borderBottom: `1px solid ${COLORS.grisBorder}`,
-          }}>
-            <div>Tâche</div>
-            <div>Statut</div>
-            <div>Collab</div>
-            <div>Temps</div>
-            {canSeeMoney && <div style={{ textAlign: "right" }}>Marge</div>}
-          </div>
-
-          {projet.taches.map((tache) => {
-            const collab = COLLABORATEURS.find((c) => c.id === tache.collab);
-            const ratio = tache.tempsAlloue > 0 ? (tache.tempsConsomme / tache.tempsAlloue) * 100 : 0;
-            const tInfo = getRentabiliteColor(ratio);
-            return (
-              <div key={tache.id} style={{
-                display: "grid",
-                gridTemplateColumns: canSeeMoney ? "2fr 1fr 0.8fr 1.2fr 1fr" : "2fr 1fr 0.8fr 1.2fr",
-                alignItems: "center", padding: "12px 20px",
-                borderBottom: `1px solid ${COLORS.grisBorder}`, background: COLORS.blanc,
-              }}>
-                <div>
-                  <div style={{ fontWeight: 500, fontSize: 13, color: COLORS.noir }}>{tache.nom}</div>
-                  {canSeeMoney && (
-                    <div style={{ fontSize: 11, color: COLORS.grisMoyen }}>
-                      {tache.montant.toLocaleString("fr-FR")} € HT
-                    </div>
-                  )}
-                  {!canSeeMoney && tache.tempsConsomme > 0 && (
-                    <div style={{ fontSize: 11, color: tInfo.color, fontWeight: 600 }}>
-                      {tInfo.label} · {Math.round(ratio)}%
-                    </div>
-                  )}
-                </div>
-                <div><StatutBadge statut={tache.statut} type="tache" /></div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <Avatar collab={collab} size={24} />
-                  <span style={{ fontSize: 11, color: COLORS.grisMoyen }}>{collab?.nom || "—"}</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <span style={{ fontSize: 12 }}>
-                    <strong>{tache.tempsConsomme}h</strong>
-                    <span style={{ color: COLORS.grisMoyen }}> / {tache.tempsAlloue}h</span>
-                  </span>
-                  <ProgressBar consumed={tache.tempsConsomme} allocated={tache.tempsAlloue} height={5} showPct={false} />
-                </div>
-                {canSeeMoney && (
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontWeight: 600, fontSize: 13, color: COLORS.dore }}>
-                      {(tache.montant - tache.cout).toLocaleString("fr-FR")} €
-                    </div>
-                    {tache.tempsConsomme > 0 && (
-                      <div style={{ fontSize: 10, color: tInfo.color, fontWeight: 600 }}>
-                        {tInfo.label} ({Math.round(ratio)}%)
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <div style={{
+        fontSize: 11, color: accent ? "#888" : COLORS.grisMoyen,
+        textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
+      }}>{label}</div>
+      <div style={{
+        fontSize: 26, fontWeight: 700,
+        color: accent ? COLORS.dore : color ?? COLORS.noir,
+        fontFamily: "var(--font-dm-serif-display), Georgia, serif", lineHeight: 1.1,
+      }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: accent ? "#666" : COLORS.grisMoyen, marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
