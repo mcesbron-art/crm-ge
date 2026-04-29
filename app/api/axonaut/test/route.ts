@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
-import { ping } from "@/lib/axonaut";
 
 /**
  * GET /api/axonaut/test
- * Vérifie la connexion à Axonaut + diagnostic des variables d'env.
+ * Diagnostic complet : capture la VRAIE réponse Axonaut (corps + headers)
+ * pour comprendre la cause exacte du 403.
  */
 export async function GET() {
   const apiKey = process.env.AXONAUT_API_KEY ?? "";
   const apiUrl = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
 
-  // Diagnostic safe (pas de clé révélée, juste indices)
   const diag = {
     api_url_used: apiUrl,
     api_url_is_default: apiUrl === "https://axonaut.com/api/v2",
@@ -22,10 +21,43 @@ export async function GET() {
     api_key_has_quotes: apiKey.startsWith('"') || apiKey.endsWith('"'),
   };
 
-  const result = await ping();
+  // Appel Axonaut brut, on capture TOUT
+  let axonautResponse: {
+    http_status?: number;
+    response_body?: string;
+    response_headers?: Record<string, string>;
+    fetch_error?: string;
+  } = {};
+
+  try {
+    const res = await fetch(`${apiUrl}/companies?per_page=1`, {
+      headers: {
+        userApiKey: apiKey,
+        Accept: "application/json",
+        "User-Agent": "CRM-GE/1.0",
+      },
+      cache: "no-store",
+    });
+
+    const headers: Record<string, string> = {};
+    res.headers.forEach((v, k) => { headers[k] = v; });
+
+    const body = await res.text();
+
+    axonautResponse = {
+      http_status: res.status,
+      response_body: body.slice(0, 800), // limite pour éviter de saturer
+      response_headers: headers,
+    };
+  } catch (e) {
+    axonautResponse = {
+      fetch_error: e instanceof Error ? e.message : String(e),
+    };
+  }
+
   return NextResponse.json(
-    { ...result, diagnostic: diag },
-    { status: result.ok ? 200 : 400 },
+    { diagnostic: diag, axonaut_response: axonautResponse },
+    { status: 200 },
   );
 }
 
