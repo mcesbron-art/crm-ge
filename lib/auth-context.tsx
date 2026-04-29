@@ -27,7 +27,7 @@ export type AppUser = {
  *   3. L'ajouter à USER_PASSWORDS_JSON (Vercel env var)
  */
 const KNOWN_USERS: AppUser[] = [
-  { id: 0, nom: "Maryline",  email: "maryline@groupe-echo.fr",  pole: "Direction",                      avatar: "MC", color: "#C5A55A", role: "direction",     base: 35, actif: true },
+  { id: 0, nom: "Maryline",  email: "m.cesbron@groupe-echo.fr", pole: "Direction",                      avatar: "MC", color: "#C5A55A", role: "direction",     base: 35, actif: true },
   { id: 1, nom: "Noémie",    email: "noemie@groupe-echo.fr",    pole: "Graphisme / Photo / Vidéo",      avatar: "N",  color: "#8E24AA", role: "collaborateur", base: 35, actif: true },
   { id: 2, nom: "Amandine",  email: "amandine@groupe-echo.fr",  pole: "Web / SEO / Contenu",            avatar: "A",  color: "#1E88E5", role: "collaborateur", base: 35, actif: true },
   { id: 3, nom: "Jérémy",    email: "jeremy@groupe-echo.fr",    pole: "Social Media / Vidéo",           avatar: "J",  color: "#43A047", role: "collaborateur", base: 35, actif: true },

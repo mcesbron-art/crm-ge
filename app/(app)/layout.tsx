@@ -56,7 +56,8 @@ export default async function AppLayout({
  */
 function hashEmailToId(email: string): number {
   const known: Record<string, number> = {
-    "maryline@groupe-echo.fr": 0,
+    "m.cesbron@groupe-echo.fr": 0,    // Maryline (Direction)
+    "maryline@groupe-echo.fr": 0,     // alias
     "noemie@groupe-echo.fr": 1,
     "amandine@groupe-echo.fr": 2,
     "jeremy@groupe-echo.fr": 3,
