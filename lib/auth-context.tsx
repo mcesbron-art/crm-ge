@@ -12,17 +12,21 @@ export type AppUser = {
   avatar: string;
   color: string;
   role: Role;
-  base: number; // heures/semaine
+  base: number;
   actif: boolean;
 };
 
 /**
- * Utilisateurs du CRM.
- * - "direction"     : Maryline → tous droits + Administration
- * - "admin"         : Fanny → tous droits données (chiffres) mais pas Administration
- * - "collaborateur" : autres → état des dossiers, pas de montants/marges
+ * Liste des collaborateurs visibles dans la page Administration et l'équipe.
+ * Sert pour l'UI uniquement — la liste réelle des users autorisés à se connecter
+ * est définie côté serveur dans lib/auth-server.ts (SERVER_USERS).
+ *
+ * Pour ajouter un VRAI utilisateur autorisé à se connecter, il faut :
+ *   1. L'ajouter ici (UI) ET dans SERVER_USERS (serveur)
+ *   2. Générer son hash via `node scripts/hash-passwords.mjs`
+ *   3. L'ajouter à USER_PASSWORDS_JSON (Vercel env var)
  */
-const INITIAL_USERS: AppUser[] = [
+const KNOWN_USERS: AppUser[] = [
   { id: 0, nom: "Maryline",  email: "maryline@groupe-echo.fr",  pole: "Direction",                      avatar: "MC", color: "#C5A55A", role: "direction",     base: 35, actif: true },
   { id: 1, nom: "Noémie",    email: "noemie@groupe-echo.fr",    pole: "Graphisme / Photo / Vidéo",      avatar: "N",  color: "#8E24AA", role: "collaborateur", base: 35, actif: true },
   { id: 2, nom: "Amandine",  email: "amandine@groupe-echo.fr",  pole: "Web / SEO / Contenu",            avatar: "A",  color: "#1E88E5", role: "collaborateur", base: 35, actif: true },
@@ -33,35 +37,41 @@ const INITIAL_USERS: AppUser[] = [
 ];
 
 type AuthContextValue = {
+  /** Utilisateur connecté (depuis la session serveur — read-only) */
   currentUser: AppUser;
-  setCurrentUserById: (id: number) => void;
+  /** Liste des utilisateurs visibles dans la page Administration */
   users: AppUser[];
+  /** Ajoute un utilisateur (UI uniquement — ne crée pas un compte authentifié) */
   addUser: (u: Omit<AppUser, "id">) => void;
   updateUser: (id: number, patch: Partial<AppUser>) => void;
   toggleActif: (id: number) => void;
-  /** "real" : vue normale du rôle de l'utilisateur connecté.
-   *  "collab" : Direction/Admin force temporairement la vue Collaborateur (aperçu). */
+  /** Mode aperçu pour Direction/Admin (voir l'UI comme un collab) */
   previewMode: "real" | "collab";
   setPreviewMode: (m: "real" | "collab") => void;
   // Helpers calculés (tiennent compte du previewMode)
-  canSeeMoney: boolean;     // direction + admin → voient les € / marges / coûts
-  canAccessAdmin: boolean;  // direction uniquement → page Administration
+  canSeeMoney: boolean;
+  canAccessAdmin: boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [users, setUsers] = useState<AppUser[]>(INITIAL_USERS);
-  const [currentUserId, setCurrentUserId] = useState<number>(0); // Maryline par défaut
+export function AuthProvider({
+  children,
+  initialUser,
+}: {
+  children: ReactNode;
+  initialUser: AppUser;
+}) {
+  // Liste des collaborateurs visibles : on commence par les users hardcodés
+  // + on remplace l'entrée correspondant à initialUser par les valeurs serveur.
+  const baseList = KNOWN_USERS.some((u) => u.id === initialUser.id)
+    ? KNOWN_USERS.map((u) => (u.id === initialUser.id ? initialUser : u))
+    : [...KNOWN_USERS, initialUser];
+
+  const [users, setUsers] = useState<AppUser[]>(baseList);
   const [previewMode, setPreviewMode] = useState<"real" | "collab">("real");
 
-  const currentUser = users.find((u) => u.id === currentUserId) ?? users[0];
-
-  const setCurrentUserById = (id: number) => {
-    if (users.some((u) => u.id === id && u.actif)) {
-      setCurrentUserId(id);
-    }
-  };
+  const currentUser = users.find((u) => u.id === initialUser.id) ?? initialUser;
 
   const addUser: AuthContextValue["addUser"] = (u) => {
     setUsers((prev) => {
@@ -76,25 +86,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const toggleActif: AuthContextValue["toggleActif"] = (id) => {
     setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, actif: !u.actif } : u)));
-    // Si on désactive l'utilisateur courant, basculer sur Maryline
-    if (currentUserId === id) setCurrentUserId(0);
   };
 
-  // Si l'utilisateur réel est Direction/Admin et active le mode aperçu, on force la vue collab.
+  // Mode aperçu actif uniquement si le vrai rôle de l'user est ≥ admin
   const realCanSeeMoney    = currentUser.role !== "collaborateur";
   const realCanAccessAdmin = currentUser.role === "direction";
   const isPreview          = previewMode === "collab" && realCanSeeMoney;
 
   const value: AuthContextValue = {
     currentUser,
-    setCurrentUserById,
     users,
     addUser,
     updateUser,
     toggleActif,
     previewMode,
     setPreviewMode: (m) => {
-      // Empêche un collaborateur (qui ne devrait pas voir le bouton de toute façon) d'activer un mode meaningless
       if (!realCanSeeMoney && m === "collab") return;
       setPreviewMode(m);
     },

@@ -15,11 +15,27 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    // TODO Sprint 1.3 : brancher Supabase Auth ici.
-    // Pour l'instant : redirige direct vers le dashboard.
-    await new Promise((r) => setTimeout(r, 400));
-    setLoading(false);
-    router.push("/dashboard");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "Identifiants invalides");
+        setLoading(false);
+        return;
+      }
+
+      // Auth réussie : redirige vers le dashboard
+      router.push("/dashboard");
+      router.refresh(); // force rechargement du layout server (qui lit la session)
+    } catch {
+      setError("Erreur de connexion au serveur");
+      setLoading(false);
+    }
   }
 
   return (
@@ -58,7 +74,8 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-dore"
+              disabled={loading}
+              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-dore disabled:opacity-60"
               placeholder="prenom@groupe-echo.fr"
             />
           </div>
@@ -74,7 +91,8 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-dore"
+              disabled={loading}
+              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-dore disabled:opacity-60"
               placeholder="••••••••"
             />
           </div>
@@ -89,7 +107,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-xs text-[#555]">
-          Sprint 1 — auth Supabase à venir
+          Mot de passe oublié ? Contactez la Direction.
         </p>
       </div>
     </div>

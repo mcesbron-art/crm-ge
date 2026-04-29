@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 
@@ -34,14 +34,13 @@ const ROLE_LABEL: Record<string, string> = {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { currentUser, users, setCurrentUserById, canSeeMoney, canAccessAdmin } = useAuth();
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const router = useRouter();
+  const { currentUser, canSeeMoney, canAccessAdmin } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  // Ferme le drawer dès qu'on change de page
   useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
-  // Empêche le scroll du body quand le drawer est ouvert sur mobile
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (drawerOpen && window.innerWidth < 1024) {
@@ -58,11 +57,19 @@ export default function Sidebar() {
     return true;
   });
 
-  const otherUsers = users.filter((u) => u.id !== currentUser.id && u.actif);
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore — on tente la redirection quand même
+    }
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <>
-      {/* Bouton hamburger (visible mobile/tablet uniquement via CSS) */}
       <button
         className="app-hamburger"
         onClick={() => setDrawerOpen(true)}
@@ -71,14 +78,12 @@ export default function Sidebar() {
         ☰
       </button>
 
-      {/* Backdrop (visible mobile uniquement quand drawer ouvert) */}
       <div
         className={`app-sidebar-backdrop ${drawerOpen ? "is-open" : ""}`}
         onClick={() => setDrawerOpen(false)}
       />
 
       <aside className={`app-sidebar ${drawerOpen ? "is-open" : ""}`}>
-        {/* Brand + close button on mobile */}
         <div className="border-b border-[#2A2A2A] px-6 pb-5 pt-7 relative">
           <div className="font-display text-[22px] font-normal tracking-wider text-dore">
             GROUPE ÉCHO
@@ -86,7 +91,6 @@ export default function Sidebar() {
           <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#666]">
             CRM Production
           </div>
-          {/* Bouton de fermeture du drawer (mobile uniquement) */}
           <button
             onClick={() => setDrawerOpen(false)}
             aria-label="Fermer le menu"
@@ -94,7 +98,6 @@ export default function Sidebar() {
           >×</button>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           {visibleNav.map((item) => {
             const active = pathname?.startsWith(item.href);
@@ -116,52 +119,28 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* User card + switcher */}
-        <div className="relative border-t border-[#2A2A2A] px-3 py-3">
-          {userMenuOpen && (
-            <div
-              className="absolute bottom-full left-3 right-3 mb-1 max-h-72 overflow-y-auto rounded-lg border border-[#2A2A2A] bg-[#1A1A1A] py-1 shadow-xl"
-              onMouseLeave={() => setUserMenuOpen(false)}
-            >
-              <div className="border-b border-[#2A2A2A] px-3 py-2 text-[10px] uppercase tracking-wider text-[#666]">
-                Changer d&apos;utilisateur (démo)
-              </div>
-              {otherUsers.map((u) => (
-                <button
-                  key={u.id}
-                  onClick={() => { setCurrentUserById(u.id); setUserMenuOpen(false); }}
-                  className="flex w-full items-center gap-3 px-3 py-2 text-left transition hover:bg-[#222]"
-                >
-                  <div
-                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
-                    style={{ background: u.color }}
-                  >
-                    {u.avatar}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-[12px] font-semibold text-white">{u.nom}</div>
-                    <div className="text-[10px] text-[#888]">{ROLE_LABEL[u.role]}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          <button
-            onClick={() => setUserMenuOpen((o) => !o)}
-            className="flex w-full items-center gap-3 rounded-lg px-2 py-2 transition hover:bg-[#1F1F1F]"
-          >
+        {/* Carte utilisateur + bouton Déconnexion */}
+        <div className="border-t border-[#2A2A2A] px-3 py-3">
+          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <div
               className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-noir"
               style={{ background: `linear-gradient(135deg, ${currentUser.color}, #D4BA78)` }}
             >
               {currentUser.avatar}
             </div>
-            <div className="min-w-0 flex-1 text-left">
+            <div className="min-w-0 flex-1">
               <div className="truncate text-[13px] font-semibold text-white">{currentUser.nom}</div>
               <div className="text-[11px] text-[#666]">{ROLE_LABEL[currentUser.role]}</div>
             </div>
-            <span className="text-[10px] text-[#666]">{userMenuOpen ? "▴" : "▾"}</span>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#2A2A2A] bg-transparent px-3 py-2 text-[12px] font-medium text-[#888] transition hover:border-rouge hover:text-rouge disabled:opacity-50"
+          >
+            <span>↩</span>
+            <span>{loggingOut ? "Déconnexion…" : "Se déconnecter"}</span>
           </button>
         </div>
       </aside>
