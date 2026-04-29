@@ -3,20 +3,31 @@ import { ping } from "@/lib/axonaut";
 
 /**
  * GET /api/axonaut/test
- * Vérifie que la clé API est valide en faisant un appel léger à Axonaut.
- *
- * Réponses :
- *   200 { ok: true, sample: "Acme Corp" }   → connexion OK
- *   400 { ok: false, error: "..." }          → clé invalide / problème réseau
+ * Vérifie la connexion à Axonaut + diagnostic des variables d'env.
  */
 export async function GET() {
+  const apiKey = process.env.AXONAUT_API_KEY ?? "";
+  const apiUrl = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
+
+  // Diagnostic safe (pas de clé révélée, juste indices)
+  const diag = {
+    api_url_used: apiUrl,
+    api_url_is_default: apiUrl === "https://axonaut.com/api/v2",
+    api_key_present: !!apiKey,
+    api_key_length: apiKey.length,
+    api_key_first4: apiKey.slice(0, 4),
+    api_key_last4: apiKey.slice(-4),
+    api_key_has_leading_space: apiKey.startsWith(" "),
+    api_key_has_trailing_space: apiKey.endsWith(" "),
+    api_key_has_quotes: apiKey.startsWith('"') || apiKey.endsWith('"'),
+  };
+
   const result = await ping();
-  if (result.ok) {
-    return NextResponse.json(result, { status: 200 });
-  }
-  return NextResponse.json(result, { status: result.status ?? 400 });
+  return NextResponse.json(
+    { ...result, diagnostic: diag },
+    { status: result.ok ? 200 : 400 },
+  );
 }
 
-// Empêche tout caching de cette route
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
