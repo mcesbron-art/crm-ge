@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { id: "bat",            label: "BAT",            href: "/bat",            icon: "✎" },
   { id: "calendrier",     label: "Calendrier",     href: "/calendrier",     icon: "▫" },
   { id: "equipe",         label: "Équipe",         href: "/equipe",         icon: "◉" },
+  { id: "opportunites",   label: "Opportunités",   href: "/opportunites",   icon: "★" },
   { id: "facturation",    label: "Facturation",    href: "/facturation",    icon: "▤", moneyOnly: true },
   { id: "rapports",       label: "Rapports",       href: "/rapports",       icon: "▥", moneyOnly: true },
   { id: "administration", label: "Administration", href: "/administration", icon: "⚙", directionOnly: true },

@@ -5,6 +5,7 @@ import Avatar from "@/components/ui/Avatar";
 import { COLORS, getRentabiliteColor, type Collaborateur } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import AccessDenied from "@/components/AccessDenied";
+import OpportunitesRapport from "@/components/OpportunitesRapport";
 
 type CollabHebdo = Collaborateur & {
   base: number;
@@ -485,6 +486,9 @@ export default function RapportsPage() {
           </div>
         </div>
       )}
+
+      {/* SECTION OPPORTUNITÉS COMMERCIALES — toujours visible */}
+      <OpportunitesRapport />
     </div>
   );
 }
