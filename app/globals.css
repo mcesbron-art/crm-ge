@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font compatibility variables */
+:root {
+  --font-dm-serif-display: var(--font-inter);
+  --font-dm-sans: var(--font-inter);
+}
+
 @layer base {
   body {
     @apply bg-gris text-noir font-sans antialiased;
@@ -9,7 +15,7 @@
   }
 
   h1, h2, h3, h4 {
-    @apply font-display font-normal;
+    @apply font-sans font-semibold;
   }
 }
 
@@ -192,11 +198,11 @@
 
 /* === Headings adaptatifs === */
 .h-page {
-  font-family: var(--font-dm-serif-display), Georgia, serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 30px;
   color: #1A1A1A;
   margin: 0 0 4px;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.15;
 }
 @media (max-width: 600px) {

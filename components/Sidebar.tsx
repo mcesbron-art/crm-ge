@@ -142,7 +142,7 @@ export default function Sidebar() {
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#333333] bg-transparent px-3 py-2 text-[14px] font-medium text-[#A8D5D0] transition hover:border-rouge hover:text-rouge hover:bg-[#333333] disabled:opacity-50"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#C5A55A] bg-transparent px-3 py-2 text-[14px] font-medium text-[#C5A55A] transition hover:border-[#D4BA78] hover:text-[#D4BA78] hover:bg-[#333333] disabled:opacity-50"
           >
             <span>↩</span>
             <span>{loggingOut ? "Déconnexion…" : "Se déconnecter"}</span>

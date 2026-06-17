@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BatProvider } from "@/lib/bat-context";
 import { OpportunitiesProvider } from "@/lib/opportunities-context";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-dm-sans",
+  variable: "--font-inter",
 });
 
-const dmSerifDisplay = DM_Serif_Display({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-dm-serif-display",
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${dmSans.variable} ${dmSerifDisplay.variable} font-sans antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <BatProvider>
           <OpportunitiesProvider>{children}</OpportunitiesProvider>
