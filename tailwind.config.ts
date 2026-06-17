@@ -9,18 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Charte Groupe Écho
+        // Charte Groupe Écho - Teal Premium
         noir: "#1A1A1A",
         "noir-deep": "#111111",
-        sidebar: "#172236",
+        // Teal palette
+        teal: "#0D6B5F",
+        "teal-dark": "#0D6B5F",
+        "teal-accent": "#16A89C",
+        "teal-light": "#A8D5D0",
+        // Legacy (kept for compatibility)
+        sidebar: "#0D6B5F",
         dore: "#C5A55A",
         "dore-light": "#D4BA78",
         "dore-pale": "#F5EDD6",
         blanc: "#FFFFFF",
-        gris: "#F9F9F8",
+        gris: "#F5F6F7",
         "gris-light": "#FAFAF9",
         "gris-moyen": "#999999",
-        "gris-border": "#E8E8E6",
+        "gris-border": "#E0E3E6",
         // Statuts
         vert: "#4CAF50",
         "vert-bg": "#E8F5E9",

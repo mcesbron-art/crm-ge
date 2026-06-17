@@ -2,42 +2,50 @@
 
 ## Theme
 
-Professional SaaS dashboard with restrained color palette. Dark sidebar navigation (Navy #172236) with gold accents (#C5A55A) and clean white content surfaces.
+Premium SaaS dashboard with teal dominance. Dark sidebar (Teal #0D6B5F) with vibrant teal accents (#16A89C), massively scaled typography, and clean white content surfaces. Audacious, professional, efficient.
 
 ## Color Palette
 
 ### Grounding
-- **Background**: #F9F9F8 (off-white, content surface)
+- **Background**: #F5F6F7 (clear light gray, content surface)
 - **Surface**: #FFFFFF (cards, elevated surfaces)
-- **Sidebar**: #172236 (dark navy, fixed UI container)
-- **Border**: #E8E8E6 (subtle dividers)
+- **Sidebar**: #0D6B5F (teal dark, fixed UI container)
+- **Border**: #E0E3E6 (subtle dividers)
+
+### Primary Accent Family (Teal)
+- **Teal Primary**: #0D6B5F (sidebar, dark actions)
+- **Teal Accent**: #16A89C (buttons, highlights, active states, icons)
+- **Teal Light**: #A8D5D0 (backgrounds, hover tints)
 
 ### Semantic Colors
-- **Primary Accent**: #C5A55A (gold, buttons, highlights, active states)
 - **Success**: #4CAF50 (green, positive states)
 - **Warning**: #FF9800 (orange, caution states)
 - **Danger**: #E53935 (red, destructive actions)
 - **Info**: #2196F3 (blue, informational states)
 
 ### Text
-- **Primary Text**: #1A1A1A (titles, body text)
-- **Secondary Text**: #666666 (metadata, secondary info)
-- **Tertiary Text**: #999999 (labels, disabled text)
-- **Inverted (on dark bg)**: #FFFFFF (primary), #CCCCCC (secondary)
+- **Primary Text**: #1A1A1A (titles, body text, numbers)
+- **Secondary Text**: #666666 (metadata)
+- **Tertiary Text**: #999999 (labels, muted)
+- **Inverted (on dark bg)**: #FFFFFF (primary), #D4D4D4 (secondary)
 
 ## Typography
 
-**Font Family**: DM Sans (system stack fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)
+**Font Families**: 
+- Display numbers: DM Serif Display, serif
+- UI: DM Sans, -apple-system, BlinkMacSystemFont, sans-serif
 
-### Scale
-- **Display (page title)**: 30px, weight 400, line-height 1.15
-- **Heading 1**: 24px, weight 600, line-height 1.2
-- **Heading 2**: 20px, weight 600, line-height 1.2
-- **Heading 3**: 16px, weight 600, line-height 1.3
-- **Body**: 14px, weight 400, line-height 1.5
-- **Small**: 12px, weight 400, line-height 1.4
-- **Label**: 12px, weight 600, line-height 1.3
-- **Code/Mono**: 12px, monospace, weight 400
+### Scale — Audacious
+- **KPI Number**: 72px, DM Serif, weight 400, line-height 1.1
+- **Display (page title)**: 36px, DM Sans, weight 600, line-height 1.15
+- **Heading 1**: 28px, DM Sans, weight 600, line-height 1.2
+- **Heading 2**: 20px, DM Sans, weight 600, line-height 1.3
+- **Heading 3**: 18px, DM Sans, weight 600, line-height 1.3
+- **KPI Label**: 14px, DM Sans, weight 600, line-height 1.3, uppercase, letter-spacing 0.5px
+- **Body**: 16px, DM Sans, weight 400, line-height 1.5
+- **Secondary**: 14px, DM Sans, weight 400, line-height 1.4
+- **Small**: 13px, DM Sans, weight 400, line-height 1.4
+- **Caption**: 12px, DM Sans, weight 500, line-height 1.3
 
 ## Components
 

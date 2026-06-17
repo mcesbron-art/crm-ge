@@ -115,15 +115,20 @@ export const PROJETS: Projet[] = [
 export const COLORS = {
   noir: "#1A1A1A",
   noirDeep: "#111111",
-  sidebar: "#172236",
+  // Teal palette (primary)
+  sidebar: "#0D6B5F",
+  teal: "#0D6B5F",
+  tealAccent: "#16A89C",
+  tealLight: "#A8D5D0",
+  // Legacy
   dore: "#C5A55A",
   doreLight: "#D4BA78",
   dorePale: "#F5EDD6",
   blanc: "#FFFFFF",
-  gris: "#F9F9F8",
+  gris: "#F5F6F7",
   grisLight: "#FAFAF9",
   grisMoyen: "#999999",
-  grisBorder: "#E8E8E6",
+  grisBorder: "#E0E3E6",
   vert: "#4CAF50",
   vertBg: "#E8F5E9",
   orange: "#FF9800",

@@ -5,6 +5,12 @@ import { getServerSession } from "@/lib/supabase-server";
 const API_URL = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
 const API_KEY = process.env.AXONAUT_API_KEY ?? "";
 
+interface AxonautQuotation {
+  title?: string;
+  number: string;
+  [key: string]: unknown;
+}
+
 function stripHtml(html?: string): string {
   if (!html) return "";
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -33,7 +39,7 @@ export async function GET() {
 
     const quotations = await res.json();
 
-    const cleaned = quotations.map((q: any) => ({
+    const cleaned = quotations.map((q: AxonautQuotation) => ({
       ...q,
       title: stripHtml(q.title) || `Devis ${q.number}`,
     }));

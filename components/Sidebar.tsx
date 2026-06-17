@@ -86,17 +86,17 @@ export default function Sidebar() {
       />
 
       <aside className={`app-sidebar ${drawerOpen ? "is-open" : ""}`}>
-        <div className="border-b border-[#1E2D3A] px-6 pb-5 pt-7 relative">
-          <div className="font-display text-[22px] font-normal tracking-wider text-dore">
+        <div className="border-b border-[#0A5349] px-6 pb-5 pt-7 relative">
+          <div className="font-display text-[22px] font-normal tracking-wider text-white">
             GROUPE ÉCHO
           </div>
-          <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#8BA5B5]">
+          <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#A8D5D0]">
             CRM Production
           </div>
           <button
             onClick={() => setDrawerOpen(false)}
             aria-label="Fermer le menu"
-            className="absolute right-3 top-3 lg:hidden flex h-8 w-8 items-center justify-center rounded-full bg-[#1E2D3A] text-[#8BA5B5] hover:text-white transition-colors"
+            className="absolute right-3 top-3 lg:hidden flex h-8 w-8 items-center justify-center rounded-full bg-[#0A5349] text-[#A8D5D0] hover:text-white transition-colors"
           >×</button>
         </div>
 
@@ -108,10 +108,10 @@ export default function Sidebar() {
                 key={item.id}
                 href={item.href}
                 className={[
-                  "mb-0.5 flex items-center gap-3 rounded-[10px] px-3.5 py-2.5 text-sm transition-all",
+                  "mb-0.5 flex items-center gap-3 rounded-[8px] px-3.5 py-2.5 text-sm transition-all font-medium",
                   active
-                    ? "bg-dore bg-opacity-15 font-semibold text-dore border-l-2 border-dore"
-                    : "text-[#8BA5B5] hover:bg-[#1E2D3A] hover:text-white",
+                    ? "bg-[#16A89C] bg-opacity-20 text-white border-l-2 border-[#16A89C]"
+                    : "text-[#A8D5D0] hover:bg-[#0A5349] hover:text-[#16A89C]",
                 ].join(" ")}
               >
                 <span className="w-5 text-center text-base">{item.icon}</span>
@@ -122,24 +122,24 @@ export default function Sidebar() {
         </nav>
 
         {/* Carte utilisateur + bouton Déconnexion */}
-        <div className="border-t border-[#1E2D3A] px-3 py-3">
+        <div className="border-t border-[#0A5349] px-3 py-3">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <div
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-noir"
-              style={{ background: `linear-gradient(135deg, ${currentUser.color}, #D4BA78)` }}
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-blanc"
+              style={{ background: `linear-gradient(135deg, ${currentUser.color}, #16A89C)` }}
             >
               {currentUser.avatar}
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-[13px] font-semibold text-white">{currentUser.nom}</div>
-              <div className="text-[11px] text-[#8BA5B5]">{ROLE_LABEL[currentUser.role]}</div>
+              <div className="text-[11px] text-[#A8D5D0]">{ROLE_LABEL[currentUser.role]}</div>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#1E2D3A] bg-transparent px-3 py-2 text-[12px] font-medium text-[#8BA5B5] transition hover:border-rouge hover:text-rouge disabled:opacity-50"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#0A5349] bg-transparent px-3 py-2 text-[12px] font-medium text-[#A8D5D0] transition hover:border-rouge hover:text-rouge hover:bg-[#0A5349] disabled:opacity-50"
           >
             <span>↩</span>
             <span>{loggingOut ? "Déconnexion…" : "Se déconnecter"}</span>

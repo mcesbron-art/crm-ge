@@ -18,21 +18,35 @@ function KPICard({
 }: { label: string; value: React.ReactNode; sub?: string; icon: string; accent?: boolean }) {
   return (
     <div style={{
-      background: accent ? COLORS.noir : COLORS.blanc, borderRadius: 16,
-      padding: "24px 24px 20px", flex: 1, minWidth: 180,
+      background: accent ? COLORS.teal : COLORS.blanc, 
+      borderRadius: 12,
+      padding: "32px 28px 24px", 
+      flex: 1, 
+      minWidth: 200,
       border: accent ? "none" : `1px solid ${COLORS.grisBorder}`,
-      position: "relative", overflow: "hidden",
+      position: "relative", 
+      overflow: "hidden",
+      boxShadow: accent ? "0 4px 12px rgba(13, 107, 95, 0.15)" : "0 1px 3px rgba(0,0,0,0.06)",
     }}>
       <div style={{
-        fontSize: 13, color: accent ? COLORS.doreLight : COLORS.grisMoyen,
-        fontWeight: 500, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8,
+        fontSize: 14, 
+        color: accent ? COLORS.tealLight : COLORS.grisMoyen,
+        fontWeight: 600, 
+        letterSpacing: 0.8, 
+        textTransform: "uppercase", 
+        marginBottom: 12,
+        fontFamily: "var(--font-dm-sans), system-ui, sans-serif",
       }}>{label}</div>
       <div style={{
-        fontSize: 36, fontWeight: 700, color: accent ? COLORS.dore : COLORS.noir,
-        lineHeight: 1.1, fontFamily: "var(--font-dm-serif-display), Georgia, serif",
+        fontSize: 72, 
+        fontWeight: 400, 
+        color: accent ? COLORS.blanc : COLORS.noir,
+        lineHeight: 1.1, 
+        fontFamily: "var(--font-dm-serif-display), Georgia, serif",
+        marginBottom: 8,
       }}>{value}</div>
-      {sub && <div style={{ fontSize: 13, color: accent ? "#999" : COLORS.grisMoyen, marginTop: 6 }}>{sub}</div>}
-      <div style={{ position: "absolute", top: 16, right: 20, fontSize: 28, opacity: accent ? 0.3 : 0.12 }}>{icon}</div>
+      {sub && <div style={{ fontSize: 14, color: accent ? COLORS.tealLight : COLORS.grisMoyen, marginTop: 6, fontWeight: 400 }}>{sub}</div>}
+      <div style={{ position: "absolute", top: 20, right: 24, fontSize: 32, opacity: accent ? 0.25 : 0.08, color: accent ? COLORS.blanc : COLORS.noir }}>{icon}</div>
     </div>
   );
 }
