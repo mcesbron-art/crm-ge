@@ -166,7 +166,7 @@ export default function CalendrierPage() {
             }}>
               {week.map((cell, ci) => {
                 if (!cell.date) {
-                  return <div key={ci} style={{ minHeight: 110, background: "#FAFAF8" }} />;
+                  return <div key={ci} style={{ minHeight: 110, background: COLORS.grisLight }} />;
                 }
                 const echeances = echeancesByDay.get(cell.iso) || [];
                 const isToday = cell.iso === todayISO;

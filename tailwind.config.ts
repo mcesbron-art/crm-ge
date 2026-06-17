@@ -12,13 +12,15 @@ const config: Config = {
         // Charte Groupe Écho
         noir: "#1A1A1A",
         "noir-deep": "#111111",
+        sidebar: "#172236",
         dore: "#C5A55A",
         "dore-light": "#D4BA78",
         "dore-pale": "#F5EDD6",
         blanc: "#FFFFFF",
-        gris: "#F7F7F5",
+        gris: "#F9F9F8",
+        "gris-light": "#FAFAF9",
         "gris-moyen": "#999999",
-        "gris-border": "#E5E5E3",
+        "gris-border": "#E8E8E6",
         // Statuts
         vert: "#4CAF50",
         "vert-bg": "#E8F5E9",

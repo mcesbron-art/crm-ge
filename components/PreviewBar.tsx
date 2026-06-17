@@ -21,8 +21,8 @@ export default function PreviewBar() {
     <div
       className="preview-bar"
       style={{
-        background: isCollab ? "#E8EAF6" : "#FAFAF8",
-        borderBottom: isCollab ? "1px solid #C5CAE9" : "1px solid #E5E5E3",
+        background: isCollab ? "#E8EAF6" : "#F9F9F8",
+        borderBottom: isCollab ? "1px solid #C5CAE9" : "1px solid #E8E8E6",
       }}
     >
       {/* Indicateur mode actif */}
@@ -52,7 +52,7 @@ export default function PreviewBar() {
       <div
         style={{
           display: "flex", padding: 3, gap: 2,
-          background: "#1A1A1A", borderRadius: 8,
+          background: "#E8E8E6", borderRadius: 8,
         }}
       >
         <button
@@ -61,7 +61,7 @@ export default function PreviewBar() {
             padding: "5px 14px", borderRadius: 6, border: "none",
             fontSize: 11, fontWeight: 600, cursor: "pointer",
             background: !isCollab ? "#C5A55A" : "transparent",
-            color:      !isCollab ? "#1A1A1A" : "#888",
+            color:      !isCollab ? "#1A1A1A" : "#999999",
             transition: "all 0.15s",
           }}
         >Vue Direction</button>
@@ -71,7 +71,7 @@ export default function PreviewBar() {
             padding: "5px 14px", borderRadius: 6, border: "none",
             fontSize: 11, fontWeight: 600, cursor: "pointer",
             background: isCollab ? "#C5A55A" : "transparent",
-            color:      isCollab ? "#1A1A1A" : "#888",
+            color:      isCollab ? "#1A1A1A" : "#999999",
             transition: "all 0.15s",
           }}
         >Vue Collaborateur</button>

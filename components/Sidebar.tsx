@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { id: "bat",            label: "BAT",            href: "/bat",            icon: "✎" },
   { id: "calendrier",     label: "Calendrier",     href: "/calendrier",     icon: "▫" },
   { id: "equipe",         label: "Équipe",         href: "/equipe",         icon: "◉" },
+  { id: "clients",        label: "Clients",        href: "/clients",        icon: "◈" },
   { id: "opportunites",   label: "Opportunités",   href: "/opportunites",   icon: "★" },
   { id: "facturation",    label: "Facturation",    href: "/facturation",    icon: "▤", moneyOnly: true },
   { id: "rapports",       label: "Rapports",       href: "/rapports",       icon: "▥", moneyOnly: true },
@@ -85,17 +86,17 @@ export default function Sidebar() {
       />
 
       <aside className={`app-sidebar ${drawerOpen ? "is-open" : ""}`}>
-        <div className="border-b border-[#2A2A2A] px-6 pb-5 pt-7 relative">
+        <div className="border-b border-[#1E2D3A] px-6 pb-5 pt-7 relative">
           <div className="font-display text-[22px] font-normal tracking-wider text-dore">
             GROUPE ÉCHO
           </div>
-          <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#666]">
+          <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#8BA5B5]">
             CRM Production
           </div>
           <button
             onClick={() => setDrawerOpen(false)}
             aria-label="Fermer le menu"
-            className="absolute right-3 top-3 lg:hidden flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2A2A] text-[#888] hover:text-white"
+            className="absolute right-3 top-3 lg:hidden flex h-8 w-8 items-center justify-center rounded-full bg-[#1E2D3A] text-[#8BA5B5] hover:text-white transition-colors"
           >×</button>
         </div>
 
@@ -109,8 +110,8 @@ export default function Sidebar() {
                 className={[
                   "mb-0.5 flex items-center gap-3 rounded-[10px] px-3.5 py-2.5 text-sm transition-all",
                   active
-                    ? "bg-[#2A2A2A] font-semibold text-dore"
-                    : "text-[#888] hover:bg-[#1F1F1F] hover:text-white",
+                    ? "bg-dore bg-opacity-15 font-semibold text-dore border-l-2 border-dore"
+                    : "text-[#8BA5B5] hover:bg-[#1E2D3A] hover:text-white",
                 ].join(" ")}
               >
                 <span className="w-5 text-center text-base">{item.icon}</span>
@@ -121,7 +122,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Carte utilisateur + bouton Déconnexion */}
-        <div className="border-t border-[#2A2A2A] px-3 py-3">
+        <div className="border-t border-[#1E2D3A] px-3 py-3">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <div
               className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-noir"
@@ -131,14 +132,14 @@ export default function Sidebar() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-[13px] font-semibold text-white">{currentUser.nom}</div>
-              <div className="text-[11px] text-[#666]">{ROLE_LABEL[currentUser.role]}</div>
+              <div className="text-[11px] text-[#8BA5B5]">{ROLE_LABEL[currentUser.role]}</div>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#2A2A2A] bg-transparent px-3 py-2 text-[12px] font-medium text-[#888] transition hover:border-rouge hover:text-rouge disabled:opacity-50"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#1E2D3A] bg-transparent px-3 py-2 text-[12px] font-medium text-[#8BA5B5] transition hover:border-rouge hover:text-rouge disabled:opacity-50"
           >
             <span>↩</span>
             <span>{loggingOut ? "Déconnexion…" : "Se déconnecter"}</span>

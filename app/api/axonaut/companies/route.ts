@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import { AxonautError } from "@/lib/axonaut";
 import { getServerSession } from "@/lib/supabase-server";
+import { AxonautError } from "@/lib/axonaut";
 
 const API_URL = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
 const API_KEY = process.env.AXONAUT_API_KEY ?? "";
-
-function stripHtml(html?: string): string {
-  if (!html) return "";
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
 
 export async function GET() {
   const profile = await getServerSession();
@@ -17,7 +12,7 @@ export async function GET() {
   }
 
   try {
-    const res = await fetch(`${API_URL}/quotations`, {
+    const res = await fetch(`${API_URL}/companies`, {
       headers: {
         "userApiKey": API_KEY,
         "Accept": "application/json",
@@ -28,20 +23,15 @@ export async function GET() {
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      throw new AxonautError(res.status, `Axonaut GET /quotations → ${res.status}`, body);
+      throw new AxonautError(res.status, `Axonaut GET /companies → ${res.status}`, body);
     }
 
-    const quotations = await res.json();
-
-    const cleaned = quotations.map((q: any) => ({
-      ...q,
-      title: stripHtml(q.title) || `Devis ${q.number}`,
-    }));
+    const companies = await res.json();
 
     return NextResponse.json({
       ok: true,
-      count: cleaned.length,
-      quotations: cleaned,
+      count: companies.length,
+      companies,
       synced_at: new Date().toISOString(),
     });
   } catch (e) {

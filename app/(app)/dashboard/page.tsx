@@ -62,7 +62,7 @@ function ProjetRow({ projet, onClick, canSeeMoney }: { projet: Projet; onClick: 
         cursor: "pointer",
         transition: "background 0.15s",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = "#FAFAF8")}
+      onMouseEnter={(e) => (e.currentTarget.style.background = COLORS.grisLight)}
       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
       <div>

@@ -1,25 +1,7 @@
-/**
- * Client Axonaut — UTILISATION SERVER-SIDE UNIQUEMENT.
- *
- * Ne JAMAIS importer ce fichier depuis un composant client (`"use client"`),
- * sinon la clé API serait exposée dans le bundle navigateur.
- *
- * À utiliser dans :
- *   - Server Components
- *   - Route Handlers (app/api/.../route.ts)
- *   - Server Actions
- *
- * Documentation Axonaut : https://axonaut.com/api/doc/
- */
-
 import "server-only";
 
 const API_URL = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
 const API_KEY = process.env.AXONAUT_API_KEY ?? "";
-
-// ============================================================
-// TYPES — minimaux pour notre usage
-// ============================================================
 
 export type AxonautCompany = {
   id: number;
@@ -32,19 +14,19 @@ export type AxonautQuotationItem = {
   id?: number;
   product_name: string;
   product_description?: string;
-  unit_job_costing?: number;     // coût de revient unitaire
-  pre_tax_amount?: number;       // montant HT total
+  unit_job_costing?: number;
+  pre_tax_amount?: number;
   quantity?: number;
 };
 
 export type AxonautQuotation = {
   id: number;
-  number: string;                // numéro devis
+  number: string;
   title?: string;
-  status: string;                // "draft" | "validated" | "accepted" | ...
+  status: string;
   total_amount?: number;
-  pre_tax_amount: number;        // total HT
-  date: string;                  // ISO
+  pre_tax_amount: number;
+  date: string;
   company?: AxonautCompany;
   quotation_lines?: AxonautQuotationItem[];
 };
@@ -55,7 +37,7 @@ export type AxonautInvoice = {
   title?: string;
   pre_tax_amount: number;
   total_amount: number;
-  status: string;                // "draft" | "sent" | "paid" | "late" | ...
+  status: string;
   date: string;
   company?: AxonautCompany;
 };
@@ -63,21 +45,17 @@ export type AxonautInvoice = {
 export type AxonautInvoiceCreate = {
   company_id: number;
   title?: string;
-  date: string;                  // YYYY-MM-DD
+  date: string;
   invoice_lines: {
     product_name: string;
     product_description?: string;
     quantity: number;
     pre_tax_unit_amount: number;
-    tax_rate?: number;           // ex: 20 pour 20%
+    tax_rate?: number;
   }[];
 };
 
-// ============================================================
-// CORE FETCH WRAPPER
-// ============================================================
-
-class AxonautError extends Error {
+export class AxonautError extends Error {
   status: number;
   body: unknown;
   constructor(status: number, message: string, body?: unknown) {
@@ -88,9 +66,9 @@ class AxonautError extends Error {
   }
 }
 
-async function axonautFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function axonautFetch<T>(path: string, init: RequestInit = {}, page?: number): Promise<T> {
   if (!API_KEY) {
-    throw new AxonautError(500, "AXONAUT_API_KEY manquante. Configurer la variable d'environnement.");
+    throw new AxonautError(500, "AXONAUT_API_KEY manquante.");
   }
 
   const url = `${API_URL}${path}`;
@@ -98,6 +76,7 @@ async function axonautFetch<T>(path: string, init: RequestInit = {}): Promise<T>
     "userApiKey": API_KEY,
     "Content-Type": "application/json",
     "Accept": "application/json",
+    ...(page !== undefined ? { "page": String(page) } : {}),
     ...(init.headers ?? {}),
   };
 
@@ -106,74 +85,62 @@ async function axonautFetch<T>(path: string, init: RequestInit = {}): Promise<T>
   if (!res.ok) {
     let body: unknown;
     try { body = await res.json(); } catch { body = await res.text().catch(() => null); }
-    throw new AxonautError(
-      res.status,
-      `Axonaut ${init.method ?? "GET"} ${path} → ${res.status}`,
-      body
-    );
+    throw new AxonautError(res.status, `Axonaut ${init.method ?? "GET"} ${path} → ${res.status}`, body);
   }
 
   return res.json() as Promise<T>;
 }
 
-// ============================================================
-// PUBLIC API
-// ============================================================
+async function axonautFetchAll<T>(path: string): Promise<T[]> {
+  const results: T[] = [];
+  let page = 1;
+  while (true) {
+    const data = await axonautFetch<T[]>(path, {}, page);
+    if (!Array.isArray(data) || data.length === 0) break;
+    results.push(...data);
+    if (data.length < 500) break;
+    page++;
+  }
+  return results;
+}
 
-/** Vérifie la connexion (récupère 1 entreprise pour valider la clé). */
-export async function ping(): Promise<{ ok: true; sample?: string } | { ok: false; error: string; status?: number }> {
+export async function ping() {
   try {
-    // GET /companies?per_page=1 — endpoint léger pour tester
-    const list = await axonautFetch<AxonautCompany[]>("/companies?per_page=1");
-    return { ok: true, sample: list[0]?.name };
+    const list = await axonautFetch<AxonautCompany[]>("/companies", {}, 1);
+    return { ok: true, sample: (list as AxonautCompany[])[0]?.name };
   } catch (e) {
-    if (e instanceof AxonautError) {
-      return { ok: false, error: e.message, status: e.status };
-    }
+    if (e instanceof AxonautError) return { ok: false, error: e.message, status: e.status };
     return { ok: false, error: e instanceof Error ? e.message : "unknown" };
   }
 }
 
-/** Récupère les devis (quotations) validés. */
 export async function listValidatedQuotations(): Promise<AxonautQuotation[]> {
-  // Selon la doc Axonaut, le filtre status varie. On récupère tout puis on filtre côté serveur.
-  const all = await axonautFetch<AxonautQuotation[]>("/quotations?per_page=200");
+  const all = await axonautFetchAll<AxonautQuotation>("/quotations");
   return all.filter((q) => ["validated", "accepted"].includes(q.status));
 }
 
-/** Récupère TOUS les devis (quotations) — tout statut confondu. */
 export async function listAllQuotations(): Promise<AxonautQuotation[]> {
-  return axonautFetch<AxonautQuotation[]>("/quotations?per_page=200");
+  return axonautFetchAll<AxonautQuotation>("/quotations");
 }
 
-/** Récupère toutes les entreprises (clients). */
 export async function listCompanies(): Promise<AxonautCompany[]> {
-  return axonautFetch<AxonautCompany[]>("/companies?per_page=200");
+  return axonautFetchAll<AxonautCompany>("/companies");
 }
 
-/** Récupère 1 devis avec ses lignes. */
 export async function getQuotation(id: number): Promise<AxonautQuotation> {
   return axonautFetch<AxonautQuotation>(`/quotations/${id}`);
 }
 
-/** Crée une facture dans Axonaut. */
 export async function createInvoice(data: AxonautInvoiceCreate): Promise<AxonautInvoice> {
-  return axonautFetch<AxonautInvoice>("/invoices", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  return axonautFetch<AxonautInvoice>("/invoices", { method: "POST", body: JSON.stringify(data) });
 }
 
-/** Récupère le statut d'une facture (ex: pour vérifier si payée). */
 export async function getInvoice(id: number): Promise<AxonautInvoice> {
   return axonautFetch<AxonautInvoice>(`/invoices/${id}`);
 }
 
-/** Liste des factures (utile pour vérifier l'état d'un abonnement). */
 export async function listInvoices(filters?: { company_id?: number }): Promise<AxonautInvoice[]> {
-  let path = "/invoices?per_page=200";
-  if (filters?.company_id) path += `&company_id=${filters.company_id}`;
-  return axonautFetch<AxonautInvoice[]>(path);
+  let path = "/invoices";
+  if (filters?.company_id) path += `?company_id=${filters.company_id}`;
+  return axonautFetchAll<AxonautInvoice>(path);
 }
-
-export { AxonautError };
