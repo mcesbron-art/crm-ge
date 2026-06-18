@@ -20,7 +20,7 @@ function KPICard({
   label: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
-  icon: string;
+  icon: string | React.ReactNode;
   isBlack?: boolean;
   subColor?: string;
   iconColor?: string;
@@ -88,9 +88,9 @@ function KPICard({
           position: "absolute",
           top: 16,
           right: 16,
-          fontSize: 18,
+          fontSize: 20,
           opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: iconBg === "#e5d1a2" ? "#C5A55A" : iconBg === "#C5A55A" ? "#C5A55A" : iconBg === "#FF9966" ? "#FF6B35" : finalIconColor,
+          color: iconBg === "#e5d1a2" ? "#9B8340" : iconBg === "#C5A55A" ? "#9B8340" : iconBg === "#FF9966" ? "#D85A3A" : finalIconColor,
           background: iconBg,
           width: iconBg ? 48 : "auto",
           height: iconBg ? 48 : "auto",
@@ -225,7 +225,14 @@ export default function DashboardRedesign() {
           label="Projets actifs"
           value={PROJETS.filter((p) => p.statut !== "Clôturé").length}
           sub={`${totalTaches} tâches au total`}
-          icon="▣"
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          }
           isBlack={true}
           iconBg="#e5d1a2"
         />

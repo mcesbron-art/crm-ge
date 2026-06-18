@@ -20,7 +20,7 @@ function KPICard({
   label: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
-  icon: string;
+  icon: string | React.ReactNode;
   isBlack?: boolean;
   subColor?: string;
   iconColor?: string;
@@ -88,9 +88,9 @@ function KPICard({
           position: "absolute",
           top: 16,
           right: 16,
-          fontSize: 18,
+          fontSize: 20,
           opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: iconBg === "#e5d1a2" ? "#C5A55A" : iconBg === "#c5a55a" ? "#c5a55a" : iconBg === "#FF9966" ? "#FF6B35" : finalIconColor,
+          color: iconBg === "#bd9945" ? "#9B8340" : iconBg === "#c5a55a" ? "#9B8340" : iconBg === "#e5d1a2" ? "#9B8340" : iconBg === "#FF9966" ? "#D85A3A" : finalIconColor,
           background: iconBg,
           width: iconBg ? 48 : "auto",
           height: iconBg ? 48 : "auto",
