@@ -41,6 +41,9 @@ export default function Sidebar() {
   const { currentUser, canSeeMoney, canAccessAdmin } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Array<{ type: string; label: string; href: string; icon: string }>>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
@@ -59,6 +62,35 @@ export default function Sidebar() {
     if (item.directionOnly && !canAccessAdmin) return false;
     return true;
   });
+
+  function handleSearch(query: string) {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const results = visibleNav.filter((item) =>
+      item.label.toLowerCase().includes(lowerQuery)
+    );
+
+    setSearchResults(results.map((item) => ({
+      type: "nav",
+      label: item.label,
+      href: item.href,
+      icon: item.icon,
+    })));
+    setShowSearchResults(true);
+  }
+
+  function navigateToResult(href: string) {
+    router.push(href);
+    setSearchQuery("");
+    setSearchResults([]);
+    setShowSearchResults(false);
+  }
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -101,6 +133,35 @@ export default function Sidebar() {
             aria-label="Fermer le menu"
             className="absolute right-3 top-3 lg:hidden flex h-8 w-8 items-center justify-center rounded-full bg-[#333333] text-white hover:text-white transition-colors"
           >×</button>
+        </div>
+
+        <div className="border-b border-[#333333] px-3 py-3 relative">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery && setShowSearchResults(true)}
+              className="w-full rounded-lg bg-[#1a1a1a] px-3 py-2.5 text-sm text-white placeholder-[#666666] border border-[#333333] outline-none transition focus:border-[#C5A55A] focus:border-opacity-50"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666666]">🔍</span>
+          </div>
+
+          {showSearchResults && searchResults.length > 0 && (
+            <div className="absolute left-3 right-3 mt-2 rounded-lg bg-[#1a1a1a] border border-[#333333] shadow-lg z-50 max-h-64 overflow-y-auto">
+              {searchResults.map((result) => (
+                <button
+                  key={`${result.type}-${result.href}`}
+                  onClick={() => navigateToResult(result.href)}
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-sm text-white hover:bg-[#333333] transition"
+                >
+                  <span className="w-5 text-center text-lg">{result.icon}</span>
+                  <span>{result.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
