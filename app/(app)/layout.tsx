@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import PreviewBar from "@/components/PreviewBar";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider } from "@/lib/theme-context";
 import { getServerSession } from "@/lib/supabase-server";
+import AppLayoutWrapper from "@/components/AppLayoutWrapper";
 
 /**
  * Layout protégé : redirige vers /login si pas de session Supabase valide.
@@ -38,15 +40,14 @@ export default async function AppLayout({
   };
 
   return (
-    <AuthProvider initialUser={initialUser}>
-      <div className="min-h-screen bg-gris">
-        <Sidebar />
-        <main className="app-main">
+    <ThemeProvider>
+      <AuthProvider initialUser={initialUser}>
+        <AppLayoutWrapper>
           <PreviewBar />
           {children}
-        </main>
-      </div>
-    </AuthProvider>
+        </AppLayoutWrapper>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
