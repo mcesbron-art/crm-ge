@@ -203,7 +203,7 @@ export default function DashboardRedesign() {
                 borderRadius: 20,
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#FFFFFF",
+                color: "#e9bf5b",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
               }}
@@ -402,7 +402,7 @@ export default function DashboardRedesign() {
         >
           <h3
             style={{
-              fontSize: 12,
+              fontSize: 18,
               fontWeight: 600,
               color: textColor,
               margin: "0 0 16px",
@@ -429,7 +429,7 @@ export default function DashboardRedesign() {
                     marginBottom: 6,
                   }}
                 >
-                  <span style={{ fontSize: 12, color: subtextColor }}>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: subtextColor }}>
                     {item.label}
                   </span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: textColor }}>

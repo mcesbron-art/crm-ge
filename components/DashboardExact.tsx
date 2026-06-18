@@ -422,7 +422,7 @@ export default function DashboardExact() {
                     marginBottom: 6,
                   }}
                 >
-                  <span style={{ fontSize: 12, color: subtextColor }}>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: subtextColor }}>
                     {item.label}
                   </span>
                   <span style={{ fontSize: 13, fontWeight: 700, color: textColor }}>
