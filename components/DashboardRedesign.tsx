@@ -148,8 +148,8 @@ export default function DashboardRedesign() {
   );
 
   // Theme colors
-  const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
-  const cardBg = isDark ? "#1F1F1F" : "#FFFFFF";
+  const bgColor = isDark ? "#0A0A0A" : "transparent";
+  const cardBg = isDark ? "#1F1F1F" : "transparent";
   const textColor = isDark ? "#E0E0E0" : "#1A1A1A";
   const subtextColor = isDark ? "#999999" : "#666666";
   const borderColor = isDark ? "#2F2F2F" : "#E8E8E8";

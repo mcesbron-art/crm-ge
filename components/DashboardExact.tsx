@@ -183,7 +183,7 @@ export default function DashboardExact() {
             <button
               style={{
                 padding: "10px 18px",
-                background: "#FFFFFF",
+                background: "transparent",
                 border: `1px solid ${borderColor}`,
                 borderRadius: 20,
                 fontSize: 13,
@@ -276,7 +276,7 @@ export default function DashboardExact() {
           {/* CA SECTION */}
           <div
             style={{
-              background: "#FFFFFF",
+              background: "transparent",
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               padding: 20,
@@ -385,7 +385,7 @@ export default function DashboardExact() {
         {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
-            background: "#FFFFFF",
+            background: "transparent",
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
@@ -523,7 +523,7 @@ export default function DashboardExact() {
       {/* PROJETS SECTION - FULL WIDTH */}
       <div
         style={{
-          background: "#FFFFFF",
+          background: "transparent",
           borderRadius: 20,
           border: `1px solid ${borderColor}`,
           overflow: "hidden",
@@ -546,7 +546,7 @@ export default function DashboardExact() {
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr 1fr",
             padding: "10px 16px",
-            background: "#FFFFFF",
+            background: "transparent",
             borderBottom: `1px solid ${borderColor}`,
             fontSize: 10,
             fontWeight: 600,
