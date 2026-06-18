@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Avatar from "@/components/ui/Avatar";
 import { InteractiveChart } from "@/components/InteractiveChart";
 import {
   PROJETS,
@@ -24,23 +23,19 @@ function KPICard({
   accent?: boolean;
   isDark?: boolean;
 }) {
-  const bgColor = accent
-    ? "#C5A55A"
-    : (isDark ? "#1A1A1A" : "#FFFFFF");
-  const textColor = accent
-    ? "#FFFFFF"
-    : (isDark ? "#E8E8E8" : "#1A1A1A");
+  const bgColor = accent ? "#C5A55A" : (isDark ? "#1A1A1A" : "#FFFFFF");
+  const textColor = accent ? "#FFFFFF" : (isDark ? "#E8E8E8" : "#1A1A1A");
   const labelColor = accent
     ? "rgba(255,255,255,0.85)"
     : (isDark ? "#999999" : "#666666");
-  const borderColor = isDark ? "#2F2F2F" : "#E8E8E6";
+  const borderColor = isDark ? "#2F2F2F" : "#E0E0E0";
 
   return (
     <div
       style={{
         background: bgColor,
         borderRadius: 12,
-        padding: "18px 16px",
+        padding: "20px 16px",
         border: `1px solid ${accent ? "transparent" : borderColor}`,
         position: "relative",
         overflow: "hidden",
@@ -65,7 +60,7 @@ function KPICard({
       </div>
       <div
         style={{
-          fontSize: 32,
+          fontSize: 36,
           fontWeight: 700,
           color: textColor,
           lineHeight: 1.1,
@@ -127,19 +122,21 @@ export default function DashboardExact() {
       }))
   );
 
+  // Colors - Light mode: white background, Dark mode: dark background
   const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
-  const cardBg = isDark ? "#1A1A1A" : "#F5F5F5";
+  const pageContainerBg = isDark ? "#0A0A0A" : "#FFFFFF";
+  const cardBg = isDark ? "#1A1A1A" : "#FFFFFF";
   const textColor = isDark ? "#E8E8E8" : "#1A1A1A";
   const subtextColor = isDark ? "#999999" : "#666666";
   const borderColor = isDark ? "#2F2F2F" : "#E0E0E0";
+  const sectionBg = isDark ? "#1A1A1A" : "#F9F9F9";
 
   return (
     <div
       style={{
-        background: bgColor,
+        background: pageContainerBg,
         minHeight: "100vh",
         color: textColor,
-        padding: "28px 32px",
       }}
     >
       {/* HEADER */}
@@ -148,7 +145,7 @@ export default function DashboardExact() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 28,
+          marginBottom: 32,
           paddingBottom: 16,
           borderBottom: `1px solid ${borderColor}`,
         }}
@@ -202,7 +199,7 @@ export default function DashboardExact() {
         </div>
       </div>
 
-      {/* KPI ROW */}
+      {/* KPI ROW - 4 CARDS */}
       <div
         style={{
           display: "grid",
@@ -236,14 +233,14 @@ export default function DashboardExact() {
         <KPICard
           label="Alertes rentabilité"
           value={alertes}
-          sub={`à surveiller`}
+          sub={`à surveiller temps de prod.`}
           icon="⚠"
           isDark={isDark}
         />
       </div>
 
-      {/* MAIN CONTENT GRID */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, marginBottom: 28 }}>
+      {/* MAIN CONTENT - 2 COLUMNS */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
         {/* LEFT COLUMN */}
         <div>
           {/* CA SECTION */}
@@ -261,22 +258,36 @@ export default function DashboardExact() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: 4,
+                marginBottom: 16,
               }}
             >
-              <h3
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: textColor,
-                  margin: 0,
-                }}
-              >
-                CA EN PRODUCTION
-              </h3>
+              <div>
+                <h3
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: textColor,
+                    margin: "0 0 8px",
+                  }}
+                >
+                  CA EN PRODUCTION
+                </h3>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    fontSize: 11,
+                  }}
+                >
+                  <span style={{ color: "#4CAF50", fontWeight: 600 }}>
+                    +12.4% Cet période
+                  </span>
+                  <span style={{ color: subtextColor }}>Période précédente</span>
+                </div>
+              </div>
               <span
                 style={{
-                  fontSize: 18,
+                  fontSize: 24,
                   fontWeight: 700,
                   color: "#C5A55A",
                 }}
@@ -284,28 +295,10 @@ export default function DashboardExact() {
                 34.7 k€
               </span>
             </div>
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                marginBottom: 16,
-                fontSize: 12,
-              }}
-            >
-              <span
-                style={{
-                  color: "#4CAF50",
-                  fontWeight: 600,
-                }}
-              >
-                +12.4% Vue globale
-              </span>
-              <span style={{ color: subtextColor }}>Tous clients</span>
-            </div>
             <InteractiveChart isDark={isDark} height={140} />
           </div>
 
-          {/* ALERTES */}
+          {/* ALERTES SECTION */}
           <div
             style={{
               background: isDark ? "#2F2515" : "#FFF8F0",
@@ -356,7 +349,7 @@ export default function DashboardExact() {
                     {t.nom.substring(0, 30)}
                   </span>
                   <span style={{ color: subtextColor, fontSize: 11 }}>
-                    {t.projet}
+                    — {t.projet}
                   </span>
                   <div
                     style={{
@@ -372,7 +365,7 @@ export default function DashboardExact() {
             })}
           </div>
 
-          {/* PROJETS */}
+          {/* PROJETS SECTION */}
           <div
             style={{
               background: cardBg,
@@ -384,7 +377,7 @@ export default function DashboardExact() {
             <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
               <h3
                 style={{
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: 600,
                   color: textColor,
                   margin: 0,
@@ -398,7 +391,7 @@ export default function DashboardExact() {
                 display: "grid",
                 gridTemplateColumns: "2fr 1fr 1fr 1fr",
                 padding: "10px 16px",
-                background: isDark ? "#141414" : "#F9F9F9",
+                background: sectionBg,
                 borderBottom: `1px solid ${borderColor}`,
                 fontSize: 10,
                 fontWeight: 600,
@@ -465,6 +458,7 @@ export default function DashboardExact() {
                     style={{
                       textAlign: "right",
                       color: "#C5A55A",
+                      fontWeight: 600,
                     }}
                   >
                     {margePercent}%
@@ -475,7 +469,7 @@ export default function DashboardExact() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
+        {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
             background: cardBg,
@@ -495,165 +489,50 @@ export default function DashboardExact() {
           >
             Opportunités
           </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span style={{ fontSize: 12, color: subtextColor }}>
-                Opportunités
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
-                24
-              </span>
-            </div>
-            <div
-              style={{
-                height: "3px",
-                background: isDark ? "#2F2F2F" : "#E5E5E3",
-                borderRadius: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "90%",
-                  height: "100%",
-                  background: "#C5A55A",
-                  borderRadius: 2,
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 12, color: subtextColor }}>
-                Devis envoyés
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
-                16
-              </span>
-            </div>
-            <div
-              style={{
-                height: "3px",
-                background: isDark ? "#2F2F2F" : "#E5E5E3",
-                borderRadius: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "65%",
-                  height: "100%",
-                  background: "#C5A55A",
-                  borderRadius: 2,
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 12, color: subtextColor }}>
-                Devis signés
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
-                9
-              </span>
-            </div>
-            <div
-              style={{
-                height: "3px",
-                background: isDark ? "#2F2F2F" : "#E5E5E3",
-                borderRadius: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "35%",
-                  height: "100%",
-                  background: "#C5A55A",
-                  borderRadius: 2,
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 12, color: subtextColor }}>
-                En production
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
-                5
-              </span>
-            </div>
-            <div
-              style={{
-                height: "3px",
-                background: isDark ? "#2F2F2F" : "#E5E5E3",
-                borderRadius: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "20%",
-                  height: "100%",
-                  background: "#C5A55A",
-                  borderRadius: 2,
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 12, color: subtextColor }}>
-                Facturés
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
-                3
-              </span>
-            </div>
-            <div
-              style={{
-                height: "3px",
-                background: isDark ? "#2F2F2F" : "#E5E5E3",
-                borderRadius: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "12%",
-                  height: "100%",
-                  background: "#C5A55A",
-                  borderRadius: 2,
-                }}
-              />
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { label: "Opportunités", value: 24, percentage: 90 },
+              { label: "Devis envoyés", value: 16, percentage: 65 },
+              { label: "Devis signés", value: 9, percentage: 35 },
+              { label: "En production", value: 5, percentage: 20 },
+              { label: "Facturés", value: 3, percentage: 12 },
+            ].map((item, idx) => (
+              <div key={idx}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 6,
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: subtextColor }}>
+                    {item.label}
+                  </span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: textColor }}>
+                    {item.value}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    height: "4px",
+                    background: isDark ? "#2F2F2F" : "#E5E5E3",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${item.percentage}%`,
+                      height: "100%",
+                      background: "#C5A55A",
+                      borderRadius: 2,
+                      transition: "width 0.3s ease",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
