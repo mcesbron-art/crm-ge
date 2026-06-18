@@ -9,10 +9,8 @@ interface DataPoint {
 }
 
 export function InteractiveChart({
-  isDark,
   height = 300,
 }: {
-  isDark: boolean;
   height?: number;
 }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -20,7 +18,6 @@ export function InteractiveChart({
     null
   );
   const svgRef = useRef<SVGSVGElement>(null);
-  const [svgWidth, setSvgWidth] = useState(800);
 
   // Colors
   const goldColor = "#C5A55A";
@@ -63,11 +60,7 @@ export function InteractiveChart({
 
   useEffect(() => {
     if (!svgRef.current) return;
-    const resizeObserver = new ResizeObserver(() => {
-      if (svgRef.current) {
-        setSvgWidth(svgRef.current.clientWidth || 800);
-      }
-    });
+    const resizeObserver = new ResizeObserver(() => {});
     resizeObserver.observe(svgRef.current);
     return () => resizeObserver.disconnect();
   }, []);
@@ -95,7 +88,7 @@ export function InteractiveChart({
     }`;
 
   const handleMouseMove = (
-    e: React.MouseEvent<SVGSVGElement>,
+    e: React.MouseEvent<SVGElement>,
     idx: number
   ) => {
     const rect = svgRef.current?.getBoundingClientRect();

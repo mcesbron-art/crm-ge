@@ -9,7 +9,7 @@ const mockUser = {
   avatar: "DU",
   color: "#C5A55A",
   role: "admin" as const,
-  base: "",
+  base: 0,
   actif: true,
 };
 

@@ -3,7 +3,6 @@
 import { InteractiveChart } from "@/components/InteractiveChart";
 import {
   PROJETS,
-  COLLABORATEURS,
   getRentabiliteColor,
 } from "@/lib/mock-data";
 
@@ -28,7 +27,6 @@ function KPICard({
   const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
   const labelColor = isBlack ? "#C5A55A" : "#666666";
   const borderColor = isBlack ? "#2F2F2F" : "#E8E8E8";
-  const accentColor = isBlack ? "#C5A55A" : "#C5A55A";
   const finalIconColor = iconColor || (isBlack ? "#C5A55A" : "#C5A55A");
 
   return (
@@ -99,7 +97,6 @@ function KPICard({
 
 export default function DashboardExact() {
   const totalCA = PROJETS.reduce((s, p) => s + p.montantHT, 0);
-  const totalMarge = PROJETS.reduce((s, p) => s + (p.montantHT - p.coutRevient), 0);
   const totalTaches = PROJETS.reduce((s, p) => s + p.taches.length, 0);
   const tachesEnCours = PROJETS.reduce(
     (s, p) => s + p.taches.filter((t) => t.statut === "En cours").length,
@@ -254,7 +251,7 @@ export default function DashboardExact() {
         />
       </div>
 
-      {/* TWO COLUMN LAYOUT WITH FULL-WIDTH SECTIONS */}
+      {/* TWO COLUMN LAYOUT - CA + OPPORTUNITÉS */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
         {/* LEFT COLUMN */}
         <div>
@@ -354,180 +351,8 @@ export default function DashboardExact() {
               </div>
             </div>
             <div style={{ height: "320px" }}>
-              <InteractiveChart isDark={false} height={320} />
+              <InteractiveChart height={320} />
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ALERTES SECTION - FULL WIDTH */}
-          <div
-            style={{
-              background: "#FFF8F0",
-              borderRadius: 20,
-              border: `1px solid #FFE0B2`,
-              padding: 16,
-              marginBottom: 24,
-              }}
-          >
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#E65100",
-                marginBottom: 12,
-              }}
-            >
-              ⚠ Alertes temps de production
-            </div>
-            {tachesAlerte.slice(0, 5).map((t, idx) => {
-              const ratio = Math.round(
-                (t.tempsConsomme / t.tempsAlloue) * 100
-              );
-              const info = getRentabiliteColor(ratio);
-              const colors = ["#6366F1", "#EC4899", "#10B981", "#8B5CF6", "#F59E0B"];
-              return (
-                <div
-                  key={t.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "8px 0",
-                    fontSize: 12,
-                    borderBottom: `1px solid rgba(0,0,0,0.1)`,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      color: info.color,
-                      minWidth: 30,
-                    }}
-                  >
-                    {ratio}%
-                  </span>
-                  <span style={{ color: textColor, flex: 1 }}>
-                    {t.nom.substring(0, 30)}
-                  </span>
-                  <span style={{ color: subtextColor, fontSize: 11 }}>
-                    — {t.projet}
-                  </span>
-                  <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "50%",
-                      background: colors[idx % colors.length],
-                      flexShrink: 0,
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-
-          {/* PROJETS SECTION - FULL WIDTH */}
-          <div
-            style={{
-              background: "#FFFFFF",
-              borderRadius: 20,
-              border: `1px solid ${borderColor}`,
-              overflow: "hidden",
-              }}
-          >
-            <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
-              <h3
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: textColor,
-                  margin: 0,
-                }}
-              >
-                Projets en cours
-              </h3>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 1fr 1fr 1fr",
-                padding: "10px 16px",
-                background: "#FFFFFF",
-                borderBottom: `1px solid ${borderColor}`,
-                fontSize: 10,
-                fontWeight: 600,
-                color: subtextColor,
-                textTransform: "uppercase",
-              }}
-            >
-              <div>Projet</div>
-              <div style={{ textAlign: "right" }}>Montant</div>
-              <div style={{ textAlign: "right" }}>Temps</div>
-              <div style={{ textAlign: "right" }}>Rentabilité</div>
-            </div>
-            {PROJETS.slice(0, 5).map((p) => {
-              const marge = p.montantHT - p.coutRevient;
-              const margePercent = Math.round((marge / p.montantHT) * 100);
-              const totalAlloue = p.taches.reduce((s, t) => s + t.tempsAlloue, 0);
-              const totalConsomme = p.taches.reduce(
-                (s, t) => s + t.tempsConsomme,
-                0
-              );
-
-              return (
-                <div
-                  key={p.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "2fr 1fr 1fr 1fr",
-                    alignItems: "center",
-                    padding: "12px 16px",
-                    borderBottom: `1px solid ${borderColor}`,
-                    fontSize: 12,
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 600, color: textColor }}>
-                      {p.nom}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: subtextColor,
-                      }}
-                    >
-                      {p.client}
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      textAlign: "right",
-                      color: textColor,
-                    }}
-                  >
-                    {p.montantHT.toLocaleString("fr-FR")} €
-                  </div>
-                  <div
-                    style={{
-                      textAlign: "right",
-                      color: textColor,
-                    }}
-                  >
-                    {totalConsomme}h / {totalAlloue}h
-                  </div>
-                  <div
-                    style={{
-                      textAlign: "right",
-                      color: "#C5A55A",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {margePercent}%
-                  </div>
-                </div>
-              );
-            })}
           </div>
         </div>
 
@@ -600,6 +425,176 @@ export default function DashboardExact() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ALERTES SECTION - FULL WIDTH */}
+      <div
+        style={{
+          background: "#FFF8F0",
+          borderRadius: 20,
+          border: `1px solid #FFE0B2`,
+          padding: 16,
+          marginBottom: 24,
+        }}
+      >
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: "#E65100",
+            marginBottom: 12,
+          }}
+        >
+          ⚠ Alertes temps de production
+        </div>
+        {tachesAlerte.slice(0, 5).map((t, idx) => {
+          const ratio = Math.round(
+            (t.tempsConsomme / t.tempsAlloue) * 100
+          );
+          const info = getRentabiliteColor(ratio);
+          const colors = ["#6366F1", "#EC4899", "#10B981", "#8B5CF6", "#F59E0B"];
+          return (
+            <div
+              key={t.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "8px 0",
+                fontSize: 12,
+                borderBottom: `1px solid rgba(0,0,0,0.1)`,
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: 600,
+                  color: info.color,
+                  minWidth: 30,
+                }}
+              >
+                {ratio}%
+              </span>
+              <span style={{ color: textColor, flex: 1 }}>
+                {t.nom.substring(0, 30)}
+              </span>
+              <span style={{ color: subtextColor, fontSize: 11 }}>
+                — {t.projet}
+              </span>
+              <div
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: "50%",
+                  background: colors[idx % colors.length],
+                  flexShrink: 0,
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* PROJETS SECTION - FULL WIDTH */}
+      <div
+        style={{
+          background: "#FFFFFF",
+          borderRadius: 20,
+          border: `1px solid ${borderColor}`,
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
+          <h3
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: textColor,
+              margin: 0,
+            }}
+          >
+            Projets en cours
+          </h3>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr 1fr",
+            padding: "10px 16px",
+            background: "#FFFFFF",
+            borderBottom: `1px solid ${borderColor}`,
+            fontSize: 10,
+            fontWeight: 600,
+            color: subtextColor,
+            textTransform: "uppercase",
+          }}
+        >
+          <div>Projet</div>
+          <div style={{ textAlign: "right" }}>Montant</div>
+          <div style={{ textAlign: "right" }}>Temps</div>
+          <div style={{ textAlign: "right" }}>Rentabilité</div>
+        </div>
+        {PROJETS.slice(0, 5).map((p) => {
+          const marge = p.montantHT - p.coutRevient;
+          const margePercent = Math.round((marge / p.montantHT) * 100);
+          const totalAlloue = p.taches.reduce((s, t) => s + t.tempsAlloue, 0);
+          const totalConsomme = p.taches.reduce(
+            (s, t) => s + t.tempsConsomme,
+            0
+          );
+
+          return (
+            <div
+              key={p.id}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr 1fr 1fr",
+                alignItems: "center",
+                padding: "12px 16px",
+                borderBottom: `1px solid ${borderColor}`,
+                fontSize: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 600, color: textColor }}>
+                  {p.nom}
+                </div>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: subtextColor,
+                  }}
+                >
+                  {p.client}
+                </div>
+              </div>
+              <div
+                style={{
+                  textAlign: "right",
+                  color: textColor,
+                }}
+              >
+                {p.montantHT.toLocaleString("fr-FR")} €
+              </div>
+              <div
+                style={{
+                  textAlign: "right",
+                  color: textColor,
+                }}
+              >
+                {totalConsomme}h / {totalAlloue}h
+              </div>
+              <div
+                style={{
+                  textAlign: "right",
+                  color: "#C5A55A",
+                  fontWeight: 600,
+                }}
+              >
+                {margePercent}%
+              </div>
+            </div>
+          );
+        })}
       </div>
 
     </div>

@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Avatar from "@/components/ui/Avatar";
-import StatutBadge from "@/components/ui/StatutBadge";
-import ProgressBar from "@/components/ui/ProgressBar";
 import {
   PROJETS,
   COLLABORATEURS,
@@ -175,7 +173,6 @@ export default function DashboardDemo() {
   const textColor = isDark ? "#E8E8E8" : "#1A1A1A";
   const subtextColor = isDark ? "#999999" : "#666666";
   const borderColor = isDark ? "#2F2F2F" : "#E8E8E6";
-  const headerBg = isDark ? "#171717" : "#FFFFFF";
 
   return (
     <div
@@ -318,7 +315,7 @@ export default function DashboardDemo() {
             margin: "0 0 16px",
           }}
         >
-          Chiffre d'affaires
+          Chiffre d&apos;affaires
         </h3>
         <SimpleLineChart isDark={isDark} height={160} />
       </div>
