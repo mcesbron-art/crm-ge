@@ -88,9 +88,9 @@ function KPICard({
           position: "absolute",
           top: 16,
           right: 16,
-          fontSize: 24,
+          fontSize: 18,
           opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: finalIconColor,
+          color: iconBg === "#C5A55A" ? "#C5A55A" : iconBg === "#FF9966" ? "#FF9966" : finalIconColor,
           background: iconBg,
           width: iconBg ? 48 : "auto",
           height: iconBg ? 48 : "auto",
@@ -228,7 +228,6 @@ export default function DashboardRedesign() {
           icon="▣"
           isBlack={true}
           iconBg="#C5A55A"
-          iconColor="#FFF"
         />
         <KPICard
           label="CA en production"
@@ -241,7 +240,6 @@ export default function DashboardRedesign() {
           }
           icon="€"
           iconBg="#C5A55A"
-          iconColor="#FFF"
         />
         <KPICard
           label="Tâches en cours"
@@ -254,7 +252,6 @@ export default function DashboardRedesign() {
           }
           icon="▶"
           iconBg="#C5A55A"
-          iconColor="#FFF"
         />
         <KPICard
           label="Alertes rentabilité"
@@ -267,7 +264,6 @@ export default function DashboardRedesign() {
           }
           icon="⚠"
           iconBg="#FF9966"
-          iconColor="#FFF"
         />
       </div>
 
