@@ -62,7 +62,7 @@ function KPICard({
         </div>
         <div
           style={{
-            fontSize: 36,
+            fontSize: 50,
             fontWeight: 700,
             color: isBlack ? accentColor : textColor,
             lineHeight: 1.1,
