@@ -2,100 +2,12 @@
 
 import { useState } from "react";
 import Avatar from "@/components/ui/Avatar";
+import { InteractiveChart } from "@/components/InteractiveChart";
 import {
   PROJETS,
   COLLABORATEURS,
   getRentabiliteColor,
 } from "@/lib/mock-data";
-
-function InteractiveChart({
-  isDark,
-  height = 200,
-}: {
-  isDark: boolean;
-  height?: number;
-}) {
-  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
-  const lineColor = "#C5A55A";
-  const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)";
-  const textColor = isDark ? "#999999" : "#666666";
-
-  const dataPoints = [
-    { x: 0, y: 120, label: "Sem 1" },
-    { x: 75, y: 100, label: "" },
-    { x: 150, y: 95, label: "" },
-    { x: 225, y: 110, label: "" },
-    { x: 300, y: 85, label: "" },
-    { x: 375, y: 75, label: "" },
-    { x: 450, y: 90, label: "" },
-    { x: 525, y: 70, label: "" },
-    { x: 600, y: 65, label: "Sem 9" },
-  ];
-
-  return (
-    <div style={{ position: "relative" }}>
-      <svg
-        width="100%"
-        height={height}
-        viewBox="0 0 600 200"
-        style={{ display: "block" }}
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <line x1="0" y1="50" x2="600" y2="50" stroke={gridColor} strokeWidth="1" />
-        <line x1="0" y1="100" x2="600" y2="100" stroke={gridColor} strokeWidth="1" />
-        <line x1="0" y1="150" x2="600" y2="150" stroke={gridColor} strokeWidth="1" />
-
-        <polyline
-          points="0,120 75,100 150,95 225,110 300,85 375,75 450,90 525,70 600,65"
-          fill="none"
-          stroke={lineColor}
-          strokeWidth="2.5"
-          opacity="0.9"
-        />
-
-        <defs>
-          <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={lineColor} stopOpacity="0.25" />
-            <stop offset="100%" stopColor={lineColor} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polygon
-          points="0,120 75,100 150,95 225,110 300,85 375,75 450,90 525,70 600,65 600,200 0,200"
-          fill="url(#areaGradient)"
-        />
-
-        {dataPoints.map((point, idx) => (
-          <circle
-            key={idx}
-            cx={point.x}
-            cy={point.y}
-            r={hoveredPoint === idx ? "5" : "3"}
-            fill={lineColor}
-            opacity={hoveredPoint === idx ? "1" : "0.6"}
-            style={{ cursor: "pointer", transition: "all 0.2s" }}
-            onMouseEnter={() => setHoveredPoint(idx)}
-            onMouseLeave={() => setHoveredPoint(null)}
-          />
-        ))}
-      </svg>
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          fontSize: "11px",
-          color: textColor,
-          marginTop: "8px",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-        }}
-      >
-        <span>Sem 1</span>
-        <span>Sem 9</span>
-      </div>
-    </div>
-  );
-}
 
 function KPICard({
   label,
