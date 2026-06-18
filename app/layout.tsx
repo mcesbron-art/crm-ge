@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BatProvider } from "@/lib/bat-context";
 import { OpportunitiesProvider } from "@/lib/opportunities-context";
+import { ThemeProvider } from "@/lib/theme-context";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        <BatProvider>
-          <OpportunitiesProvider>{children}</OpportunitiesProvider>
-        </BatProvider>
+        <ThemeProvider>
+          <BatProvider>
+            <OpportunitiesProvider>{children}</OpportunitiesProvider>
+          </BatProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
