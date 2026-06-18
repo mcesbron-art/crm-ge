@@ -1,6 +1,7 @@
 "use client";
 
 import { InteractiveChart } from "@/components/InteractiveChart";
+import { useTheme } from "@/lib/theme-context";
 import {
   PROJETS,
   getRentabiliteColor,
@@ -108,6 +109,9 @@ function KPICard({
 }
 
 export default function DashboardRedesign() {
+  const { mode, toggleMode } = useTheme();
+  const isDark = mode === "dark";
+
   const totalCA = PROJETS.reduce((s, p) => s + p.montantHT, 0);
   const totalTaches = PROJETS.reduce((s, p) => s + p.taches.length, 0);
   const tachesEnCours = PROJETS.reduce(
@@ -135,16 +139,20 @@ export default function DashboardRedesign() {
       }))
   );
 
-  // Light theme colors
-  const textColor = "#1A1A1A";
-  const subtextColor = "#666666";
-  const borderColor = "#E8E8E8";
+  // Theme colors
+  const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
+  const cardBg = isDark ? "#1F1F1F" : "#FFFFFF";
+  const textColor = isDark ? "#E0E0E0" : "#1A1A1A";
+  const subtextColor = isDark ? "#999999" : "#666666";
+  const borderColor = isDark ? "#2F2F2F" : "#E8E8E8";
 
   return (
     <div
       style={{
         minHeight: "100vh",
+        background: bgColor,
         color: textColor,
+        transition: "background 0.3s ease, color 0.3s ease",
       }}
     >
       {/* INTEGRATED HEADER - Vos Direction + Dashboard + Buttons */}
@@ -180,6 +188,22 @@ export default function DashboardRedesign() {
             </p>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
+            <button
+              onClick={toggleMode}
+              style={{
+                padding: "10px 18px",
+                background: isDark ? "#2F2F2F" : "#FFFFFF",
+                border: `1px solid ${borderColor}`,
+                borderRadius: 20,
+                fontSize: 13,
+                fontWeight: 600,
+                color: textColor,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {isDark ? "☀️ Clair" : "🌙 Nuit"}
+            </button>
             <button
               style={{
                 padding: "10px 18px",
@@ -283,7 +307,7 @@ export default function DashboardRedesign() {
           {/* CA SECTION */}
           <div
             style={{
-              background: "#FFFFFF",
+              background: cardBg,
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               padding: 20,
