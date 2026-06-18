@@ -53,7 +53,7 @@ function KPICard({
         <div
           style={{
             fontSize: 10,
-            color: labelColor,
+            color: isBlack ? "#C5A55A" : labelColor,
             fontWeight: 600,
             letterSpacing: 0.5,
             textTransform: "uppercase",
@@ -227,7 +227,8 @@ export default function DashboardRedesign() {
           sub={`${totalTaches} tâches au total`}
           icon="▣"
           isBlack={true}
-          iconBlur={true}
+          iconBg="#C5A55A"
+          iconColor="#FFF"
         />
         <KPICard
           label="CA en production"
@@ -239,7 +240,7 @@ export default function DashboardRedesign() {
             </div>
           }
           icon="€"
-          iconBg="#FFD700"
+          iconBg="#C5A55A"
           iconColor="#FFF"
         />
         <KPICard
@@ -252,7 +253,7 @@ export default function DashboardRedesign() {
             </div>
           }
           icon="▶"
-          iconBg="#10B981"
+          iconBg="#C5A55A"
           iconColor="#FFF"
         />
         <KPICard
@@ -265,7 +266,7 @@ export default function DashboardRedesign() {
             </div>
           }
           icon="⚠"
-          iconBg="#FF6B6B"
+          iconBg="#FF9966"
           iconColor="#FFF"
         />
       </div>
