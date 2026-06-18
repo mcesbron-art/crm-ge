@@ -548,10 +548,10 @@ export default function DashboardRedesign() {
         <div
           style={{
             background: "#FFFFFF",
-            borderRadius: 12,
+            borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            height: "fit-content",
+            minHeight: "420px",
           }}
         >
           <h3

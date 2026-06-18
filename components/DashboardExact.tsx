@@ -548,10 +548,10 @@ export default function DashboardExact() {
         <div
           style={{
             background: "#FFFFFF",
-            borderRadius: 12,
+            borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            height: "fit-content",
+            minHeight: "220px",
           }}
         >
           <h3
