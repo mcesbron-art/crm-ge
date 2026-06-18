@@ -254,8 +254,8 @@ export default function DashboardRedesign() {
         />
       </div>
 
-      {/* TWO COLUMN LAYOUT WITH FULL-WIDTH SECTIONS */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+      {/* TWO COLUMN LAYOUT - CA + OPPORTUNITÉS */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, width: "100%" }}>
         {/* LEFT COLUMN */}
         <div>
           {/* CA SECTION */}
@@ -357,8 +357,10 @@ export default function DashboardRedesign() {
               <InteractiveChart isDark={false} height={320} />
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* ALERTES SECTION - FULL WIDTH */}
+      {/* ALERTES SECTION - FULL WIDTH */}
           <div
             style={{
               background: "#FFF8F0",
@@ -366,8 +368,7 @@ export default function DashboardRedesign() {
               border: `1px solid #FFE0B2`,
               padding: 16,
               marginBottom: 24,
-              gridColumn: "1 / -1",
-            }}
+              }}
           >
             <div
               style={{
@@ -433,8 +434,7 @@ export default function DashboardRedesign() {
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               overflow: "hidden",
-              gridColumn: "1 / -1",
-            }}
+              }}
           >
             <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
               <h3

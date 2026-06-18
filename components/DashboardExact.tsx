@@ -357,8 +357,10 @@ export default function DashboardExact() {
               <InteractiveChart isDark={false} height={320} />
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* ALERTES SECTION - FULL WIDTH */}
+      {/* ALERTES SECTION - FULL WIDTH */}
           <div
             style={{
               background: "#FFF8F0",
@@ -366,8 +368,7 @@ export default function DashboardExact() {
               border: `1px solid #FFE0B2`,
               padding: 16,
               marginBottom: 24,
-              gridColumn: "1 / -1",
-            }}
+              }}
           >
             <div
               style={{
@@ -433,8 +434,7 @@ export default function DashboardExact() {
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               overflow: "hidden",
-              gridColumn: "1 / -1",
-            }}
+              }}
           >
             <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
               <h3
