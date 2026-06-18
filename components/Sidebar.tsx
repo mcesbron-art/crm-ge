@@ -10,23 +10,163 @@ type NavItem = {
   id: string;
   label: string;
   href: string;
-  icon: string;
+  icon: React.ReactNode;
   moneyOnly?: boolean;
   directionOnly?: boolean;
 };
 
-const NAV: NavItem[] = [
-  { id: "dashboard",      label: "Dashboard",      href: "/dashboard",      icon: "▦" },
-  { id: "projets",        label: "Projets",        href: "/projets",        icon: "▣" },
-  { id: "kanban",         label: "Kanban",         href: "/kanban",         icon: "▰" },
-  { id: "bat",            label: "BAT",            href: "/bat",            icon: "✎" },
-  { id: "calendrier",     label: "Calendrier",     href: "/calendrier",     icon: "▫" },
-  { id: "equipe",         label: "Équipe",         href: "/equipe",         icon: "◉" },
-  { id: "clients",        label: "Clients",        href: "/clients",        icon: "◈" },
-  { id: "opportunites",   label: "Opportunités",   href: "/opportunites",   icon: "★" },
-  { id: "facturation",    label: "Facturation",    href: "/facturation",    icon: "▤", moneyOnly: true },
-  { id: "rapports",       label: "Rapports",       href: "/rapports",       icon: "▥", moneyOnly: true },
-  { id: "administration", label: "Administration", href: "/administration", icon: "⚙", directionOnly: true },
+type NavGroup = {
+  label: string;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "PRINCIPAL",
+    items: [
+      {
+        id: "dashboard",
+        label: "Dashboard",
+        href: "/dashboard",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        )
+      },
+      {
+        id: "projets",
+        label: "Projets",
+        href: "/projets",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        )
+      },
+      {
+        id: "kanban",
+        label: "Kanban",
+        href: "/kanban",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="4" width="4" height="16"></rect>
+            <rect x="10.5" y="4" width="4" height="16"></rect>
+            <rect x="18" y="4" width="4" height="16"></rect>
+          </svg>
+        )
+      },
+      {
+        id: "bat",
+        label: "BAT",
+        href: "/bat",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        )
+      },
+      {
+        id: "calendrier",
+        label: "Calendrier",
+        href: "/calendrier",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        )
+      },
+    ]
+  },
+  {
+    label: "GESTION",
+    items: [
+      {
+        id: "equipe",
+        label: "Équipe",
+        href: "/equipe",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        )
+      },
+      {
+        id: "clients",
+        label: "Clients",
+        href: "/clients",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        )
+      },
+      {
+        id: "opportunites",
+        label: "Opportunités",
+        href: "/opportunites",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+          </svg>
+        )
+      },
+      {
+        id: "facturation",
+        label: "Facturation",
+        href: "/facturation",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="2" y1="17" x2="22" y2="17"></line>
+            <path d="M2 5h20"></path>
+          </svg>
+        ),
+        moneyOnly: true
+      },
+    ]
+  },
+  {
+    label: "SYSTÈME",
+    items: [
+      {
+        id: "rapports",
+        label: "Rapports",
+        href: "/rapports",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <path d="M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"></path>
+            <path d="M12 3v6"></path>
+          </svg>
+        ),
+        moneyOnly: true
+      },
+      {
+        id: "administration",
+        label: "Administration",
+        href: "/administration",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+          </svg>
+        ),
+        directionOnly: true
+      },
+    ]
+  }
 ];
 
 const ROLE_LABEL: Record<string, string> = {
@@ -42,7 +182,7 @@ export default function Sidebar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Array<{ type: string; label: string; href: string; icon: string }>>([]);
+  const [searchResults, setSearchResults] = useState<Array<{ type: string; label: string; href: string; icon: React.ReactNode }>>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   useEffect(() => { setDrawerOpen(false); }, [pathname]);
@@ -57,11 +197,14 @@ export default function Sidebar() {
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
 
-  const visibleNav = NAV.filter((item) => {
-    if (item.moneyOnly && !canSeeMoney) return false;
-    if (item.directionOnly && !canAccessAdmin) return false;
-    return true;
-  });
+  const visibleNav = NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      if (item.moneyOnly && !canSeeMoney) return false;
+      if (item.directionOnly && !canAccessAdmin) return false;
+      return true;
+    }),
+  })).filter((group) => group.items.length > 0);
 
   function handleSearch(query: string) {
     setSearchQuery(query);
@@ -72,16 +215,22 @@ export default function Sidebar() {
     }
 
     const lowerQuery = query.toLowerCase();
-    const results = visibleNav.filter((item) =>
-      item.label.toLowerCase().includes(lowerQuery)
-    );
+    const results: Array<{ type: string; label: string; href: string; icon: React.ReactNode }> = [];
 
-    setSearchResults(results.map((item) => ({
-      type: "nav",
-      label: item.label,
-      href: item.href,
-      icon: item.icon,
-    })));
+    visibleNav.forEach((group) => {
+      group.items.forEach((item) => {
+        if (item.label.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            type: "nav",
+            label: item.label,
+            href: item.href,
+            icon: item.icon,
+          });
+        }
+      });
+    });
+
+    setSearchResults(results);
     setShowSearchResults(true);
   }
 
@@ -164,7 +313,7 @@ export default function Sidebar() {
                     idx !== searchResults.length - 1 ? "border-b border-[#2a2a2a]" : ""
                   }`}
                 >
-                  <span className="w-5 text-center text-base">{result.icon}</span>
+                  <span className="w-5 flex items-center justify-center">{result.icon}</span>
                   <span className="font-medium flex-1 text-left">{result.label}</span>
                 </button>
               ))}
@@ -173,24 +322,31 @@ export default function Sidebar() {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
-          {visibleNav.map((item) => {
-            const active = pathname?.startsWith(item.href);
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={[
-                  "mb-0.5 flex items-center gap-3 rounded-[8px] px-3.5 py-2.5 text-base transition-all font-medium",
-                  active
-                    ? "bg-[#1a1a1a] bg-opacity-40 text-white border-l-2 border-[#C5A55A]"
-                    : "text-white hover:bg-[#333333] hover:text-[#C5A55A]",
-                ].join(" ")}
-              >
-                <span className="w-5 text-center text-lg">{item.icon}</span>
-                {item.label}
-              </Link>
-            );
-          })}
+          {visibleNav.map((group, groupIdx) => (
+            <div key={group.label} className={groupIdx > 0 ? "mt-6" : ""}>
+              <div className="px-3.5 py-2 text-xs font-bold text-[#666666] uppercase tracking-wider">
+                {group.label}
+              </div>
+              {group.items.map((item) => {
+                const active = pathname?.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className={[
+                      "mb-0.5 flex items-center gap-3 rounded-[8px] px-3.5 py-2.5 text-sm transition-all font-medium",
+                      active
+                        ? "bg-[#1a1a1a] bg-opacity-40 text-[#C5A55A] border-l-2 border-[#C5A55A]"
+                        : "text-[#999999] hover:bg-[#333333] hover:text-white",
+                    ].join(" ")}
+                  >
+                    <span className="w-5 flex items-center justify-center text-lg">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Carte utilisateur + bouton Déconnexion */}
