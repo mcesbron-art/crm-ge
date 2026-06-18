@@ -1,5 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider } from "@/lib/theme-context";
 
 const mockUser = {
   id: 0,
@@ -17,15 +18,17 @@ export default function DemoLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <AuthProvider initialUser={mockUser}>
-      <div className="min-h-screen bg-blanc">
-        <Sidebar />
-        <main className="app-main">
-          <div style={{ padding: "20px 32px" }}>
-            {children}
-          </div>
-        </main>
-      </div>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider initialUser={mockUser}>
+        <div className="min-h-screen bg-blanc">
+          <Sidebar />
+          <main className="app-main">
+            <div style={{ padding: "20px 32px" }}>
+              {children}
+            </div>
+          </main>
+        </div>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
