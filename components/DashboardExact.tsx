@@ -14,6 +14,8 @@ function KPICard({
   isBlack = false,
   subColor,
   iconColor,
+  iconBg,
+  iconBlur = false,
 }: {
   label: string;
   value: React.ReactNode;
@@ -22,6 +24,8 @@ function KPICard({
   isBlack?: boolean;
   subColor?: string;
   iconColor?: string;
+  iconBg?: string;
+  iconBlur?: boolean;
 }) {
   const bgColor = isBlack ? "#0F0F0F" : "#FFFFFF";
   const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
@@ -85,8 +89,16 @@ function KPICard({
           top: 16,
           right: 16,
           fontSize: 24,
-          opacity: isBlack ? 0.5 : 0.6,
+          opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
           color: finalIconColor,
+          background: iconBg,
+          width: iconBg ? 48 : "auto",
+          height: iconBg ? 48 : "auto",
+          borderRadius: iconBg ? 12 : "auto",
+          display: iconBg ? "flex" : "block",
+          alignItems: iconBg ? "center" : "auto",
+          justifyContent: iconBg ? "center" : "auto",
+          filter: iconBlur ? "blur(2px)" : "none",
         }}
       >
         {icon}
@@ -215,6 +227,7 @@ export default function DashboardExact() {
           sub={`${totalTaches} tâches au total`}
           icon="▣"
           isBlack={true}
+          iconBlur={true}
         />
         <KPICard
           label="CA en production"
@@ -226,6 +239,8 @@ export default function DashboardExact() {
             </div>
           }
           icon="€"
+          iconBg="#FFD700"
+          iconColor="#FFF"
         />
         <KPICard
           label="Tâches en cours"
@@ -237,6 +252,8 @@ export default function DashboardExact() {
             </div>
           }
           icon="▶"
+          iconBg="#10B981"
+          iconColor="#FFF"
         />
         <KPICard
           label="Alertes rentabilité"
@@ -248,6 +265,8 @@ export default function DashboardExact() {
             </div>
           }
           icon="⚠"
+          iconBg="#FF6B6B"
+          iconColor="#FFF"
         />
       </div>
 
