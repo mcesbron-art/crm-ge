@@ -269,7 +269,7 @@ export default function DashboardExact() {
         />
       </div>
 
-      {/* TWO COLUMN LAYOUT */}
+      {/* TWO COLUMN LAYOUT WITH FULL-WIDTH SECTIONS */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
         {/* LEFT COLUMN */}
         <div>
@@ -373,7 +373,7 @@ export default function DashboardExact() {
             </div>
           </div>
 
-          {/* ALERTES SECTION */}
+          {/* ALERTES SECTION - FULL WIDTH */}
           <div
             style={{
               background: "#FFF8F0",
@@ -381,6 +381,7 @@ export default function DashboardExact() {
               border: `1px solid #FFE0B2`,
               padding: 16,
               marginBottom: 24,
+              gridColumn: "1 / -1",
             }}
           >
             <div
@@ -440,13 +441,14 @@ export default function DashboardExact() {
             })}
           </div>
 
-          {/* PROJETS SECTION */}
+          {/* PROJETS SECTION - FULL WIDTH */}
           <div
             style={{
               background: "#FFFFFF",
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               overflow: "hidden",
+              gridColumn: "1 / -1",
             }}
           >
             <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
