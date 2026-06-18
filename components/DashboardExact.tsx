@@ -13,16 +13,18 @@ function KPICard({
   sub,
   icon,
   isBlack = false,
+  subColor,
 }: {
   label: string;
   value: React.ReactNode;
   sub?: string;
   icon: string;
   isBlack?: boolean;
+  subColor?: string;
 }) {
   const bgColor = isBlack ? "#0F0F0F" : "#FFFFFF";
   const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
-  const labelColor = isBlack ? "#999999" : "#666666";
+  const labelColor = isBlack ? "#C5A55A" : "#666666";
   const borderColor = isBlack ? "#2F2F2F" : "#E8E8E8";
   const accentColor = isBlack ? "#C5A55A" : "#C5A55A";
 
@@ -30,12 +32,12 @@ function KPICard({
     <div
       style={{
         background: bgColor,
-        borderRadius: 12,
-        padding: "20px 16px",
+        borderRadius: 20,
+        padding: "24px 20px",
         border: `1px solid ${borderColor}`,
         position: "relative",
         overflow: "hidden",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
         minHeight: "120px",
         display: "flex",
         flexDirection: "column",
@@ -68,7 +70,7 @@ function KPICard({
         </div>
       </div>
       {sub && (
-        <div style={{ fontSize: 10, color: labelColor, marginTop: 4, fontWeight: 400 }}>
+        <div style={{ fontSize: 10, color: subColor || labelColor, marginTop: 4, fontWeight: 400 }}>
           {sub}
         </div>
       )}
@@ -240,8 +242,9 @@ export default function DashboardExact() {
         <KPICard
           label="Alertes rentabilité"
           value={alertes}
-          sub={`à surveiller temps de prod.`}
+          sub="À surveiller temps de prod."
           icon="⚠"
+          subColor="#E65100"
         />
       </div>
 
@@ -253,7 +256,7 @@ export default function DashboardExact() {
           <div
             style={{
               background: "#FFFFFF",
-              borderRadius: 12,
+              borderRadius: 20,
               border: `1px solid ${borderColor}`,
               padding: 20,
               marginBottom: 24,
@@ -312,7 +315,7 @@ export default function DashboardExact() {
           <div
             style={{
               background: "#FFF8F0",
-              borderRadius: 12,
+              borderRadius: 20,
               border: `1px solid #FFE0B2`,
               padding: 16,
               marginBottom: 24,
@@ -379,7 +382,7 @@ export default function DashboardExact() {
           <div
             style={{
               background: "#FFFFFF",
-              borderRadius: 12,
+              borderRadius: 20,
               border: `1px solid ${borderColor}`,
               overflow: "hidden",
             }}
