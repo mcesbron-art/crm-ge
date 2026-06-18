@@ -296,8 +296,8 @@ export default function DashboardExact() {
                   style={{
                     fontSize: 12,
                     fontWeight: 600,
-                    color: textColor,
-                    margin: "0 0 8px",
+                    color: subtextColor,
+                    margin: "0 0 12px",
                     textTransform: "uppercase",
                     letterSpacing: 0.5,
                   }}
@@ -307,28 +307,69 @@ export default function DashboardExact() {
                 <div
                   style={{
                     display: "flex",
-                    gap: 12,
-                    fontSize: 11,
+                    gap: 16,
+                    alignItems: "center",
+                    marginBottom: 12,
                   }}
                 >
-                  <span style={{ color: "#C5A55A", fontWeight: 600 }}>
-                    🔺 Cet période
+                  <span
+                    style={{
+                      fontSize: 32,
+                      fontWeight: 700,
+                      color: textColor,
+                      fontFamily: "Georgia, serif",
+                    }}
+                  >
+                    34.7 k€
                   </span>
-                  <span style={{ color: subtextColor }}>Période précédente</span>
+                  <span style={{ color: "#10B981", fontWeight: 600, fontSize: 13 }}>
+                    ↑ 12,4 %
+                  </span>
+                </div>
+                <div style={{ display: "flex", gap: 12 }}>
+                  <button
+                    style={{
+                      padding: "6px 12px",
+                      background: "#F5F5F5",
+                      border: "1px solid #E0E0E0",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      color: textColor,
+                      cursor: "pointer",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Vue globale ▾
+                  </button>
+                  <button
+                    style={{
+                      padding: "6px 12px",
+                      background: "#F5F5F5",
+                      border: "1px solid #E0E0E0",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      color: textColor,
+                      cursor: "pointer",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Tous clients ▾
+                  </button>
                 </div>
               </div>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontWeight: 700,
-                  color: "#C5A55A",
-                }}
-              >
-                34.7 k€
-              </span>
+              <div style={{ display: "flex", gap: 12, fontSize: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 12, height: 12, background: "#C5A55A", borderRadius: 2 }} />
+                  <span style={{ color: textColor }}>Cette période</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 12, height: 12, background: "#CCCCCC", borderRadius: 2 }} />
+                  <span style={{ color: subtextColor }}>Période préc.</span>
+                </div>
+              </div>
             </div>
-            <div style={{ height: "180px" }}>
-              <InteractiveChart isDark={false} height={180} />
+            <div style={{ height: "320px" }}>
+              <InteractiveChart isDark={false} height={320} />
             </div>
           </div>
 
