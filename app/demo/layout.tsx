@@ -18,7 +18,7 @@ export default function DemoLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <AuthProvider initialUser={mockUser}>
-      <div className="min-h-screen bg-gris">
+      <div className="min-h-screen bg-blanc">
         <Sidebar />
         <main className="app-main">
           <div style={{ padding: "20px 32px" }}>
