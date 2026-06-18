@@ -182,28 +182,30 @@ export default function DashboardRedesign() {
           <div style={{ display: "flex", gap: 12 }}>
             <button
               style={{
-                padding: "8px 14px",
-                background: "#F0F0F0",
+                padding: "10px 18px",
+                background: "#FFFFFF",
                 border: `1px solid ${borderColor}`,
-                borderRadius: 8,
-                fontSize: 12,
+                borderRadius: 20,
+                fontSize: 13,
                 fontWeight: 600,
                 color: textColor,
                 cursor: "pointer",
+                transition: "all 0.2s ease",
               }}
             >
-              📥 Exporter PDF
+              ↓ Exporter PDF
             </button>
             <button
               style={{
-                padding: "8px 14px",
+                padding: "10px 18px",
                 background: "#000000",
                 border: "none",
-                borderRadius: 8,
-                fontSize: 12,
+                borderRadius: 20,
+                fontSize: 13,
                 fontWeight: 600,
                 color: "#FFFFFF",
                 cursor: "pointer",
+                transition: "all 0.2s ease",
               }}
             >
               + Nouveau projet
