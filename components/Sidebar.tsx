@@ -137,15 +137,21 @@ export default function Sidebar() {
 
         <div className="border-b border-[#333333] px-4 py-4 relative">
           <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#666666] text-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </span>
             <input
               type="text"
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               onFocus={() => searchQuery && setShowSearchResults(true)}
-              className="w-full rounded-[10px] bg-[#1a1a1a] px-4 py-3 pr-11 text-sm text-white placeholder-[#888888] border border-[#2a2a2a] outline-none transition focus:border-[#C5A55A] focus:ring-1 focus:ring-[#C5A55A] focus:ring-opacity-30 font-medium"
+              className="w-full rounded-[10px] bg-[#1a1a1a] pl-11 pr-14 py-3 text-sm text-white placeholder-[#888888] border border-[#2a2a2a] outline-none transition focus:border-[#C5A55A] focus:ring-1 focus:ring-[#C5A55A] focus:ring-opacity-30 font-medium"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#888888] text-base">🔍</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666666] text-xs font-semibold">⌘K</span>
           </div>
 
           {showSearchResults && searchResults.length > 0 && (
