@@ -238,8 +238,8 @@ export default function DashboardRedesign() {
           label="CA en production"
           value={`${(totalCA / 1000).toFixed(1)}k€`}
           sub={
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-              <span style={{ color: "#10B981", fontWeight: 600 }}>↑ 12.4%</span>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ color: "#10B981", fontWeight: 600, background: "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>↑ 12.4%</span>
               <span style={{ color: "#999999" }}>Marge 25.4€</span>
             </div>
           }
@@ -249,8 +249,8 @@ export default function DashboardRedesign() {
           label="Tâches en cours"
           value={tachesEnCours}
           sub={
-            <div style={{ display: "flex", gap: 4 }}>
-              <span style={{ color: "#10B981", fontWeight: 600 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ color: "#10B981", fontWeight: 600, background: "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
               <span style={{ color: "#999999" }}>sur {totalTaches} tâches</span>
             </div>
           }
