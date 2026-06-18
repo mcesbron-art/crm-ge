@@ -538,7 +538,7 @@ export default function DashboardExact() {
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            height: "510px",
+            height: "500px",
             overflow: "auto",
           }}
         >
