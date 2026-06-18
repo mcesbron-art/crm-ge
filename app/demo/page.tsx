@@ -1,7 +1,7 @@
 "use client";
 
-import DashboardDemo from "@/components/DashboardDemo";
+import DashboardExact from "@/components/DashboardExact";
 
 export default function DemoPage() {
-  return <DashboardDemo />;
+  return <DashboardExact />;
 }

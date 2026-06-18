@@ -1,0 +1,750 @@
+"use client";
+
+import { useState } from "react";
+import Avatar from "@/components/ui/Avatar";
+import {
+  PROJETS,
+  COLLABORATEURS,
+  getRentabiliteColor,
+} from "@/lib/mock-data";
+
+function InteractiveChart({
+  isDark,
+  height = 200,
+}: {
+  isDark: boolean;
+  height?: number;
+}) {
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+  const lineColor = "#C5A55A";
+  const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)";
+  const textColor = isDark ? "#999999" : "#666666";
+
+  const dataPoints = [
+    { x: 0, y: 120, label: "Sem 1" },
+    { x: 75, y: 100, label: "" },
+    { x: 150, y: 95, label: "" },
+    { x: 225, y: 110, label: "" },
+    { x: 300, y: 85, label: "" },
+    { x: 375, y: 75, label: "" },
+    { x: 450, y: 90, label: "" },
+    { x: 525, y: 70, label: "" },
+    { x: 600, y: 65, label: "Sem 9" },
+  ];
+
+  return (
+    <div style={{ position: "relative" }}>
+      <svg
+        width="100%"
+        height={height}
+        viewBox="0 0 600 200"
+        style={{ display: "block" }}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <line x1="0" y1="50" x2="600" y2="50" stroke={gridColor} strokeWidth="1" />
+        <line x1="0" y1="100" x2="600" y2="100" stroke={gridColor} strokeWidth="1" />
+        <line x1="0" y1="150" x2="600" y2="150" stroke={gridColor} strokeWidth="1" />
+
+        <polyline
+          points="0,120 75,100 150,95 225,110 300,85 375,75 450,90 525,70 600,65"
+          fill="none"
+          stroke={lineColor}
+          strokeWidth="2.5"
+          opacity="0.9"
+        />
+
+        <defs>
+          <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={lineColor} stopOpacity="0.25" />
+            <stop offset="100%" stopColor={lineColor} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <polygon
+          points="0,120 75,100 150,95 225,110 300,85 375,75 450,90 525,70 600,65 600,200 0,200"
+          fill="url(#areaGradient)"
+        />
+
+        {dataPoints.map((point, idx) => (
+          <circle
+            key={idx}
+            cx={point.x}
+            cy={point.y}
+            r={hoveredPoint === idx ? "5" : "3"}
+            fill={lineColor}
+            opacity={hoveredPoint === idx ? "1" : "0.6"}
+            style={{ cursor: "pointer", transition: "all 0.2s" }}
+            onMouseEnter={() => setHoveredPoint(idx)}
+            onMouseLeave={() => setHoveredPoint(null)}
+          />
+        ))}
+      </svg>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: "11px",
+          color: textColor,
+          marginTop: "8px",
+          paddingLeft: "10px",
+          paddingRight: "10px",
+        }}
+      >
+        <span>Sem 1</span>
+        <span>Sem 9</span>
+      </div>
+    </div>
+  );
+}
+
+function KPICard({
+  label,
+  value,
+  sub,
+  icon,
+  accent = false,
+  isDark = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  sub?: string;
+  icon: string;
+  accent?: boolean;
+  isDark?: boolean;
+}) {
+  const bgColor = accent
+    ? "#C5A55A"
+    : (isDark ? "#1A1A1A" : "#FFFFFF");
+  const textColor = accent
+    ? "#FFFFFF"
+    : (isDark ? "#E8E8E8" : "#1A1A1A");
+  const labelColor = accent
+    ? "rgba(255,255,255,0.85)"
+    : (isDark ? "#999999" : "#666666");
+  const borderColor = isDark ? "#2F2F2F" : "#E8E8E6";
+
+  return (
+    <div
+      style={{
+        background: bgColor,
+        borderRadius: 12,
+        padding: "18px 16px",
+        border: `1px solid ${accent ? "transparent" : borderColor}`,
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: accent
+          ? "0 4px 12px rgba(197, 165, 90, 0.25)"
+          : isDark
+          ? "0 1px 3px rgba(0,0,0,0.2)"
+          : "0 1px 3px rgba(0,0,0,0.06)",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 11,
+          color: labelColor,
+          fontWeight: 600,
+          letterSpacing: 0.5,
+          textTransform: "uppercase",
+          marginBottom: 8,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: 32,
+          fontWeight: 700,
+          color: textColor,
+          lineHeight: 1.1,
+          fontFamily: "Georgia, serif",
+          marginBottom: 4,
+        }}
+      >
+        {value}
+      </div>
+      {sub && (
+        <div style={{ fontSize: 11, color: labelColor, marginTop: 4, fontWeight: 400 }}>
+          {sub}
+        </div>
+      )}
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          right: 14,
+          fontSize: 20,
+          opacity: accent ? 0.25 : 0.08,
+          color: textColor,
+        }}
+      >
+        {icon}
+      </div>
+    </div>
+  );
+}
+
+export default function DashboardExact() {
+  const [isDark, setIsDark] = useState(false);
+
+  const totalCA = PROJETS.reduce((s, p) => s + p.montantHT, 0);
+  const totalMarge = PROJETS.reduce((s, p) => s + (p.montantHT - p.coutRevient), 0);
+  const totalTaches = PROJETS.reduce((s, p) => s + p.taches.length, 0);
+  const tachesEnCours = PROJETS.reduce(
+    (s, p) => s + p.taches.filter((t) => t.statut === "En cours").length,
+    0
+  );
+  const alertes = PROJETS.reduce(
+    (s, p) =>
+      s +
+      p.taches.filter(
+        (t) => t.tempsAlloue > 0 && t.tempsConsomme / t.tempsAlloue >= 0.75
+      ).length,
+    0
+  );
+
+  const tachesAlerte = PROJETS.flatMap((p) =>
+    p.taches
+      .filter(
+        (t) => t.tempsAlloue > 0 && t.tempsConsomme / t.tempsAlloue >= 0.75
+      )
+      .map((t, idx) => ({
+        ...t,
+        projet: p.nom,
+        id: `${p.id}-${idx}`,
+      }))
+  );
+
+  const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
+  const cardBg = isDark ? "#1A1A1A" : "#F5F5F5";
+  const textColor = isDark ? "#E8E8E8" : "#1A1A1A";
+  const subtextColor = isDark ? "#999999" : "#666666";
+  const borderColor = isDark ? "#2F2F2F" : "#E0E0E0";
+
+  return (
+    <div
+      style={{
+        background: bgColor,
+        minHeight: "100vh",
+        color: textColor,
+        padding: "28px 32px",
+      }}
+    >
+      {/* HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 28,
+          paddingBottom: 16,
+          borderBottom: `1px solid ${borderColor}`,
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              fontFamily: "Georgia, serif",
+              fontSize: 32,
+              color: textColor,
+              margin: "0 0 4px",
+              fontWeight: 400,
+            }}
+          >
+            Dashboard
+          </h1>
+          <p style={{ color: subtextColor, fontSize: 12, margin: 0 }}>
+            Semaine du 10 au 16 mars 2026
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 12 }}>
+          <button
+            onClick={() => setIsDark(!isDark)}
+            style={{
+              padding: "8px 14px",
+              background: isDark ? "#1F1F1F" : "#F0F0F0",
+              border: `1px solid ${borderColor}`,
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 600,
+              color: textColor,
+              cursor: "pointer",
+            }}
+          >
+            {isDark ? "☀️ Light" : "🌙 Dark"}
+          </button>
+          <button
+            style={{
+              padding: "8px 14px",
+              background: "#C5A55A",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 600,
+              color: "#1A1A1A",
+              cursor: "pointer",
+            }}
+          >
+            + Nouveau projet
+          </button>
+        </div>
+      </div>
+
+      {/* KPI ROW */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 16,
+          marginBottom: 28,
+        }}
+      >
+        <KPICard
+          label="Projets actifs"
+          value={PROJETS.filter((p) => p.statut !== "Clôturé").length}
+          sub={`${totalTaches} tâches au total`}
+          icon="▣"
+          accent
+          isDark={isDark}
+        />
+        <KPICard
+          label="CA en production"
+          value={`${(totalCA / 1000).toFixed(1)}k€`}
+          sub={`+12.4% Marge 25.4€`}
+          icon="€"
+          isDark={isDark}
+        />
+        <KPICard
+          label="Tâches en cours"
+          value={tachesEnCours}
+          sub={`sur ${totalTaches} tâches`}
+          icon="▶"
+          isDark={isDark}
+        />
+        <KPICard
+          label="Alertes rentabilité"
+          value={alertes}
+          sub={`à surveiller`}
+          icon="⚠"
+          isDark={isDark}
+        />
+      </div>
+
+      {/* MAIN CONTENT GRID */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, marginBottom: 28 }}>
+        {/* LEFT COLUMN */}
+        <div>
+          {/* CA SECTION */}
+          <div
+            style={{
+              background: cardBg,
+              borderRadius: 12,
+              border: `1px solid ${borderColor}`,
+              padding: 20,
+              marginBottom: 24,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 4,
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: textColor,
+                  margin: 0,
+                }}
+              >
+                CA EN PRODUCTION
+              </h3>
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#C5A55A",
+                }}
+              >
+                34.7 k€
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                marginBottom: 16,
+                fontSize: 12,
+              }}
+            >
+              <span
+                style={{
+                  color: "#4CAF50",
+                  fontWeight: 600,
+                }}
+              >
+                +12.4% Vue globale
+              </span>
+              <span style={{ color: subtextColor }}>Tous clients</span>
+            </div>
+            <InteractiveChart isDark={isDark} height={140} />
+          </div>
+
+          {/* ALERTES */}
+          <div
+            style={{
+              background: isDark ? "#2F2515" : "#FFF8F0",
+              borderRadius: 12,
+              border: `1px solid ${isDark ? "#4A3420" : "#FFE0B2"}`,
+              padding: 16,
+              marginBottom: 24,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: isDark ? "#FFB366" : "#E65100",
+                marginBottom: 12,
+              }}
+            >
+              ⚠ Alertes temps de production
+            </div>
+            {tachesAlerte.slice(0, 5).map((t, idx) => {
+              const ratio = Math.round(
+                (t.tempsConsomme / t.tempsAlloue) * 100
+              );
+              const info = getRentabiliteColor(ratio);
+              const colors = ["#6366F1", "#EC4899", "#10B981", "#8B5CF6", "#F59E0B"];
+              return (
+                <div
+                  key={t.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "8px 0",
+                    fontSize: 12,
+                    borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: info.color,
+                      minWidth: 30,
+                    }}
+                  >
+                    {ratio}%
+                  </span>
+                  <span style={{ color: textColor, flex: 1 }}>
+                    {t.nom.substring(0, 30)}
+                  </span>
+                  <span style={{ color: subtextColor, fontSize: 11 }}>
+                    {t.projet}
+                  </span>
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      background: colors[idx % colors.length],
+                      flexShrink: 0,
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* PROJETS */}
+          <div
+            style={{
+              background: cardBg,
+              borderRadius: 12,
+              border: `1px solid ${borderColor}`,
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
+              <h3
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: textColor,
+                  margin: 0,
+                }}
+              >
+                Projets en cours
+              </h3>
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr 1fr 1fr",
+                padding: "10px 16px",
+                background: isDark ? "#141414" : "#F9F9F9",
+                borderBottom: `1px solid ${borderColor}`,
+                fontSize: 10,
+                fontWeight: 600,
+                color: subtextColor,
+                textTransform: "uppercase",
+              }}
+            >
+              <div>Projet</div>
+              <div style={{ textAlign: "right" }}>Montant</div>
+              <div style={{ textAlign: "right" }}>Temps</div>
+              <div style={{ textAlign: "right" }}>Rentabilité</div>
+            </div>
+            {PROJETS.slice(0, 3).map((p) => {
+              const marge = p.montantHT - p.coutRevient;
+              const margePercent = Math.round((marge / p.montantHT) * 100);
+              const totalAlloue = p.taches.reduce((s, t) => s + t.tempsAlloue, 0);
+              const totalConsomme = p.taches.reduce(
+                (s, t) => s + t.tempsConsomme,
+                0
+              );
+
+              return (
+                <div
+                  key={p.id}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr 1fr 1fr",
+                    alignItems: "center",
+                    padding: "12px 16px",
+                    borderBottom: `1px solid ${borderColor}`,
+                    fontSize: 12,
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 600, color: textColor }}>
+                      {p.nom}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: subtextColor,
+                      }}
+                    >
+                      {p.client}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      textAlign: "right",
+                      color: textColor,
+                    }}
+                  >
+                    {p.montantHT.toLocaleString("fr-FR")} €
+                  </div>
+                  <div
+                    style={{
+                      textAlign: "right",
+                      color: textColor,
+                    }}
+                  >
+                    {totalConsomme}h / {totalAlloue}h
+                  </div>
+                  <div
+                    style={{
+                      textAlign: "right",
+                      color: "#C5A55A",
+                    }}
+                  >
+                    {margePercent}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div
+          style={{
+            background: cardBg,
+            borderRadius: 12,
+            border: `1px solid ${borderColor}`,
+            padding: 20,
+            height: "fit-content",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: textColor,
+              margin: "0 0 16px",
+            }}
+          >
+            Opportunités
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ fontSize: 12, color: subtextColor }}>
+                Opportunités
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
+                24
+              </span>
+            </div>
+            <div
+              style={{
+                height: "3px",
+                background: isDark ? "#2F2F2F" : "#E5E5E3",
+                borderRadius: 2,
+              }}
+            >
+              <div
+                style={{
+                  width: "90%",
+                  height: "100%",
+                  background: "#C5A55A",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 12,
+              }}
+            >
+              <span style={{ fontSize: 12, color: subtextColor }}>
+                Devis envoyés
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
+                16
+              </span>
+            </div>
+            <div
+              style={{
+                height: "3px",
+                background: isDark ? "#2F2F2F" : "#E5E5E3",
+                borderRadius: 2,
+              }}
+            >
+              <div
+                style={{
+                  width: "65%",
+                  height: "100%",
+                  background: "#C5A55A",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 12,
+              }}
+            >
+              <span style={{ fontSize: 12, color: subtextColor }}>
+                Devis signés
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
+                9
+              </span>
+            </div>
+            <div
+              style={{
+                height: "3px",
+                background: isDark ? "#2F2F2F" : "#E5E5E3",
+                borderRadius: 2,
+              }}
+            >
+              <div
+                style={{
+                  width: "35%",
+                  height: "100%",
+                  background: "#C5A55A",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 12,
+              }}
+            >
+              <span style={{ fontSize: 12, color: subtextColor }}>
+                En production
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
+                5
+              </span>
+            </div>
+            <div
+              style={{
+                height: "3px",
+                background: isDark ? "#2F2F2F" : "#E5E5E3",
+                borderRadius: 2,
+              }}
+            >
+              <div
+                style={{
+                  width: "20%",
+                  height: "100%",
+                  background: "#C5A55A",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 12,
+              }}
+            >
+              <span style={{ fontSize: 12, color: subtextColor }}>
+                Facturés
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: textColor }}>
+                3
+              </span>
+            </div>
+            <div
+              style={{
+                height: "3px",
+                background: isDark ? "#2F2F2F" : "#E5E5E3",
+                borderRadius: 2,
+              }}
+            >
+              <div
+                style={{
+                  width: "12%",
+                  height: "100%",
+                  background: "#C5A55A",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
