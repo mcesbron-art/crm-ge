@@ -416,7 +416,7 @@ export default function DashboardRedesign() {
         {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
-            background: "#FFFFFF",
+            background: cardBg,
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
@@ -487,9 +487,9 @@ export default function DashboardRedesign() {
       {/* ALERTES SECTION - FULL WIDTH */}
       <div
         style={{
-          background: "#FFF8F0",
+          background: isDark ? "#1F1F1F" : "#FFF8F0",
           borderRadius: 20,
-          border: `1px solid #FFE0B2`,
+          border: `1px solid ${isDark ? "#3F3F3F" : "#FFE0B2"}`,
           padding: 16,
           marginBottom: 24,
         }}
@@ -554,7 +554,7 @@ export default function DashboardRedesign() {
       {/* PROJETS SECTION - FULL WIDTH */}
       <div
         style={{
-          background: "#FFFFFF",
+          background: cardBg,
           borderRadius: 20,
           border: `1px solid ${borderColor}`,
           overflow: "hidden",
