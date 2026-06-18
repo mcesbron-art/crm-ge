@@ -158,10 +158,10 @@ export default function DashboardRedesign() {
             <h1
               style={{
                 fontFamily: "Georgia, serif",
-                fontSize: 28,
+                fontSize: 40,
                 color: textColor,
                 margin: "0 0 2px",
-                fontWeight: 400,
+                fontWeight: 700,
               }}
             >
               Dashboard
