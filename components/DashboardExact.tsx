@@ -551,7 +551,7 @@ export default function DashboardExact() {
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            minHeight: "220px",
+            minHeight: "380px",
           }}
         >
           <h3
