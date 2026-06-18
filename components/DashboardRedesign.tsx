@@ -144,111 +144,114 @@ export default function DashboardRedesign() {
         color: textColor,
       }}
     >
-      {/* TOP HEADER - Vos Direction */}
+      {/* INTEGRATED HEADER - Vos Direction + Dashboard + Buttons */}
       <div
         style={{
-          background: isDark ? "#1A1A1A" : "#FFFFFF",
           borderBottom: `1px solid ${borderColor}`,
-          padding: "12px 0",
-          marginBottom: 20,
-          fontSize: 12,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingLeft: 0,
-          paddingRight: 0,
-        }}
-      >
-        <div style={{ display: "flex", gap: 16, alignItems: "center", flex: 1 }}>
-          <span style={{ color: "#C5A55A", fontWeight: 700 }}>🔺 Vos Direction</span>
-          <span style={{ color: subtextColor }}>accès complet aux montants, marges et rapports</span>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            style={{
-              padding: "6px 12px",
-              background: isDark ? "#2F2F2F" : "#F0F0F0",
-              border: `1px solid ${borderColor}`,
-              borderRadius: 6,
-              fontSize: 11,
-              fontWeight: 600,
-              color: textColor,
-              cursor: "pointer",
-            }}
-          >
-            Vos Collaborateur
-          </button>
-          <button
-            style={{
-              padding: "6px 12px",
-              background: "#000000",
-              border: "none",
-              borderRadius: 6,
-              fontSize: 11,
-              fontWeight: 600,
-              color: "#FFFFFF",
-              cursor: "pointer",
-            }}
-          >
-            Vos Direction
-          </button>
-        </div>
-      </div>
-
-      {/* MAIN HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
           marginBottom: 24,
+          paddingBottom: 16,
         }}
       >
-        <div>
-          <h1
-            style={{
-              fontFamily: "Georgia, serif",
-              fontSize: 32,
-              color: textColor,
-              margin: "0 0 4px",
-              fontWeight: 400,
-            }}
-          >
-            Dashboard
-          </h1>
-          <p style={{ color: subtextColor, fontSize: 12, margin: 0 }}>
-            Semaine du 10 au 16 mars 2026
-          </p>
+        {/* Top row - Vos Direction */}
+        <div
+          style={{
+            fontSize: 12,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flex: 1 }}>
+            <span style={{ color: "#C5A55A", fontWeight: 700 }}>★ Vos Direction</span>
+            <span style={{ color: subtextColor }}>— accès complet aux montants, marges et rapports</span>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              style={{
+                padding: "6px 12px",
+                background: isDark ? "#2F2F2F" : "#F0F0F0",
+                border: `1px solid ${borderColor}`,
+                borderRadius: 6,
+                fontSize: 11,
+                fontWeight: 600,
+                color: textColor,
+                cursor: "pointer",
+              }}
+            >
+              Vos Collaborateur
+            </button>
+            <button
+              style={{
+                padding: "6px 12px",
+                background: "#000000",
+                border: "none",
+                borderRadius: 6,
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#FFFFFF",
+                cursor: "pointer",
+              }}
+            >
+              Vue Direction
+            </button>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: 12 }}>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: isDark ? "#1F1F1F" : "#F0F0F0",
-              border: `1px solid ${borderColor}`,
-              borderRadius: 8,
-              fontSize: 12,
-              fontWeight: 600,
-              color: textColor,
-              cursor: "pointer",
-            }}
-          >
-            📥 Exporter PDF
-          </button>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "#C5A55A",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 12,
-              fontWeight: 600,
-              color: "#1A1A1A",
-              cursor: "pointer",
-            }}
-          >
-            + Nouveau projet
-          </button>
+
+        {/* Bottom row - Dashboard Title + Buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                fontFamily: "Georgia, serif",
+                fontSize: 28,
+                color: textColor,
+                margin: "0 0 2px",
+                fontWeight: 400,
+              }}
+            >
+              Dashboard
+            </h1>
+            <p style={{ color: subtextColor, fontSize: 12, margin: 0 }}>
+              Semaine du 10 au 16 mars 2026
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button
+              style={{
+                padding: "8px 14px",
+                background: isDark ? "#1F1F1F" : "#F0F0F0",
+                border: `1px solid ${borderColor}`,
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 600,
+                color: textColor,
+                cursor: "pointer",
+              }}
+            >
+              📥 Exporter PDF
+            </button>
+            <button
+              style={{
+                padding: "8px 14px",
+                background: "#000000",
+                border: "none",
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#FFFFFF",
+                cursor: "pointer",
+              }}
+            >
+              + Nouveau projet
+            </button>
+          </div>
         </div>
       </div>
 
@@ -596,31 +599,6 @@ export default function DashboardRedesign() {
         </div>
       </div>
 
-      {/* Toggle Dark Mode Button - Floating */}
-      <button
-        onClick={() => setIsDark(!isDark)}
-        style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          width: 50,
-          height: 50,
-          borderRadius: "50%",
-          background: isDark ? "#FFC107" : "#1A1A1A",
-          border: "none",
-          color: isDark ? "#1A1A1A" : "#FFFFFF",
-          fontSize: 24,
-          cursor: "pointer",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 20,
-        }}
-        title={isDark ? "Mode light" : "Mode dark"}
-      >
-        {isDark ? "☀️" : "🌙"}
-      </button>
     </div>
   );
 }
