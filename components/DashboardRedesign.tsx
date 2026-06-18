@@ -150,6 +150,7 @@ export default function DashboardRedesign() {
   // Theme colors
   const bgColor = isDark ? "#0A0A0A" : "transparent";
   const cardBg = isDark ? "#1F1F1F" : "transparent";
+  const sectionCardBg = isDark ? "#1F1F1F" : "#FFFFFF";
   const textColor = isDark ? "#E0E0E0" : "#1A1A1A";
   const subtextColor = isDark ? "#999999" : "#666666";
   const borderColor = isDark ? "#2F2F2F" : "#E8E8E8";
@@ -319,7 +320,7 @@ export default function DashboardRedesign() {
           {/* CA SECTION */}
           <div
             style={{
-              background: cardBg,
+              background: sectionCardBg,
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               padding: 20,
@@ -428,7 +429,7 @@ export default function DashboardRedesign() {
         {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
-            background: cardBg,
+            background: sectionCardBg,
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
@@ -566,7 +567,7 @@ export default function DashboardRedesign() {
       {/* PROJETS SECTION - FULL WIDTH */}
       <div
         style={{
-          background: cardBg,
+          background: sectionCardBg,
           borderRadius: 20,
           border: `1px solid ${borderColor}`,
           overflow: "hidden",

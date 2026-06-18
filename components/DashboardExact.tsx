@@ -276,7 +276,7 @@ export default function DashboardExact() {
           {/* CA SECTION */}
           <div
             style={{
-              background: "transparent",
+              background: "#FFFFFF",
               borderRadius: 20,
               border: `1px solid ${borderColor}`,
               padding: 20,
@@ -385,7 +385,7 @@ export default function DashboardExact() {
         {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
-            background: "transparent",
+            background: "#FFFFFF",
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
@@ -523,7 +523,7 @@ export default function DashboardExact() {
       {/* PROJETS SECTION - FULL WIDTH */}
       <div
         style={{
-          background: "transparent",
+          background: "#FFFFFF",
           borderRadius: 20,
           border: `1px solid ${borderColor}`,
           overflow: "hidden",
