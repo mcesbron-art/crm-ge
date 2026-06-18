@@ -90,7 +90,7 @@ function KPICard({
           right: 16,
           fontSize: 18,
           opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: iconBg === "#C5A55A" ? "#C5A55A" : iconBg === "#FF9966" ? "#FF9966" : finalIconColor,
+          color: iconBg === "#e5d1a2" ? "#e5d1a2" : iconBg === "#C5A55A" ? "#C5A55A" : iconBg === "#FF9966" ? "#FF9966" : finalIconColor,
           background: iconBg,
           width: iconBg ? 48 : "auto",
           height: iconBg ? 48 : "auto",
@@ -227,7 +227,7 @@ export default function DashboardRedesign() {
           sub={`${totalTaches} tâches au total`}
           icon="▣"
           isBlack={true}
-          iconBg="#C5A55A"
+          iconBg="#e5d1a2"
         />
         <KPICard
           label="CA en production"
@@ -239,7 +239,7 @@ export default function DashboardRedesign() {
             </div>
           }
           icon="€"
-          iconBg="#C5A55A"
+          iconBg="#e5d1a2"
         />
         <KPICard
           label="Tâches en cours"
@@ -251,7 +251,7 @@ export default function DashboardRedesign() {
             </div>
           }
           icon="▶"
-          iconBg="#C5A55A"
+          iconBg="#e5d1a2"
         />
         <KPICard
           label="Alertes rentabilité"
