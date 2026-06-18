@@ -551,7 +551,7 @@ export default function DashboardRedesign() {
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            height: "400px",
+            height: "520px",
             overflow: "auto",
           }}
         >
