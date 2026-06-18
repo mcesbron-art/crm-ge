@@ -84,10 +84,10 @@ function KPICard({
       <div
         style={{
           position: "absolute",
-          top: 14,
-          right: 14,
-          fontSize: 20,
-          opacity: isBlack ? 0.3 : 0.6,
+          top: 16,
+          right: 16,
+          fontSize: 24,
+          opacity: isBlack ? 0.5 : 0.6,
           color: finalIconColor,
         }}
       >
