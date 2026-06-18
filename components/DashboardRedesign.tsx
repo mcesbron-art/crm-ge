@@ -304,7 +304,15 @@ export default function DashboardRedesign() {
                   >
                     34.7 k€
                   </span>
-                  <span style={{ color: "#10B981", fontWeight: 600, fontSize: 13 }}>
+                  <span style={{
+                    color: "#10B981",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    background: "#E6F7F0",
+                    padding: "4px 10px",
+                    borderRadius: 6,
+                    display: "inline-block"
+                  }}>
                     ↑ 12,4 %
                   </span>
                 </div>
