@@ -64,7 +64,7 @@ function KPICard({
           style={{
             fontSize: 50,
             fontWeight: 700,
-            color: isBlack ? accentColor : textColor,
+            color: textColor,
             lineHeight: 1.1,
             fontFamily: "Georgia, serif",
           }}
@@ -73,11 +73,11 @@ function KPICard({
         </div>
       </div>
       {sub && typeof sub === "string" ? (
-        <div style={{ fontSize: 10, color: subColor || labelColor, marginTop: 4, fontWeight: 400 }}>
+        <div style={{ fontSize: 12, color: subColor || labelColor, marginTop: 8, fontWeight: 400 }}>
           {sub}
         </div>
       ) : (
-        <div style={{ fontSize: 10, marginTop: 4, fontWeight: 400 }}>
+        <div style={{ fontSize: 12, marginTop: 8, fontWeight: 400 }}>
           {sub}
         </div>
       )}
