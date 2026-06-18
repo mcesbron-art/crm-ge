@@ -17,6 +17,7 @@ function KPICard({
   iconColor,
   iconBg,
   iconBlur = false,
+  isDarkMode = false,
 }: {
   label: string;
   value: React.ReactNode;
@@ -27,11 +28,18 @@ function KPICard({
   iconColor?: string;
   iconBg?: string;
   iconBlur?: boolean;
+  isDarkMode?: boolean;
 }) {
-  const bgColor = isBlack ? "#0F0F0F" : "#FFFFFF";
-  const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
-  const labelColor = isBlack ? "#C5A55A" : "#666666";
-  const borderColor = isBlack ? "#2F2F2F" : "#E8E8E8";
+  const bgColor = isBlack
+    ? (isDarkMode ? "#C5A55A" : "#0F0F0F")
+    : (isDarkMode ? "#1F1F1F" : "#FFFFFF");
+  const textColor = isBlack
+    ? (isDarkMode ? "#000000" : "#FFFFFF")
+    : (isDarkMode ? "#E0E0E0" : "#1A1A1A");
+  const labelColor = isBlack
+    ? (isDarkMode ? "#000000" : "#C5A55A")
+    : (isDarkMode ? "#999999" : "#666666");
+  const borderColor = isDarkMode ? "#2F2F2F" : (isBlack ? "#2F2F2F" : "#E8E8E8");
   const finalIconColor = iconColor || (isBlack ? "#C5A55A" : "#C5A55A");
 
   return (
@@ -261,42 +269,46 @@ export default function DashboardRedesign() {
           }
           isBlack={true}
           iconBg="#e5d1a2"
+          isDarkMode={isDark}
         />
         <KPICard
           label="CA en production"
           value={`${(totalCA / 1000).toFixed(1)}k€`}
           sub={
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: "#10B981", fontWeight: 600, background: "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>↑ 12.4%</span>
-              <span style={{ color: "#999999" }}>Marge 25.4€</span>
+              <span style={{ color: isDark ? "#5FB981" : "#10B981", fontWeight: 600, background: isDark ? "#1a3a2a" : "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>↑ 12.4%</span>
+              <span style={{ color: isDark ? "#666666" : "#999999" }}>Marge 25.4€</span>
             </div>
           }
           icon="€"
           iconBg="#e5d1a2"
+          isDarkMode={isDark}
         />
         <KPICard
           label="Tâches en cours"
           value={tachesEnCours}
           sub={
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: "#10B981", fontWeight: 600, background: "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
-              <span style={{ color: "#999999" }}>sur {totalTaches} tâches</span>
+              <span style={{ color: isDark ? "#5FB981" : "#10B981", fontWeight: 600, background: isDark ? "#1a3a2a" : "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
+              <span style={{ color: isDark ? "#666666" : "#999999" }}>sur {totalTaches} tâches</span>
             </div>
           }
           icon="▶"
           iconBg="#e5d1a2"
+          isDarkMode={isDark}
         />
         <KPICard
           label="Alertes rentabilité"
           value={alertes}
           sub={
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: "#E65100", fontWeight: 600, background: "#FFE6E6", padding: "4px 8px", borderRadius: 6 }}>À surveiller</span>
-              <span style={{ color: "#999999" }}>temps de prod.</span>
+              <span style={{ color: isDark ? "#FF9966" : "#E65100", fontWeight: 600, background: isDark ? "#2a1a1a" : "#FFE6E6", padding: "4px 8px", borderRadius: 6 }}>À surveiller</span>
+              <span style={{ color: isDark ? "#666666" : "#999999" }}>temps de prod.</span>
             </div>
           }
           icon="⚠"
           iconBg="#FF9966"
+          isDarkMode={isDark}
         />
       </div>
 
