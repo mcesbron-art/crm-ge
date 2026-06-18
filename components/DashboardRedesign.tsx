@@ -118,17 +118,13 @@ export default function DashboardRedesign() {
   );
 
   // Light theme colors
-  const pageContainerBg = "#FFFFFF";
-  const cardBg = "#FFFFFF";
   const textColor = "#1A1A1A";
   const subtextColor = "#666666";
   const borderColor = "#E8E8E8";
-  const sectionBg = "#FFFFFF";
 
   return (
     <div
       style={{
-        background: pageContainerBg,
         minHeight: "100vh",
         color: textColor,
       }}
