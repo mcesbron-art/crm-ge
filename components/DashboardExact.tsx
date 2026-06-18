@@ -157,7 +157,6 @@ export default function DashboardExact() {
           style={{
             fontSize: 12,
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 16,
           }}
@@ -165,36 +164,6 @@ export default function DashboardExact() {
           <div style={{ display: "flex", gap: 8, alignItems: "center", flex: 1 }}>
             <span style={{ color: "#C5A55A", fontWeight: 700 }}>★ Vos Direction</span>
             <span style={{ color: subtextColor }}>— accès complet aux montants, marges et rapports</span>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-              style={{
-                padding: "6px 12px",
-                background: isDark ? "#2F2F2F" : "#F0F0F0",
-                border: `1px solid ${borderColor}`,
-                borderRadius: 6,
-                fontSize: 11,
-                fontWeight: 600,
-                color: textColor,
-                cursor: "pointer",
-              }}
-            >
-              Vos Collaborateur
-            </button>
-            <button
-              style={{
-                padding: "6px 12px",
-                background: "#000000",
-                border: "none",
-                borderRadius: 6,
-                fontSize: 11,
-                fontWeight: 600,
-                color: "#FFFFFF",
-                cursor: "pointer",
-              }}
-            >
-              Vue Direction
-            </button>
           </div>
         </div>
 
