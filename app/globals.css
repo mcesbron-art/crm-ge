@@ -10,7 +10,7 @@
 
 @layer base {
   body {
-    @apply bg-gris text-noir font-sans antialiased;
+    @apply bg-blanc text-noir font-sans antialiased;
     font-size: 16px;
   }
 
