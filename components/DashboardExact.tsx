@@ -146,22 +146,7 @@ export default function DashboardExact() {
           paddingBottom: 16,
         }}
       >
-        {/* Top row - Vos Direction */}
-        <div
-          style={{
-            fontSize: 12,
-            display: "flex",
-            alignItems: "center",
-            marginBottom: 16,
-          }}
-        >
-          <div style={{ display: "flex", gap: 8, alignItems: "center", flex: 1 }}>
-            <span style={{ color: "#C5A55A", fontWeight: 700 }}>★ Vos Direction</span>
-            <span style={{ color: subtextColor }}>— accès complet aux montants, marges et rapports</span>
-          </div>
-        </div>
-
-        {/* Bottom row - Dashboard Title + Buttons */}
+        {/* Dashboard Title + Buttons */}
         <div
           style={{
             display: "flex",
