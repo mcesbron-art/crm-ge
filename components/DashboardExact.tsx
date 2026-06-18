@@ -14,19 +14,22 @@ function KPICard({
   icon,
   isBlack = false,
   subColor,
+  iconColor,
 }: {
   label: string;
   value: React.ReactNode;
-  sub?: string;
+  sub?: React.ReactNode;
   icon: string;
   isBlack?: boolean;
   subColor?: string;
+  iconColor?: string;
 }) {
   const bgColor = isBlack ? "#0F0F0F" : "#FFFFFF";
   const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
   const labelColor = isBlack ? "#C5A55A" : "#666666";
   const borderColor = isBlack ? "#2F2F2F" : "#E8E8E8";
   const accentColor = isBlack ? "#C5A55A" : "#C5A55A";
+  const finalIconColor = iconColor || (isBlack ? "#C5A55A" : "#C5A55A");
 
   return (
     <div
@@ -69,8 +72,12 @@ function KPICard({
           {value}
         </div>
       </div>
-      {sub && (
+      {sub && typeof sub === "string" ? (
         <div style={{ fontSize: 10, color: subColor || labelColor, marginTop: 4, fontWeight: 400 }}>
+          {sub}
+        </div>
+      ) : (
+        <div style={{ fontSize: 10, marginTop: 4, fontWeight: 400 }}>
           {sub}
         </div>
       )}
@@ -80,8 +87,8 @@ function KPICard({
           top: 14,
           right: 14,
           fontSize: 20,
-          opacity: 0.08,
-          color: textColor,
+          opacity: isBlack ? 0.3 : 0.6,
+          color: finalIconColor,
         }}
       >
         {icon}
@@ -230,21 +237,35 @@ export default function DashboardExact() {
         <KPICard
           label="CA en production"
           value={`${(totalCA / 1000).toFixed(1)}k€`}
-          sub={`+12.4% Marge 25.4€`}
+          sub={
+            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+              <span style={{ color: "#10B981", fontWeight: 600 }}>↑ 12.4%</span>
+              <span style={{ color: "#999999" }}>Marge 25.4€</span>
+            </div>
+          }
           icon="€"
         />
         <KPICard
           label="Tâches en cours"
           value={tachesEnCours}
-          sub={`sur ${totalTaches} tâches`}
+          sub={
+            <div style={{ display: "flex", gap: 4 }}>
+              <span style={{ color: "#10B981", fontWeight: 600 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
+              <span style={{ color: "#999999" }}>sur {totalTaches} tâches</span>
+            </div>
+          }
           icon="▶"
         />
         <KPICard
           label="Alertes rentabilité"
           value={alertes}
-          sub="À surveiller temps de prod."
+          sub={
+            <div style={{ display: "flex", gap: 4 }}>
+              <span style={{ color: "#E65100", fontWeight: 600 }}>À surveiller</span>
+              <span style={{ color: "#999999" }}>temps de prod.</span>
+            </div>
+          }
           icon="⚠"
-          subColor="#E65100"
         />
       </div>
 
