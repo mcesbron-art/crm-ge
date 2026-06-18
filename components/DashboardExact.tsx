@@ -90,7 +90,7 @@ function KPICard({
           right: 16,
           fontSize: 18,
           opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: iconBg === "#e5d1a2" ? "#e5d1a2" : iconBg === "#c5a55a" ? "#c5a55a" : finalIconColor,
+          color: iconBg === "#e5d1a2" ? "#C5A55A" : iconBg === "#c5a55a" ? "#c5a55a" : iconBg === "#FF9966" ? "#FF6B35" : finalIconColor,
           background: iconBg,
           width: iconBg ? 48 : "auto",
           height: iconBg ? 48 : "auto",
