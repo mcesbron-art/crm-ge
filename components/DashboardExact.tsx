@@ -44,34 +44,39 @@ function KPICard({
           : isDark
           ? "0 1px 3px rgba(0,0,0,0.2)"
           : "0 1px 3px rgba(0,0,0,0.06)",
+        minHeight: "120px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <div
-        style={{
-          fontSize: 11,
-          color: labelColor,
-          fontWeight: 600,
-          letterSpacing: 0.5,
-          textTransform: "uppercase",
-          marginBottom: 8,
-        }}
-      >
-        {label}
-      </div>
-      <div
-        style={{
-          fontSize: 36,
-          fontWeight: 700,
-          color: textColor,
-          lineHeight: 1.1,
-          fontFamily: "Georgia, serif",
-          marginBottom: 4,
-        }}
-      >
-        {value}
+      <div>
+        <div
+          style={{
+            fontSize: 10,
+            color: labelColor,
+            fontWeight: 600,
+            letterSpacing: 0.5,
+            textTransform: "uppercase",
+            marginBottom: 8,
+          }}
+        >
+          {label}
+        </div>
+        <div
+          style={{
+            fontSize: 36,
+            fontWeight: 700,
+            color: textColor,
+            lineHeight: 1.1,
+            fontFamily: "Georgia, serif",
+          }}
+        >
+          {value}
+        </div>
       </div>
       {sub && (
-        <div style={{ fontSize: 11, color: labelColor, marginTop: 4, fontWeight: 400 }}>
+        <div style={{ fontSize: 10, color: labelColor, marginTop: 4, fontWeight: 400 }}>
           {sub}
         </div>
       )}
@@ -122,7 +127,7 @@ export default function DashboardExact() {
       }))
   );
 
-  // Colors - Light mode: white background, Dark mode: dark background
+  // Colors
   const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
   const pageContainerBg = isDark ? "#0A0A0A" : "#FFFFFF";
   const cardBg = isDark ? "#1A1A1A" : "#FFFFFF";
@@ -139,15 +144,64 @@ export default function DashboardExact() {
         color: textColor,
       }}
     >
-      {/* HEADER */}
+      {/* TOP HEADER - Vos Direction */}
+      <div
+        style={{
+          background: isDark ? "#1A1A1A" : "#FFFFFF",
+          borderBottom: `1px solid ${borderColor}`,
+          padding: "12px 0",
+          marginBottom: 20,
+          fontSize: 12,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingLeft: 0,
+          paddingRight: 0,
+        }}
+      >
+        <div style={{ display: "flex", gap: 16, alignItems: "center", flex: 1 }}>
+          <span style={{ color: "#C5A55A", fontWeight: 700 }}>🔺 Vos Direction</span>
+          <span style={{ color: subtextColor }}>accès complet aux montants, marges et rapports</span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            style={{
+              padding: "6px 12px",
+              background: isDark ? "#2F2F2F" : "#F0F0F0",
+              border: `1px solid ${borderColor}`,
+              borderRadius: 6,
+              fontSize: 11,
+              fontWeight: 600,
+              color: textColor,
+              cursor: "pointer",
+            }}
+          >
+            Vos Collaborateur
+          </button>
+          <button
+            style={{
+              padding: "6px 12px",
+              background: "#000000",
+              border: "none",
+              borderRadius: 6,
+              fontSize: 11,
+              fontWeight: 600,
+              color: "#FFFFFF",
+              cursor: "pointer",
+            }}
+          >
+            Vos Direction
+          </button>
+        </div>
+      </div>
+
+      {/* MAIN HEADER */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 32,
-          paddingBottom: 16,
-          borderBottom: `1px solid ${borderColor}`,
+          alignItems: "flex-start",
+          marginBottom: 24,
         }}
       >
         <div>
@@ -168,7 +222,6 @@ export default function DashboardExact() {
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <button
-            onClick={() => setIsDark(!isDark)}
             style={{
               padding: "8px 14px",
               background: isDark ? "#1F1F1F" : "#F0F0F0",
@@ -180,7 +233,7 @@ export default function DashboardExact() {
               cursor: "pointer",
             }}
           >
-            {isDark ? "☀️ Light" : "🌙 Dark"}
+            📥 Exporter PDF
           </button>
           <button
             style={{
@@ -205,7 +258,7 @@ export default function DashboardExact() {
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: 16,
-          marginBottom: 28,
+          marginBottom: 24,
         }}
       >
         <KPICard
@@ -239,7 +292,7 @@ export default function DashboardExact() {
         />
       </div>
 
-      {/* MAIN CONTENT - 2 COLUMNS */}
+      {/* TWO COLUMN LAYOUT */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
         {/* LEFT COLUMN */}
         <div>
@@ -257,17 +310,19 @@ export default function DashboardExact() {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: "flex-start",
                 marginBottom: 16,
               }}
             >
               <div>
                 <h3
                   style={{
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: 600,
                     color: textColor,
                     margin: "0 0 8px",
+                    textTransform: "uppercase",
+                    letterSpacing: 0.5,
                   }}
                 >
                   CA EN PRODUCTION
@@ -279,15 +334,15 @@ export default function DashboardExact() {
                     fontSize: 11,
                   }}
                 >
-                  <span style={{ color: "#4CAF50", fontWeight: 600 }}>
-                    +12.4% Cet période
+                  <span style={{ color: "#C5A55A", fontWeight: 600 }}>
+                    🔺 Cet période
                   </span>
                   <span style={{ color: subtextColor }}>Période précédente</span>
                 </div>
               </div>
               <span
                 style={{
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: 700,
                   color: "#C5A55A",
                 }}
@@ -295,7 +350,9 @@ export default function DashboardExact() {
                 34.7 k€
               </span>
             </div>
-            <InteractiveChart isDark={isDark} height={140} />
+            <div style={{ height: "180px" }}>
+              <InteractiveChart isDark={isDark} height={180} />
+            </div>
           </div>
 
           {/* ALERTES SECTION */}
@@ -404,7 +461,7 @@ export default function DashboardExact() {
               <div style={{ textAlign: "right" }}>Temps</div>
               <div style={{ textAlign: "right" }}>Rentabilité</div>
             </div>
-            {PROJETS.slice(0, 3).map((p) => {
+            {PROJETS.slice(0, 5).map((p) => {
               const marge = p.montantHT - p.coutRevient;
               const margePercent = Math.round((marge / p.montantHT) * 100);
               const totalAlloue = p.taches.reduce((s, t) => s + t.tempsAlloue, 0);
@@ -481,18 +538,20 @@ export default function DashboardExact() {
         >
           <h3
             style={{
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 600,
               color: textColor,
               margin: "0 0 16px",
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
             }}
           >
             Opportunités
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
-              { label: "Opportunités", value: 24, percentage: 90 },
-              { label: "Devis envoyés", value: 16, percentage: 65 },
+              { label: "Devis envoyés", value: 24, percentage: 90 },
+              { label: "Devis signés", value: 16, percentage: 65 },
               { label: "Devis signés", value: 9, percentage: 35 },
               { label: "En production", value: 5, percentage: 20 },
               { label: "Facturés", value: 3, percentage: 12 },
@@ -536,6 +595,32 @@ export default function DashboardExact() {
           </div>
         </div>
       </div>
+
+      {/* Toggle Dark Mode Button - Floating */}
+      <button
+        onClick={() => setIsDark(!isDark)}
+        style={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          width: 50,
+          height: 50,
+          borderRadius: "50%",
+          background: isDark ? "#FFC107" : "#1A1A1A",
+          border: "none",
+          color: isDark ? "#1A1A1A" : "#FFFFFF",
+          fontSize: 24,
+          cursor: "pointer",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 20,
+        }}
+        title={isDark ? "Mode light" : "Mode dark"}
+      >
+        {isDark ? "☀️" : "🌙"}
+      </button>
     </div>
   );
 }
