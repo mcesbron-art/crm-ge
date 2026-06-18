@@ -260,8 +260,8 @@ export default function DashboardRedesign() {
           label="Alertes rentabilité"
           value={alertes}
           sub={
-            <div style={{ display: "flex", gap: 4 }}>
-              <span style={{ color: "#E65100", fontWeight: 600 }}>À surveiller</span>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span style={{ color: "#E65100", fontWeight: 600, background: "#FFE6E6", padding: "4px 8px", borderRadius: 6 }}>À surveiller</span>
               <span style={{ color: "#999999" }}>temps de prod.</span>
             </div>
           }
