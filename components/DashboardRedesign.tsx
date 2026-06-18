@@ -551,7 +551,8 @@ export default function DashboardRedesign() {
             borderRadius: 20,
             border: `1px solid ${borderColor}`,
             padding: 20,
-            minHeight: "380px",
+            height: "400px",
+            overflow: "auto",
           }}
         >
           <h3
