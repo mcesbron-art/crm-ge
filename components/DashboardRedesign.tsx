@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { InteractiveChart } from "@/components/InteractiveChart";
 import {
   PROJETS,
@@ -13,22 +12,19 @@ function KPICard({
   value,
   sub,
   icon,
-  accent = false,
-  isDark = false,
+  isBlack = false,
 }: {
   label: string;
   value: React.ReactNode;
   sub?: string;
   icon: string;
-  accent?: boolean;
-  isDark?: boolean;
+  isBlack?: boolean;
 }) {
-  const bgColor = accent ? "#C5A55A" : (isDark ? "#1A1A1A" : "#FFFFFF");
-  const textColor = accent ? "#FFFFFF" : (isDark ? "#E8E8E8" : "#1A1A1A");
-  const labelColor = accent
-    ? "rgba(255,255,255,0.85)"
-    : (isDark ? "#999999" : "#666666");
-  const borderColor = isDark ? "#2F2F2F" : "#E0E0E0";
+  const bgColor = isBlack ? "#0F0F0F" : "#FFFFFF";
+  const textColor = isBlack ? "#FFFFFF" : "#1A1A1A";
+  const labelColor = isBlack ? "#999999" : "#666666";
+  const borderColor = isBlack ? "#2F2F2F" : "#E8E8E8";
+  const accentColor = isBlack ? "#C5A55A" : "#C5A55A";
 
   return (
     <div
@@ -36,14 +32,10 @@ function KPICard({
         background: bgColor,
         borderRadius: 12,
         padding: "20px 16px",
-        border: `1px solid ${accent ? "transparent" : borderColor}`,
+        border: `1px solid ${borderColor}`,
         position: "relative",
         overflow: "hidden",
-        boxShadow: accent
-          ? "0 4px 12px rgba(197, 165, 90, 0.25)"
-          : isDark
-          ? "0 1px 3px rgba(0,0,0,0.2)"
-          : "0 1px 3px rgba(0,0,0,0.06)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
         minHeight: "120px",
         display: "flex",
         flexDirection: "column",
@@ -67,7 +59,7 @@ function KPICard({
           style={{
             fontSize: 36,
             fontWeight: 700,
-            color: textColor,
+            color: isBlack ? accentColor : textColor,
             lineHeight: 1.1,
             fontFamily: "Georgia, serif",
           }}
@@ -86,7 +78,7 @@ function KPICard({
           top: 14,
           right: 14,
           fontSize: 20,
-          opacity: accent ? 0.25 : 0.08,
+          opacity: 0.08,
           color: textColor,
         }}
       >
@@ -97,8 +89,6 @@ function KPICard({
 }
 
 export default function DashboardRedesign() {
-  const [isDark, setIsDark] = useState(false);
-
   const totalCA = PROJETS.reduce((s, p) => s + p.montantHT, 0);
   const totalMarge = PROJETS.reduce((s, p) => s + (p.montantHT - p.coutRevient), 0);
   const totalTaches = PROJETS.reduce((s, p) => s + p.taches.length, 0);
@@ -127,14 +117,13 @@ export default function DashboardRedesign() {
       }))
   );
 
-  // Colors
-  const bgColor = isDark ? "#0A0A0A" : "#FFFFFF";
-  const pageContainerBg = isDark ? "#0A0A0A" : "#FFFFFF";
-  const cardBg = isDark ? "#1A1A1A" : "#FFFFFF";
-  const textColor = isDark ? "#E8E8E8" : "#1A1A1A";
-  const subtextColor = isDark ? "#999999" : "#666666";
-  const borderColor = isDark ? "#2F2F2F" : "#E0E0E0";
-  const sectionBg = isDark ? "#1A1A1A" : "#F9F9F9";
+  // Light theme colors
+  const pageContainerBg = "#FFFFFF";
+  const cardBg = "#FFFFFF";
+  const textColor = "#1A1A1A";
+  const subtextColor = "#666666";
+  const borderColor = "#E8E8E8";
+  const sectionBg = "#FFFFFF";
 
   return (
     <div
@@ -195,7 +184,7 @@ export default function DashboardRedesign() {
             <button
               style={{
                 padding: "8px 14px",
-                background: isDark ? "#1F1F1F" : "#F0F0F0",
+                background: "#F0F0F0",
                 border: `1px solid ${borderColor}`,
                 borderRadius: 8,
                 fontSize: 12,
@@ -238,29 +227,25 @@ export default function DashboardRedesign() {
           value={PROJETS.filter((p) => p.statut !== "Clôturé").length}
           sub={`${totalTaches} tâches au total`}
           icon="▣"
-          accent
-          isDark={isDark}
+          isBlack={true}
         />
         <KPICard
           label="CA en production"
           value={`${(totalCA / 1000).toFixed(1)}k€`}
           sub={`+12.4% Marge 25.4€`}
           icon="€"
-          isDark={isDark}
         />
         <KPICard
           label="Tâches en cours"
           value={tachesEnCours}
           sub={`sur ${totalTaches} tâches`}
           icon="▶"
-          isDark={isDark}
         />
         <KPICard
           label="Alertes rentabilité"
           value={alertes}
           sub={`à surveiller temps de prod.`}
           icon="⚠"
-          isDark={isDark}
         />
       </div>
 
@@ -271,7 +256,7 @@ export default function DashboardRedesign() {
           {/* CA SECTION */}
           <div
             style={{
-              background: cardBg,
+              background: "#FFFFFF",
               borderRadius: 12,
               border: `1px solid ${borderColor}`,
               padding: 20,
@@ -323,16 +308,16 @@ export default function DashboardRedesign() {
               </span>
             </div>
             <div style={{ height: "180px" }}>
-              <InteractiveChart isDark={isDark} height={180} />
+              <InteractiveChart isDark={false} height={180} />
             </div>
           </div>
 
           {/* ALERTES SECTION */}
           <div
             style={{
-              background: isDark ? "#2F2515" : "#FFF8F0",
+              background: "#FFF8F0",
               borderRadius: 12,
-              border: `1px solid ${isDark ? "#4A3420" : "#FFE0B2"}`,
+              border: `1px solid #FFE0B2`,
               padding: 16,
               marginBottom: 24,
             }}
@@ -341,7 +326,7 @@ export default function DashboardRedesign() {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: isDark ? "#FFB366" : "#E65100",
+                color: "#E65100",
                 marginBottom: 12,
               }}
             >
@@ -362,7 +347,7 @@ export default function DashboardRedesign() {
                     gap: 10,
                     padding: "8px 0",
                     fontSize: 12,
-                    borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+                    borderBottom: `1px solid rgba(0,0,0,0.1)`,
                   }}
                 >
                   <span
@@ -397,7 +382,7 @@ export default function DashboardRedesign() {
           {/* PROJETS SECTION */}
           <div
             style={{
-              background: cardBg,
+              background: "#FFFFFF",
               borderRadius: 12,
               border: `1px solid ${borderColor}`,
               overflow: "hidden",
@@ -420,7 +405,7 @@ export default function DashboardRedesign() {
                 display: "grid",
                 gridTemplateColumns: "2fr 1fr 1fr 1fr",
                 padding: "10px 16px",
-                background: sectionBg,
+                background: "#FFFFFF",
                 borderBottom: `1px solid ${borderColor}`,
                 fontSize: 10,
                 fontWeight: 600,
@@ -501,7 +486,7 @@ export default function DashboardRedesign() {
         {/* RIGHT COLUMN - OPPORTUNITIES */}
         <div
           style={{
-            background: cardBg,
+            background: "#FFFFFF",
             borderRadius: 12,
             border: `1px solid ${borderColor}`,
             padding: 20,
@@ -547,7 +532,7 @@ export default function DashboardRedesign() {
                 <div
                   style={{
                     height: "4px",
-                    background: isDark ? "#2F2F2F" : "#E5E5E3",
+                    background: "#E5E5E3",
                     borderRadius: 2,
                     overflow: "hidden",
                   }}
