@@ -589,7 +589,7 @@ export default function DashboardRedesign() {
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr 1fr",
             padding: "10px 16px",
-            background: "#FFFFFF",
+            background: cardBg,
             borderBottom: `1px solid ${borderColor}`,
             fontSize: 10,
             fontWeight: 600,

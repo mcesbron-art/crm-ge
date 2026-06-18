@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTheme } from "@/lib/theme-context";
 
 interface DataPoint {
   date: string;
@@ -13,6 +14,13 @@ export function InteractiveChart({
 }: {
   height?: number;
 }) {
+  let isDark = false;
+  try {
+    const { mode } = useTheme();
+    isDark = mode === "dark";
+  } catch {
+    isDark = false;
+  }
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
     null
@@ -21,10 +29,10 @@ export function InteractiveChart({
 
   // Colors
   const goldColor = "#C5A55A";
-  const greyColor = "#CCCCCC";
-  const gridColor = "#E0E0E0";
-  const textColor = "#999999";
-  const bgColor = "#FFFFFF";
+  const greyColor = isDark ? "#555555" : "#CCCCCC";
+  const gridColor = isDark ? "#2F2F2F" : "#E0E0E0";
+  const textColor = isDark ? "#999999" : "#999999";
+  const bgColor = isDark ? "#1F1F1F" : "#FFFFFF";
 
   // Data - realistic CA values between 15k and 30k
   const data: DataPoint[] = [
