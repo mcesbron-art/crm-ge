@@ -87,7 +87,7 @@ export default function ClientDetailPage() {
           left: "50%",
           transform: "translate(-50%, -50%)",
           background: "#fff",
-          border: "1px solid #E7E4DA",
+          border: "1px solid #ECEBE4",
           borderRadius: 16,
           padding: 24,
           width: "90%",
@@ -102,16 +102,16 @@ export default function ClientDetailPage() {
             <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C8B83" }}>×</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <input type="text" placeholder="Titre du ticket" style={{ padding: "10px 12px", border: "1px solid #E7E4DA", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
-            <textarea placeholder="Description" rows={3} style={{ padding: "10px 12px", border: "1px solid #E7E4DA", borderRadius: 8, fontSize: 13, resize: "none", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
-            <select style={{ padding: "10px 12px", border: "1px solid #E7E4DA", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
+            <input type="text" placeholder="Titre du ticket" style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
+            <textarea placeholder="Description" rows={3} style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, resize: "none", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
+            <select style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
               <option>Sélectionner une priorité</option>
               <option>Basse</option>
               <option>Normale</option>
               <option>Haute</option>
             </select>
             <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 12 }}>
-              <button onClick={onClose} style={{ padding: "8px 16px", background: "#F4ECD7", border: "1px solid #E7E4DA", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
+              <button onClick={onClose} style={{ padding: "8px 16px", background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
                 Annuler
               </button>
               <button style={{ padding: "8px 16px", background: "#0F0E0A", border: "none", color: "#E9D7A6", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
@@ -125,7 +125,7 @@ export default function ClientDetailPage() {
   };
 
   return (
-    <div style={{ background: "#F4ECD7", minHeight: "100vh", padding: "26px 30px", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+    <div style={{ background: "#F5F4EF", minHeight: "100vh", padding: "26px 30px", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
       {/* Section 1: En-tête + KPIs */}
       <div style={{ marginBottom: 16 }}>
         {/* En-tête */}
@@ -202,7 +202,7 @@ export default function ClientDetailPage() {
 
           {/* Boutons */}
           <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-            <button style={{ padding: "6px 12px", background: "#E7E4DA", border: "none", borderRadius: 5, fontSize: 10, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16", whiteSpace: "nowrap" }}>
+            <button style={{ padding: "6px 12px", background: "#ECEBE4", border: "none", borderRadius: 5, fontSize: 10, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16", whiteSpace: "nowrap" }}>
               ☎️ Contacter
             </button>
             <button style={{ padding: "6px 12px", background: "#B08D32", border: "none", borderRadius: 5, fontSize: 10, fontWeight: 600, color: "#fff", cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", whiteSpace: "nowrap" }}>
@@ -214,7 +214,7 @@ export default function ClientDetailPage() {
         {/* KPIs */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
           {kpis.map((kpi, i) => (
-            <div key={i} style={{ background: "#F4ECD7", border: "1px solid #E7E4DA", borderRadius: 11, padding: "16px 14px" }}>
+            <div key={i} style={{ background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 11, padding: "16px 14px" }}>
               {/* Header: Label + Icon */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <span style={{ fontSize: "7px", textTransform: "uppercase", color: "#9A988F", fontWeight: 900, letterSpacing: "0.12em", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
@@ -242,7 +242,7 @@ export default function ClientDetailPage() {
       {/* Section 2: Projets + Contacts + Documents */}
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, marginBottom: 24 }}>
         {/* Projets */}
-        <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
               Projets du client
@@ -250,7 +250,7 @@ export default function ClientDetailPage() {
             <span style={{ fontSize: 12, color: "#8C8B83", fontWeight: 600 }}>{projects.length} projets</span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, paddingBottom: 12, borderBottom: "1px solid #E7E4DA", marginBottom: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, paddingBottom: 12, borderBottom: "1px solid #ECEBE4", marginBottom: 12 }}>
             <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>PROJET</span>
             <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>STATUT</span>
             <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>MONTANT</span>
@@ -260,7 +260,7 @@ export default function ClientDetailPage() {
           {projects.map((proj, i) => {
             const colors = getStatusColor(proj.status);
             return (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, padding: "12px 0", borderBottom: "1px solid #F4ECD7", alignItems: "center" }}>
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, padding: "12px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{proj.name}</div>
                   <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 2 }}>{proj.ref}</div>
@@ -279,7 +279,7 @@ export default function ClientDetailPage() {
         {/* Contacts + Documents */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
           {/* Contact référent */}
-          <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24 }}>
+          <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
             <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
               Contact référent
             </h3>
@@ -300,7 +300,7 @@ export default function ClientDetailPage() {
           </div>
 
           {/* Documents commerciaux */}
-          <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24 }}>
+          <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
                 Documents commerciaux
@@ -309,7 +309,7 @@ export default function ClientDetailPage() {
             </div>
             <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
               {documents.map((doc, i) => (
-                <button key={i} style={{ padding: "6px 12px", background: "#F4ECD7", border: "1px solid #E7E4DA", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
+                <button key={i} style={{ padding: "6px 12px", background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
                   {doc.name} <span style={{ fontWeight: 700 }}>{doc.count}</span>
                 </button>
               ))}
@@ -324,12 +324,12 @@ export default function ClientDetailPage() {
       {/* Section 3: Activité récente + Documents partagés */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
         {/* Activité */}
-        <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24 }}>
+        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
           <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
             Activité récente
           </h3>
           {activities.map((act, i) => (
-            <div key={i} style={{ paddingBottom: 16, marginBottom: 16, borderBottom: i < activities.length - 1 ? "1px solid #F4ECD7" : "none", display: "flex", gap: 12 }}>
+            <div key={i} style={{ paddingBottom: 16, marginBottom: 16, borderBottom: i < activities.length - 1 ? "1px solid #F5F4EF" : "none", display: "flex", gap: 12 }}>
               <div style={{ width: 32, height: 32, borderRadius: "50%", background: act.color, color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 {act.avatar}
               </div>
@@ -344,7 +344,7 @@ export default function ClientDetailPage() {
         </div>
 
         {/* Documents partagés */}
-        <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24 }}>
+        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
               Documents partagés
@@ -358,14 +358,14 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Section 4: Suivi client */}
-      <div style={{ background: "#fff", border: "1px solid #E7E4DA", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+      <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 24, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
             Suivi client
           </h3>
 
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <div style={{ display: "flex", gap: 8, background: "#F4ECD7", padding: "6px 8px", borderRadius: 8 }}>
+            <div style={{ display: "flex", gap: 8, background: "#F5F4EF", padding: "6px 8px", borderRadius: 8 }}>
               {[
                 { label: "Opportunités", count: 3 },
                 { label: "Tâches", count: 5 },
@@ -376,7 +376,7 @@ export default function ClientDetailPage() {
                   onClick={() => setFollowupTab(tab.label as any)}
                   style={{
                     background: followupTab === tab.label ? "#fff" : "transparent",
-                    border: followupTab === tab.label ? "1px solid #E7E4DA" : "none",
+                    border: followupTab === tab.label ? "1px solid #ECEBE4" : "none",
                     color: followupTab === tab.label ? "#1C1B16" : "#8C8B83",
                     padding: "6px 12px",
                     borderRadius: 6,
@@ -399,7 +399,7 @@ export default function ClientDetailPage() {
 
         {followupTab === "Tickets" && (
           <div>
-            <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, paddingBottom: 12, borderBottom: "1px solid #E7E4DA", marginBottom: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, paddingBottom: 12, borderBottom: "1px solid #ECEBE4", marginBottom: 12 }}>
               <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>RÉF.</span>
               <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>SUJET</span>
               <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>PRIORITÉ</span>
@@ -411,7 +411,7 @@ export default function ClientDetailPage() {
               const priColor = getPriorityColor(ticket.priority);
               const statColor = getStatusBadgeColor(ticket.status);
               return (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, padding: "16px 0", borderBottom: "1px solid #F4ECD7", alignItems: "center" }}>
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, padding: "16px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#8C8B83" }}>{ticket.ref}</div>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16", marginBottom: 4 }}>{ticket.title}</div>
