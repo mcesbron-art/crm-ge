@@ -1,61 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-
-// Plus Jakarta Sans est importé via le layout global
+import { getClient, getClientMetrics, getClientProjects, getClientContact, Client, ClientMetrics, ClientProject, ClientContact } from "@/lib/clients-data";
 
 export default function ClientDetailPage() {
   const params = useParams();
-  const clientId = params?.id;
+  const clientId = params?.id as string;
   const [followupTab, setFollowupTab] = useState<"Opportunités" | "Tâches" | "Tickets">("Tickets");
   const [showAddTicket, setShowAddTicket] = useState(false);
 
-  const client = {
-    name: "Maison Relais Gourmet",
-    type: "Restaurant & traiteur d'événementiel",
-    siret: "SIRET 812-456-789 00021",
-    email: "contact@relais-gourmet.fr",
-    phone: "02 418 25 00",
-    city: "Angers, Maine-et-Loire",
-    since: "Client depuis sept. 2023",
-    status: "Client actif!",
-    avatar: "MR",
-    avatarBg: "#C5A55A",
-  };
+  // État pour les données dynamiques
+  const [client, setClient] = useState<Client | null>(null);
+  const [metrics, setMetrics] = useState<ClientMetrics | null>(null);
+  const [projects, setProjects] = useState<ClientProject[]>([]);
+  const [contact, setContact] = useState<ClientContact | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const kpis = [
-    { label: "CA TOTAL FACTURÉ", value: "47.2 k€", sub: "+18% vs 2024", icon: "💶" },
-    { label: "CA EN COURS", value: "8.5 k€", sub: "3 devis, en production", icon: "📋" },
-    { label: "MARGE MOYENNE", value: "67 %", sub: "Réalisation au-dessus du seuil", icon: "📊" },
-    { label: "PROJETS RÉALISÉS", value: "9", sub: "8 livrés, 1 en cours", icon: "📦" },
-  ];
+  // Charger les données du client
+  useEffect(() => {
+    if (clientId) {
+      const clientData = getClient(clientId);
+      const metricsData = getClientMetrics(clientId);
+      const projectsData = getClientProjects(clientId);
+      const contactData = getClientContact(clientId);
 
-  const projects = [
-    { name: "Maquettes site e-commerce", ref: "MRG-09", status: "En production", amount: "8 500 €", date: "Mars 2026" },
-    { name: "Campagne emailing printemps", ref: "MRG-08", status: "Livré", amount: "3 200 €", date: "Févr. 2026" },
-    { name: "Refonte identité de marque", ref: "MRG-07", status: "Livré", amount: "12 000 €", date: "Nov. 2025" },
-    { name: "Shooting photo produits", ref: "MRG-06", status: "Livré", amount: "4 100 €", date: "Sept. 2025" },
-    { name: "Brochure traiteur 2025", ref: "MRG-05", status: "Livré", amount: "2 800 €", date: "Juin 2025" },
-  ];
+      setClient(clientData);
+      setMetrics(metricsData);
+      setProjects(projectsData);
+      setContact(contactData);
+      setLoading(false);
+    }
+  }, [clientId]);
 
-  const contactRef = { name: "Claire Lemaire", role: "Directrice marketing", email: "c.lemaire@relais-gourmet.fr", phone: "0612 45 78 90", avatar: "CL", color: "#7C3AED" };
+  if (loading || !client || !metrics) {
+    return <div style={{ padding: "40px", textAlign: "center", color: "#8C8B83" }}>Chargement...</div>;
+  }
 
+  // Données de documents et activités (à adapter par client)
   const documents = [
-    { name: "Devis", count: "2" },
-    { name: "Commandes", count: "2" },
-    { name: "Factures", count: "3" },
+    { name: "Devis", count: String(Math.floor(Math.random() * 5) + 1) },
+    { name: "Commandes", count: String(Math.floor(Math.random() * 5) + 1) },
+    { name: "Factures", count: String(Math.floor(Math.random() * 8) + 1) },
   ];
 
   const activities = [
-    { author: "Vous", time: "Hier à 18:45", content: "Appel avec le client concernant le brief projet", count: "6 commentaires", avatar: "GE", color: "#0A0A0A" },
-    { author: "Maryline L.", time: "Mardi • 2025-03-31", content: "Devis PRG-06 envoyé", count: "1 commentaire", avatar: "ML", color: "#7C3AED" },
+    { author: "Vous", time: "Hier à 18:45", content: `Appel avec ${client.name} concernant le brief projet`, count: "6 commentaires", avatar: "GE", color: "#0A0A0A" },
+    { author: "Maryline L.", time: "Mardi • 2025-03-31", content: "Devis envoyé", count: "1 commentaire", avatar: "ML", color: "#7C3AED" },
     { author: "Thomas B.", time: "Mercredi • 2025-03-28", content: "Nouvelle prise contact", avatar: "TB", color: "#2563EB" },
   ];
 
   const tickets = [
     { ref: "#T-218", title: "Bug affichage page panier sur mobile", tags: ["Site internet", "Urgent"], priority: "Haute", status: "En cours", assigned: { name: "Adrien D.", initials: "AD", color: "#16A34A" } },
     { ref: "#T-205", title: "Mise à jour visuels page d'accueil", tags: ["Graphisme", "Site internet"], priority: "Normale", status: "Nouveau", assigned: { name: "Thomas B.", initials: "TB", color: "#2563EB" } },
+  ];
+
+  const kpis = [
+    { label: "CA TOTAL FACTURÉ", value: metrics.totalRevenue, sub: "+18% vs 2024", icon: "💶" },
+    { label: "CA EN COURS", value: metrics.pendingRevenue, sub: "3 devis, en production", icon: "📋" },
+    { label: "MARGE MOYENNE", value: metrics.avgMargin, sub: "Réalisation au-dessus du seuil", icon: "📊" },
+    { label: "PROJETS RÉALISÉS", value: String(metrics.projectCount), sub: `${metrics.deliveredCount} livrés, 1 en cours`, icon: "📦" },
   ];
 
   const getStatusColor = (status: string) => {
@@ -143,7 +147,7 @@ export default function ClientDetailPage() {
             width: 48,
             height: 48,
             borderRadius: "50%",
-            background: "#B08D32",
+            background: client.avatarColor,
             color: "#fff",
             fontSize: 18,
             fontWeight: 900,
@@ -164,13 +168,13 @@ export default function ClientDetailPage() {
                 {client.name}
               </h1>
               <span style={{ background: "#1F9D57", color: "#fff", fontSize: 8, fontWeight: 700, padding: "2px 6px", borderRadius: 2, whiteSpace: "nowrap" }}>
-                ✓ {client.status}
+                ✓ {client.status === "Actif" ? "Client actif" : client.status}
               </span>
             </div>
 
-            {/* Ligne 1: Type + SIRET */}
+            {/* Ligne 1: Secteur + SIRET */}
             <div style={{ display: "flex", gap: 20, fontSize: "10.5px", color: "#A6A498", marginBottom: 4, lineHeight: 1.1 }}>
-              <span>{client.type}</span>
+              <span>{client.sector}</span>
               <span style={{ display: "flex", gap: 3 }}>
                 <span>📋</span>
                 <span>{client.siret}</span>
@@ -195,8 +199,8 @@ export default function ClientDetailPage() {
 
             {/* Ligne 3: Client depuis */}
             <div style={{ fontSize: "10.5px", color: "#A6A498", lineHeight: 1.1, display: "flex", gap: 3 }}>
-              <span>📋</span>
-              <span>{client.since}</span>
+              <span>📅</span>
+              <span>Client depuis {client.joinDate}</span>
             </div>
           </div>
 
@@ -257,47 +261,53 @@ export default function ClientDetailPage() {
             <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>DATE</span>
           </div>
 
-          {projects.map((proj, i) => {
-            const colors = getStatusColor(proj.status);
-            return (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, padding: "12px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{proj.name}</div>
-                  <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 2 }}>{proj.ref}</div>
+          {projects.length > 0 ? (
+            projects.map((proj, i) => {
+              const colors = getStatusColor(proj.status);
+              return (
+                <div key={proj.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, padding: "12px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{proj.name}</div>
+                    <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 2 }}>{proj.id}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: colors.dot }} />
+                    <span style={{ fontSize: 12, color: colors.text }}>{proj.status}</span>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#1C1B16" }}>{proj.amount}</div>
+                  <div style={{ fontSize: 12, color: "#8C8B83" }}>{proj.date}</div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: colors.dot }} />
-                  <span style={{ fontSize: 12, color: colors.text }}>{proj.status}</span>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#1C1B16" }}>{proj.amount}</div>
-                <div style={{ fontSize: 12, color: "#8C8B83" }}>{proj.date}</div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div style={{ textAlign: "center", padding: "20px", color: "#8C8B83" }}>Aucun projet pour ce client</div>
+          )}
         </div>
 
         {/* Contacts + Documents */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
           {/* Contact référent */}
-          <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
-            <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
-              Contact référent
-            </h3>
-            <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: contactRef.color, color: "#fff", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                {contactRef.avatar}
+          {contact && (
+            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
+              <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
+                Contact référent
+              </h3>
+              <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: "50%", background: contact.color, color: "#fff", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {contact.avatar}
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{contact.name}</div>
+                  <div style={{ fontSize: 11, color: "#8C8B83" }}>{contact.role}</div>
+                </div>
               </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{contactRef.name}</div>
-                <div style={{ fontSize: 11, color: "#8C8B83" }}>{contactRef.role}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12, color: "#8C8B83" }}>
+                <div>📧 {contact.email}</div>
+                <div>☎️ {contact.phone}</div>
+                <div>🌐 {client.website || "N/A"}</div>
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12, color: "#8C8B83" }}>
-              <div>📧 {contactRef.email}</div>
-              <div>☎️ {contactRef.phone}</div>
-              <div>🌐 relais-gourmet.fr</div>
-            </div>
-          </div>
+          )}
 
           {/* Documents commerciaux */}
           <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
