@@ -183,8 +183,10 @@ export type AxonautContract = {
  * `updated_before` dans le chemin ci-dessous.
  */
 export async function listContractsSince(updatedAfterDDMMYYYY?: string): Promise<AxonautContract[]> {
+  // Les slashes du format DD/MM/YYYY ne doivent PAS être encodés en %2F :
+  // Axonaut ne peut pas parser "01%2F01%2F2026" comme date et ignore silencieusement le filtre.
   const path = updatedAfterDDMMYYYY
-    ? `/contracts?updated_after=${encodeURIComponent(updatedAfterDDMMYYYY)}`
+    ? `/contracts?updated_after=${updatedAfterDDMMYYYY}`
     : "/contracts";
   return axonautFetchAll<AxonautContract>(path);
 }
