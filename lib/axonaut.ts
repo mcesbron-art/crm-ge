@@ -66,6 +66,9 @@ export class AxonautError extends Error {
   }
 }
 
+const FETCH_TIMEOUT_MS = 25_000; // 25 s par requête (budget total 60 s sur Hobby)
+const MAX_PAGES = 20;            // garde-fou : 20 × 500 = 10 000 items max
+
 async function axonautFetch<T>(path: string, init: RequestInit = {}, page?: number): Promise<T> {
   if (!API_KEY) {
     throw new AxonautError(500, "AXONAUT_API_KEY manquante.");
@@ -80,7 +83,12 @@ async function axonautFetch<T>(path: string, init: RequestInit = {}, page?: numb
     ...(init.headers ?? {}),
   };
 
-  const res = await fetch(url, { ...init, headers, cache: "no-store" });
+  const res = await fetch(url, {
+    ...init,
+    headers,
+    cache: "no-store",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
 
   if (!res.ok) {
     let body: unknown;
@@ -94,8 +102,11 @@ async function axonautFetch<T>(path: string, init: RequestInit = {}, page?: numb
 async function axonautFetchAll<T>(path: string): Promise<T[]> {
   const results: T[] = [];
   let page = 1;
-  while (true) {
+  while (page <= MAX_PAGES) {
+    console.log(`[axonaut] GET ${path} — page ${page}`);
+    const t0 = Date.now();
     const data = await axonautFetch<T[]>(path, {}, page);
+    console.log(`[axonaut] page ${page} → ${Array.isArray(data) ? data.length : "non-array"} items (${Date.now() - t0} ms)`);
     if (!Array.isArray(data) || data.length === 0) break;
     results.push(...data);
     if (data.length < 500) break;
@@ -143,4 +154,37 @@ export async function listInvoices(filters?: { company_id?: number }): Promise<A
   let path = "/invoices";
   if (filters?.company_id) path += `?company_id=${filters.company_id}`;
   return axonautFetchAll<AxonautInvoice>(path);
+}
+
+// ---------------------------------------------------------------------------
+// Contracts (commandes)
+// ---------------------------------------------------------------------------
+
+export type AxonautContract = {
+  id: number;
+  company?: { id: number; name: string };
+  project?: { name?: string };
+  quotation?: { id: number };
+  start_date?: string | null;
+  expected_delivery_date?: string | null;
+  updated_at?: string | null;
+};
+
+/**
+ * Récupère les commandes Axonaut modifiées après une date donnée.
+ *
+ * @param updatedAfterDDMMYYYY - Date au format DD/MM/YYYY (format Axonaut).
+ *   Omettre pour récupérer toutes les commandes sans filtre de date.
+ *
+ * ⚠️  Note Axonaut : les paramètres `updated_after` et `updated_before` sont
+ * documentés de façon ambiguë — vérifier le comportement réel via
+ * GET /api/axonaut/contracts-sync/probe avant de passer en production.
+ * Si les résultats semblent inversés, remplacer `updated_after` par
+ * `updated_before` dans le chemin ci-dessous.
+ */
+export async function listContractsSince(updatedAfterDDMMYYYY?: string): Promise<AxonautContract[]> {
+  const path = updatedAfterDDMMYYYY
+    ? `/contracts?updated_after=${encodeURIComponent(updatedAfterDDMMYYYY)}`
+    : "/contracts";
+  return axonautFetchAll<AxonautContract>(path);
 }
