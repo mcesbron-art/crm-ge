@@ -62,6 +62,16 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   return <div style={{ fontSize: 12.5, letterSpacing: ".12em", textTransform: "uppercase" as const, color: "#9A998F", fontWeight: 700, marginBottom: 8 }}>{children}</div>;
 }
 
+/* Style commun des champs cliquables de la sidebar (Statut, Priorité,
+   Assigné à, Projet) — bordure + fond visibles au repos, accent doré au
+   survol, pour qu'ils se distinguent clairement d'un simple texte. */
+const fieldTriggerStyle: React.CSSProperties = {
+  display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+  width: "100%", cursor: "pointer", background: "#fff", border: "1px solid #E2E1DA",
+  borderRadius: 10, padding: "9px 12px", fontFamily: "inherit",
+  boxShadow: "0 1px 2px rgba(20,20,15,.03)", boxSizing: "border-box" as const,
+};
+
 function InlineSelect({ value, options, renderValue, onSelect }: {
   value: string;
   options: readonly string[];
@@ -71,16 +81,16 @@ function InlineSelect({ value, options, renderValue, onSelect }: {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen(o => !o)} style={{ display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer", background: "transparent", border: "none", padding: 0, fontFamily: "inherit" }}>
-        {renderValue(value)}
-        <span style={{ color: "#C0BEB3", fontSize: 12 }}>▾</span>
+      <button onClick={() => setOpen(o => !o)} className="ge-field-trigger" style={fieldTriggerStyle}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>{renderValue(value)}</span>
+        <span style={{ color: "#A6A498", fontSize: 12, flex: "none" }}>▾</span>
       </button>
       {open && (
         <>
           <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40 }} />
-          <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, zIndex: 50, background: "#fff", border: "1px solid #E6E5DE", borderRadius: 11, boxShadow: "0 20px 44px -18px rgba(20,20,15,.35)", padding: 6, minWidth: 180 }}>
+          <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 50, background: "#fff", border: "1px solid #E6E5DE", borderRadius: 11, boxShadow: "0 20px 44px -18px rgba(20,20,15,.35)", padding: 6, minWidth: 180 }}>
             {options.map(o => (
-              <div key={o} onClick={() => { onSelect(o); setOpen(false); }} style={{ padding: "8px 11px", borderRadius: 8, cursor: "pointer", background: o === value ? "#F6EFDD" : "transparent", fontWeight: o === value ? 700 : 500, fontSize: 15, color: o === value ? "#0A0A0A" : "#33322C" }}>
+              <div key={o} onClick={() => { onSelect(o); setOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 11px", borderRadius: 8, cursor: "pointer", background: o === value ? "#F6EFDD" : "transparent", fontWeight: o === value ? 700 : 500, fontSize: 15, color: o === value ? "#0A0A0A" : "#33322C" }}>
                 {renderValue(o)}
               </div>
             ))}
@@ -99,16 +109,18 @@ function AssigneeSelect({ value, collaborateurs, onSelect }: {
   const [open, setOpen] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", background: "transparent", border: "none", padding: 0, fontFamily: "inherit", width: "100%" }}>
-        {value ? (
-          <>
-            <Avatar initials={value.nom.slice(0, 2).toUpperCase()} color={value.color ?? "#888"} size={24} />
-            <span style={{ fontSize: 15.5, fontWeight: 600, color: "#1C1B16" }}>{value.nom}</span>
-          </>
-        ) : (
-          <span style={{ fontSize: 15.5, color: "#C0BEB3" }}>Non assigné</span>
-        )}
-        <span style={{ color: "#C0BEB3", fontSize: 12, marginLeft: "auto" }}>▾</span>
+      <button onClick={() => setOpen(o => !o)} className="ge-field-trigger" style={fieldTriggerStyle}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+          {value ? (
+            <>
+              <Avatar initials={value.nom.slice(0, 2).toUpperCase()} color={value.color ?? "#888"} size={22} />
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#1C1B16", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value.nom}</span>
+            </>
+          ) : (
+            <span style={{ fontSize: 15, color: "#B7B5A9" }}>Non assigné</span>
+          )}
+        </span>
+        <span style={{ color: "#A6A498", fontSize: 12, flex: "none" }}>▾</span>
       </button>
       {open && (
         <>
@@ -249,10 +261,12 @@ function ProjectPicker({ value, projectLabel, onSelect, onClear }: {
 
   return (
     <div style={{ position: "relative" }}>
-      <button onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", background: "transparent", border: "none", padding: 0, fontFamily: "inherit", width: "100%" }}>
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#A09E92" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6.5C3 5.7 3.6 5 4.4 5H8l1.6 1.8h6C16.4 6.8 17 7.4 17 8.2V14.6c0 .8-.6 1.4-1.4 1.4H4.4C3.6 16 3 15.4 3 14.6Z"/></svg>
-        <span style={{ fontSize: 15.5, fontWeight: 600, color: value ? "#1C1B16" : "#C0BEB3" }}>{value ? projectLabel : "Aucun projet lié"}</span>
-        <span style={{ color: "#C0BEB3", fontSize: 12, marginLeft: "auto" }}>▾</span>
+      <button onClick={() => setOpen(o => !o)} className="ge-field-trigger" style={fieldTriggerStyle}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#A09E92" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="M3 6.5C3 5.7 3.6 5 4.4 5H8l1.6 1.8h6C16.4 6.8 17 7.4 17 8.2V14.6c0 .8-.6 1.4-1.4 1.4H4.4C3.6 16 3 15.4 3 14.6Z"/></svg>
+          <span style={{ fontSize: 15, fontWeight: 700, color: value ? "#1C1B16" : "#B7B5A9", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value ? projectLabel : "Aucun projet lié"}</span>
+        </span>
+        <span style={{ color: "#A6A498", fontSize: 12, flex: "none" }}>▾</span>
       </button>
       {open && (
         <>
@@ -467,6 +481,13 @@ export default function TicketDetailPage() {
 
   return (
     <div style={{ flex: 1, minWidth: 0, background: "#F5F5F2", display: "flex", flexDirection: "column", fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+      <style>{`
+        .ge-field-trigger:hover {
+          border-color: #C9A24E !important;
+          background: #FFFDF7 !important;
+          box-shadow: 0 0 0 3px rgba(201,162,78,.12) !important;
+        }
+      `}</style>
 
       {saveError && (
         <div style={{ position: "fixed", top: 20, right: 20, zIndex: 100, background: "#FBEAE0", border: "1px solid #F0B08A", color: "#9A3412", fontSize: 15, fontWeight: 600, padding: "10px 16px", borderRadius: 10, boxShadow: "0 12px 30px -10px rgba(20,20,15,.3)", display: "flex", alignItems: "center", gap: 10 }}>

@@ -97,16 +97,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ width: "100%", minHeight: "100vh", display: "flex", background: "#0A0A0A", fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
+    <div className="ge-login-root" style={{ width: "100%", minHeight: "100vh", display: "flex", background: "#0A0A0A", fontFamily: "'Plus Jakarta Sans',system-ui,sans-serif" }}>
       <style>{`
         @keyframes geFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-14px); } }
         @keyframes geGlow  { 0%,100% { opacity:.55; } 50% { opacity:.9; } }
         @keyframes geSpin  { to { transform:rotate(360deg); } }
         #ge-login input::placeholder { color:#A6A498; }
+
+        .ge-login-left  { flex: 1.05; padding: 52px 56px; }
+        .ge-login-right { flex: 1; padding: 48px 40px; }
+        .ge-login-h1    { font-size: 52px; }
+        .ge-login-logo-img { width: 186px; }
+
+        @media (max-width: 980px) {
+          .ge-login-root  { flex-direction: column; }
+          .ge-login-left  { flex: none; padding: 34px 32px 26px; }
+          .ge-login-right { flex: none; padding: 36px 32px 56px; }
+          .ge-login-h1    { font-size: 36px; }
+        }
+        @media (max-width: 640px) {
+          .ge-login-left  { padding: 26px 20px 20px; }
+          .ge-login-right { padding: 26px 18px 44px; }
+          .ge-login-h1    { font-size: 27px; }
+          .ge-login-sub   { display: none; }
+          .ge-login-logo-img { width: 148px; }
+        }
       `}</style>
 
       {/* ══ LEFT — BRAND PANEL ══ */}
-      <div style={{ flex: 1.05, position: "relative", overflow: "hidden", background: "#0A0A0A", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "52px 56px", minWidth: 0 }}>
+      <div className="ge-login-left" style={{ position: "relative", overflow: "hidden", background: "#0A0A0A", display: "flex", flexDirection: "column", justifyContent: "space-between", minWidth: 0 }}>
         {/* ambient glows */}
         <div style={{ position: "absolute", top: -160, left: -120, width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle,rgba(201,162,78,.22),transparent 66%)", animation: "geGlow 7s ease-in-out infinite", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: -200, right: -160, width: 560, height: 560, borderRadius: "50%", background: "radial-gradient(circle,rgba(201,162,78,.13),transparent 68%)", pointerEvents: "none" }} />
@@ -117,7 +136,7 @@ export default function LoginPage() {
         {/* logo */}
         <div style={{ position: "relative" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-groupe-echo.png" alt="Groupe Écho — Communication | Formation | Événementiel" style={{ width: 186, height: "auto", display: "block" }} />
+          <img src="/logo-groupe-echo.png" alt="Groupe Écho — Communication | Formation | Événementiel" className="ge-login-logo-img" style={{ height: "auto", display: "block" }} />
         </div>
 
         {/* centrepiece */}
@@ -126,17 +145,17 @@ export default function LoginPage() {
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#C9A24E", boxShadow: "0 0 10px #C9A24E" }} />
             <span style={{ fontSize: 13.5, letterSpacing: ".16em", textTransform: "uppercase", fontWeight: 700, color: "#D9BE7E" }}>CRM interne · Production</span>
           </div>
-          <h1 style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 52, lineHeight: 1.08, fontWeight: 800, color: "#F4ECD7", margin: 0, letterSpacing: "-.02em" }}>
+          <h1 className="ge-login-h1" style={{ fontFamily: "Georgia, 'Times New Roman', serif", lineHeight: 1.08, fontWeight: 800, color: "#F4ECD7", margin: 0, letterSpacing: "-.02em" }}>
             Pilotez chaque<br />projet, du <span style={{ fontStyle: "italic", color: "#D9BE7E" }}>brief</span><br />à la facturation.
           </h1>
-          <p style={{ fontSize: 15.5, lineHeight: 1.65, color: "#9A968A", margin: "22px 0 0", maxWidth: 400 }}>
+          <p className="ge-login-sub" style={{ fontSize: 15.5, lineHeight: 1.65, color: "#9A968A", margin: "22px 0 0", maxWidth: 400 }}>
             L&apos;espace de travail des équipes Groupe Écho — Communication, Formation, Événementiel. Suivi des projets, clients et devis en un seul endroit.
           </p>
         </div>
 
         {/* footer meta */}
-        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
             <span style={{ fontSize: 14, color: "#6E6A5E", letterSpacing: ".04em" }}>© 2026 Groupe Écho</span>
             <span style={{ fontSize: 14, color: "#6E6A5E", cursor: "pointer" }}>Confidentialité</span>
             <span style={{ fontSize: 14, color: "#6E6A5E", cursor: "pointer" }}>Aide</span>
@@ -148,7 +167,7 @@ export default function LoginPage() {
       </div>
 
       {/* ══ RIGHT — FORM PANEL ══ */}
-      <div id="ge-login" style={{ flex: 1, background: "#F5F5F2", display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 40px", minWidth: 0 }}>
+      <div id="ge-login" className="ge-login-right" style={{ background: "#F5F5F2", display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0 }}>
         <div style={{ width: "100%", maxWidth: 404 }}>
 
           <div style={{ marginBottom: 30 }}>
