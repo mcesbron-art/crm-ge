@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
-import { sendBatResponseEmail, sendFacturationEmail } from "@/lib/email";
+import { sendBatResponseEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -111,20 +111,9 @@ export async function POST(req: NextRequest) {
       console.log("[bat/respond] no notifyTo — skipping response email");
     }
 
-    // 7a. Email facturation
-    console.log("[bat/respond] sending facturation email, FACTURATION_EMAIL:", process.env.FACTURATION_EMAIL);
-    try {
-      const r2 = await sendFacturationEmail({
-        projectName:  project?.name ?? "Projet",
-        clientName:   project?.client_name ?? "",
-        assigneeName,
-      });
-      console.log("[bat/respond] facturation email result:", JSON.stringify(r2));
-    } catch (e) {
-      console.error("[bat/respond] facturation email FAILED:", e instanceof Error ? e.message : e);
-    }
-
-    // 8a. Passer le projet en "Terminé"
+    // 7a. Passer le projet en "Terminé" — plus d'email facturation ici : la
+    // comptable consulte directement la page Facturation (demandes de
+    // facturation par tâche), pas de notification à recevoir.
     const { error: termineErr } = await admin
       .from("projects")
       .update({ status: "termine" })

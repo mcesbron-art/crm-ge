@@ -211,7 +211,6 @@ const IconList = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="no
 const IconCheck = ({ size = 13, stroke = "#fff" }: { size?: number; stroke?: string }) => (<svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><path d="M4 10.5 8 14l8-8.5" /></svg>);
 const IconHourglass = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3.5h8M6 16.5h8M6.5 3.5c0 3.5 7 3.5 7 7s-7 3.5-7 7" /><path d="M13.5 3.5c0 3.5-7 3.5-7 7s7 3.5 7 7" /></svg>);
 const IconDoc = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h5l3 3v11H6z" /><path d="M11 3v3h3" /></svg>);
-const IconEnvelope = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="14" height="10" rx="1.6" /><path d="M3.5 6l6.5 5 6.5-5" /></svg>);
 const IconClock = () => (<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" /></svg>);
 const IconWarning = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#D08A4A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3.5 17 16H3z" /><line x1="10" y1="8.4" x2="10" y2="11.6" /><circle cx="10" cy="13.8" r="0.5" fill="#D08A4A" /></svg>);
 const IconInvoice = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#C2410C" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="14" height="10" rx="1.6" /><path d="M3.5 6l6.5 5 6.5-5" /></svg>);
@@ -1098,7 +1097,7 @@ export default function ProjetsClient({
 
                   {"facturer" in col && col.facturer && (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 600, color: "#B7651E", background: "rgba(194,65,12,.07)", borderRadius: 7, padding: "6px 9px", lineHeight: 1.35 }}>
-                      <IconClock />Email facturation envoyé auto à Axonaut
+                      <IconClock />À traiter par la comptabilité dans Facturation
                     </div>
                   )}
 
@@ -1691,28 +1690,20 @@ export default function ProjetsClient({
                 <div>
                   <div style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, marginBottom: 9 }}>Facturation</div>
                   <div style={{ border: "1px solid #E6A972", background: "#FBF3EC", borderRadius: 14, padding: "15px 16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <span style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(194,65,12,.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "#C2410C", flex: "none", fontSize: 13, fontWeight: 800, fontFamily: "Georgia, 'Times New Roman', serif" }}>MCH</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 15.5, fontWeight: 700, color: "#1C1B16" }}>Marie-Claude H.</div>
-                        <div style={{ fontSize: 13.5, color: "#8C8B83", marginTop: 1 }}>Comptabilité · responsable facturation</div>
-                      </div>
-                    </div>
                     {!dp.invoiceNotified ? (
                       <>
-                        <p style={{ fontSize: 14, color: "#8A6A42", lineHeight: 1.45, margin: "12px 0" }}>Envoyer la notification de mise en facturation à Marie-Claude H.</p>
+                        <p style={{ fontSize: 14, color: "#8A6A42", lineHeight: 1.45, margin: "0 0 12px" }}>Une fois le type de facture choisi sur la tâche, marquez le projet comme terminé : la comptabilité le retrouvera dans la page Facturation.</p>
                         <button className="btn" onClick={() => notifyInvoice(dp.id)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, width: "100%", background: "#C2410C", color: "#fff", fontSize: 15, fontWeight: 700, padding: 11, borderRadius: 10, border: "none", fontFamily: "inherit" }}>
-                          <IconEnvelope />Envoyer l&apos;email de facturation
+                          <IconCheck />Marquer terminé
                         </button>
                       </>
                     ) : (
-                      <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 13, background: "#E7F3EB", borderRadius: 10, padding: "10px 13px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 9, background: "#E7F3EB", borderRadius: 10, padding: "10px 13px" }}>
                         <span style={{ width: 24, height: 24, borderRadius: "50%", background: "#1F9D57", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}><IconCheck size={13} /></span>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 14.5, fontWeight: 700, color: "#1F8A5B" }}>Email de facturation envoyé</div>
-                          <div style={{ fontSize: 13, color: "#5C8B6E", marginTop: 1 }}>Notification transmise à Marie-Claude H.</div>
+                          <div style={{ fontSize: 14.5, fontWeight: 700, color: "#1F8A5B" }}>Projet marqué terminé</div>
+                          <div style={{ fontSize: 13, color: "#5C8B6E", marginTop: 1 }}>Visible dans la page Facturation</div>
                         </div>
-                        <span onClick={() => notifyInvoice(dp.id)} style={{ fontSize: 13.5, fontWeight: 600, color: "#1F8A5B", cursor: "pointer", whiteSpace: "nowrap" }}>Renvoyer</span>
                       </div>
                     )}
                   </div>
@@ -2072,7 +2063,7 @@ function KanbanCard({ p, accent, collabsMap, originLabel, originColor, originBg,
         <div style={{ display: "flex", alignItems: "center", gap: 5, flex: "none" }}>
           {showHourglass && <span title="En attente d'un élément" style={{ width: 21, height: 21, borderRadius: 6, background: "rgba(208,138,74,.14)", display: "flex", alignItems: "center", justifyContent: "center", color: "#C2410C" }}><IconHourglass /></span>}
           {showDoc && <span title="BAT uploadé" style={{ width: 21, height: 21, borderRadius: 6, background: "rgba(201,162,78,.16)", display: "flex", alignItems: "center", justifyContent: "center", color: "#B0892B" }}><IconDoc /></span>}
-          {showEnvelope && <span title="Notification facturation envoyée" style={{ width: 21, height: 21, borderRadius: 6, background: "rgba(31,138,91,.14)", display: "flex", alignItems: "center", justifyContent: "center", color: "#1F8A5B" }}><IconEnvelope /></span>}
+          {showEnvelope && <span title="Projet marqué terminé" style={{ width: 21, height: 21, borderRadius: 6, background: "rgba(31,138,91,.14)", display: "flex", alignItems: "center", justifyContent: "center", color: "#1F8A5B" }}><IconCheck size={12} stroke="#1F8A5B" /></span>}
         </div>
       </div>
       <div style={{ fontSize: 16, fontWeight: 700, color: "#1C1B16", lineHeight: 1.3 }}>{p.name}</div>
@@ -2103,12 +2094,12 @@ function KanbanCard({ p, accent, collabsMap, originLabel, originColor, originBg,
       {p.col === "facturer" && (
         !p.invoiceNotified ? (
           <button className="btn" onClick={onNotify} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "100%", marginTop: 11, background: "#C2410C", color: "#fff", fontSize: 13.5, fontWeight: 700, padding: 8, borderRadius: 9, border: "none", fontFamily: "inherit" }}>
-            <IconEnvelope />Envoyer à la facturation
+            <IconCheck />Marquer terminé
           </button>
         ) : (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "100%", marginTop: 11, background: "#E7F3EB", color: "#1F8A5B", fontSize: 13, fontWeight: 700, padding: 8, borderRadius: 9 }}>
             <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10.5 8 14l8-8.5" /></svg>
-            Email facturation envoyé
+            Projet marqué terminé
           </div>
         )
       )}

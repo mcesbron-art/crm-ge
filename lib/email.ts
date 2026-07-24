@@ -97,50 +97,6 @@ export async function sendBatValidationEmail(opts: {
   });
 }
 
-/* ── Email notification facturation ── */
-export async function sendFacturationEmail(opts: {
-  projectName: string;
-  clientName: string;
-  assigneeName: string;
-}) {
-  const to = process.env.FACTURATION_EMAIL;
-  if (!to) {
-    console.warn("[email] FACTURATION_EMAIL non configuré — email non envoyé");
-    return;
-  }
-
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    subject: `Mise en facturation – ${opts.projectName}`,
-    html: `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:32px;background:#F5F5F2;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:14px;padding:32px;box-shadow:0 2px 12px rgba(0,0,0,.07)">
-    <h2 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#0A0A0A">Mise en facturation</h2>
-    <p style="margin:0 0 20px;font-size:13px;color:#8C8B83">Notification automatique CRM Groupe Écho</p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ECEBE4;border-radius:10px;overflow:hidden">
-      <tr><td style="padding:12px 16px;border-bottom:1px solid #ECEBE4;background:#F9F9F7">
-        <span style="font-size:11px;font-weight:700;color:#A6A498;letter-spacing:.08em;text-transform:uppercase">Projet</span>
-        <p style="margin:4px 0 0;font-size:15px;font-weight:700;color:#1C1B16">${opts.projectName}</p>
-      </td></tr>
-      <tr><td style="padding:12px 16px;border-bottom:1px solid #ECEBE4">
-        <span style="font-size:11px;font-weight:700;color:#A6A498;letter-spacing:.08em;text-transform:uppercase">Client</span>
-        <p style="margin:4px 0 0;font-size:14px;color:#33322C">${opts.clientName}</p>
-      </td></tr>
-      <tr><td style="padding:12px 16px">
-        <span style="font-size:11px;font-weight:700;color:#A6A498;letter-spacing:.08em;text-transform:uppercase">Chargé de projet</span>
-        <p style="margin:4px 0 0;font-size:14px;color:#33322C">${opts.assigneeName}</p>
-      </td></tr>
-    </table>
-    <p style="margin:20px 0 0;font-size:13px;color:#8C8B83">Ce projet est prêt à être facturé. Merci de procéder à la facturation via Axonaut.</p>
-  </div>
-</body>
-</html>`,
-  });
-}
-
 /* ── Email notification réponse BAT (acceptation ou refus) ── */
 export async function sendBatResponseEmail(opts: {
   to: string;
