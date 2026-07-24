@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { listInvoices, AxonautError } from "@/lib/axonaut";
 import { getServerSession } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 
 /**
  * GET /api/axonaut/invoices
@@ -10,6 +11,9 @@ export async function GET() {
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+  if (!can(profile.role, "view_billing")) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
 
   try {

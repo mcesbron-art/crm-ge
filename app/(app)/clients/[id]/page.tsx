@@ -1,470 +1,203 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getClient, getClientMetrics, getClientProjects, getClientContact, Client, ClientMetrics, ClientProject, ClientContact } from "@/lib/clients-data";
+import { useClientsStore } from "@/lib/clients-store";
+import { ClientProject } from "@/lib/clients-data";
+import { useAuth } from "@/lib/auth-context";
+import { can } from "@/lib/permissions";
+import AccessDenied from "@/components/AccessDenied";
+import { typography } from "@/lib/typography";
+
+/* ─── Icônes SVG ──────────────────────────────────────────────────────────── */
+
+const IconEmail = ({ stroke = "#B79B5E" }) => (
+  <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="5" width="14" height="11" rx="2" /><path d="M3 6.5 10 11l7-4.5" />
+  </svg>
+);
+const IconPhone = ({ stroke = "#B79B5E" }) => (
+  <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4.5h3l1.4 3.5-2 1.4c.8 1.8 2.3 3.3 4.1 4.1l1.4-2 3.5 1.4v3c0 .6-.5 1-1 1C9.6 17 4 11.4 4 5.5c0-.5.4-1 1-1z" />
+  </svg>
+);
+const IconPin = ({ stroke = "#B79B5E" }) => (
+  <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 17s5.5-4.4 5.5-9A5.5 5.5 0 0 0 4.5 8c0 4.6 5.5 9 5.5 9z" /><circle cx="10" cy="8" r="2" />
+  </svg>
+);
+const IconCalendar = ({ stroke = "#B79B5E" }) => (
+  <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 7h14M5 4v2m10-2v2M4 7h12v9H4z" />
+  </svg>
+);
+const IconGlobe = ({ stroke = "#B08D32" }) => (
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="10" r="7" /><path d="M3 10h14M10 3c2 2.2 2 11.8 0 14M10 3c-2 2.2-2 11.8 0 14" />
+  </svg>
+);
+
+/* ─── Couleur de statut de projet ────────────────────────────────────────── */
+
+function getStatusStyle(status: string) {
+  if (status === "En production") return { dot: "#3B82F6", text: "#3B82F6" };
+  if (status === "Livré")         return { dot: "#3FBF77", text: "#1F9D57" };
+  return { dot: "#9A9990", text: "#9A9990" };
+}
+
+/* ─── Page principale ────────────────────────────────────────────────────── */
 
 export default function ClientDetailPage() {
   const params = useParams();
   const clientId = params?.id as string;
-  const [followupTab, setFollowupTab] = useState<"Opportunités" | "Tâches" | "Tickets">("Tickets");
-  const [showAddTicket, setShowAddTicket] = useState(false);
+  const { currentUser, effectiveRole } = useAuth();
+  const { getClientById, getProjects, getContact } = useClientsStore();
 
-  // État pour les données dynamiques
-  const [client, setClient] = useState<Client | null>(null);
-  const [metrics, setMetrics] = useState<ClientMetrics | null>(null);
-  const [projects, setProjects] = useState<ClientProject[]>([]);
-  const [contact, setContact] = useState<ClientContact | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Charger les données du client
-  useEffect(() => {
-    if (clientId) {
-      const clientData = getClient(clientId);
-      const metricsData = getClientMetrics(clientId);
-      const projectsData = getClientProjects(clientId);
-      const contactData = getClientContact(clientId);
-
-      setClient(clientData);
-      setMetrics(metricsData);
-      setProjects(projectsData);
-      setContact(contactData);
-      setLoading(false);
-    }
-  }, [clientId]);
-
-  if (loading || !client || !metrics) {
-    return <div style={{ padding: "40px", textAlign: "center", color: "#8C8B83" }}>Chargement...</div>;
+  if (!can(effectiveRole, "view_all_pages")) {
+    return (
+      <AccessDenied
+        message="La page Clients est réservée aux administrateurs."
+        user={{ nom: currentUser.nom, role: currentUser.role }}
+      />
+    );
   }
 
-  // Données de documents et activités (à adapter par client)
-  const documents = [
-    { name: "Devis", count: String(Math.floor(Math.random() * 5) + 1) },
-    { name: "Commandes", count: String(Math.floor(Math.random() * 5) + 1) },
-    { name: "Factures", count: String(Math.floor(Math.random() * 8) + 1) },
-  ];
+  const client  = getClientById(clientId);
+  const projects: ClientProject[] = getProjects(clientId);
+  const contact = getContact(clientId);
 
-  const activities = [
-    { author: "Vous", time: "Hier à 18:45", content: `Appel avec ${client.name} concernant le brief projet`, count: "6 commentaires", avatar: "GE", color: "#0A0A0A" },
-    { author: "Maryline L.", time: "Mardi • 2025-03-31", content: "Devis envoyé", count: "1 commentaire", avatar: "ML", color: "#7C3AED" },
-    { author: "Thomas B.", time: "Mercredi • 2025-03-28", content: "Nouvelle prise contact", avatar: "TB", color: "#2563EB" },
-  ];
-
-  const tickets = [
-    { ref: "#T-218", title: "Bug affichage page panier sur mobile", tags: ["Site internet", "Urgent"], priority: "Haute", status: "En cours", assigned: { name: "Adrien D.", initials: "AD", color: "#16A34A" } },
-    { ref: "#T-205", title: "Mise à jour visuels page d'accueil", tags: ["Graphisme", "Site internet"], priority: "Normale", status: "Nouveau", assigned: { name: "Thomas B.", initials: "TB", color: "#2563EB" } },
-  ];
-
-  const kpis = [
-    { label: "CA TOTAL FACTURÉ", value: metrics.totalRevenue, sub: "+18% vs 2024", icon: "💶" },
-    { label: "CA EN COURS", value: metrics.pendingRevenue, sub: "3 devis, en production", icon: "📋" },
-    { label: "MARGE MOYENNE", value: metrics.avgMargin, sub: "Réalisation au-dessus du seuil", icon: "📊" },
-    { label: "PROJETS RÉALISÉS", value: String(metrics.projectCount), sub: `${metrics.deliveredCount} livrés, 1 en cours`, icon: "📦" },
-  ];
-
-  const getStatusColor = (status: string) => {
-    if (status === "En production") return { bg: "#E1F5FE", text: "#0277BD", dot: "#0277BD" };
-    if (status === "Livré") return { bg: "#E8F5E9", text: "#2E7D32", dot: "#2E7D32" };
-    return { bg: "#F5F5F5", text: "#757575", dot: "#757575" };
-  };
-
-  const getPriorityColor = (priority: string) => {
-    if (priority === "Haute") return { bg: "#FED7AA", text: "#92400E" };
-    if (priority === "Normale") return { bg: "#DBEAFE", text: "#1E40AF" };
-    return { bg: "#F0FDF4", text: "#166534" };
-  };
-
-  const getStatusBadgeColor = (status: string) => {
-    if (status === "En cours") return { bg: "#FEF3C7", text: "#92400E" };
-    if (status === "Nouveau") return { bg: "#F3F4F6", text: "#4B5563" };
-    return { bg: "#E0F2FE", text: "#0369A1" };
-  };
-
-  const Modal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-    if (!isOpen) return null;
+  if (!client) {
     return (
-      <>
-        <div onClick={onClose} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", zIndex: 999 }} />
-        <div style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          background: "#fff",
-          border: "1px solid #ECEBE4",
-          borderRadius: 16,
-          padding: 24,
-          width: "90%",
-          maxWidth: 500,
-          zIndex: 1000,
-          fontFamily: "var(--font-plus-jakarta), sans-serif",
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
-              Nouveau ticket
-            </h3>
-            <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C8B83" }}>×</button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <input type="text" placeholder="Titre du ticket" style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
-            <textarea placeholder="Description" rows={3} style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, resize: "none", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }} />
-            <select style={{ padding: "10px 12px", border: "1px solid #ECEBE4", borderRadius: 8, fontSize: 13, fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
-              <option>Sélectionner une priorité</option>
-              <option>Basse</option>
-              <option>Normale</option>
-              <option>Haute</option>
-            </select>
-            <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 12 }}>
-              <button onClick={onClose} style={{ padding: "8px 16px", background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
-                Annuler
-              </button>
-              <button style={{ padding: "8px 16px", background: "#0F0E0A", border: "none", color: "#E9D7A6", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-                Créer
-              </button>
-            </div>
-          </div>
-        </div>
-      </>
+      <div style={{ padding: 40, textAlign: "center", color: "#8C8B83", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+        Client introuvable.
+      </div>
     );
-  };
+  }
 
   return (
-    <div style={{ background: "#F5F4EF", minHeight: "100vh", padding: "26px 30px", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-      {/* Section 1: En-tête + KPIs */}
-      <div style={{ marginBottom: 16 }}>
-        {/* En-tête */}
-        <div style={{
-          background: "#0F0E0A",
-          borderRadius: 16,
-          padding: "20px 24px",
-          marginBottom: 16,
-          display: "flex",
-          gap: 16,
-          alignItems: "flex-start",
-        }}>
-          {/* Avatar */}
-          <div style={{
-            width: 48,
-            height: 48,
-            borderRadius: "50%",
-            background: client.avatarColor,
-            color: "#fff",
-            fontSize: 18,
-            fontWeight: 900,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            fontFamily: "var(--font-playfair), Georgia, serif",
-          }}>
-            {client.avatar}
-          </div>
+    <div style={{ background: "#F5F5F2", minHeight: "100vh", padding: "20px 30px", fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif" }}>
 
-          {/* Contenu */}
-          <div style={{ flex: 1 }}>
-            {/* Titre + Badge */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <h1 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 19, fontWeight: 700, color: "#E9D7A6", margin: 0, lineHeight: 1.1 }}>
+      {/* ── EN-TÊTE CLIENT ── */}
+      <div style={{ background: "#0A0A0A", borderRadius: 18, padding: "26px 28px", color: "#EFE9DA", position: "relative", overflow: "hidden", marginBottom: 16 }}>
+        <div style={{ position: "absolute", top: -70, right: -40, width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle,rgba(201,162,78,.20),transparent 68%)", pointerEvents: "none" }} />
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 20, position: "relative" }}>
+          {/* Avatar */}
+          <span style={{ width: 72, height: 72, borderRadius: 18, background: "linear-gradient(135deg,#E0BC68,#A47E2A)", color: "#1A1206", fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 28, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            {client.avatar}
+          </span>
+
+          {/* Infos */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <h1 style={{ ...typography.pageTitle, fontSize: 30, color: "#F4ECD7" }}>
                 {client.name}
               </h1>
-              <span style={{ background: "#1F9D57", color: "#fff", fontSize: 8, fontWeight: 700, padding: "2px 6px", borderRadius: 2, whiteSpace: "nowrap" }}>
-                ✓ {client.status === "Actif" ? "Client actif" : client.status}
+              <span style={{ display: "flex", alignItems: "center", gap: 6, background: client.status === "Actif" ? "rgba(31,157,87,.16)" : client.status === "Prospect" ? "rgba(37,99,235,.16)" : "rgba(107,114,128,.16)", color: client.status === "Actif" ? "#5FCB8B" : client.status === "Prospect" ? "#60A5FA" : "#9CA3AF", fontSize: 14, fontWeight: 700, padding: "4px 10px", borderRadius: 99 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: client.status === "Actif" ? "#3FBF77" : client.status === "Prospect" ? "#2563EB" : "#6B7280", display: "inline-block" }} />
+                {client.status}
               </span>
             </div>
 
-            {/* Ligne 1: Secteur + SIRET */}
-            <div style={{ display: "flex", gap: 20, fontSize: "10.5px", color: "#A6A498", marginBottom: 4, lineHeight: 1.1 }}>
-              <span>{client.sector}</span>
-              <span style={{ display: "flex", gap: 3 }}>
-                <span>📋</span>
-                <span>{client.siret}</span>
-              </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 9, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 15, color: "#9A9684" }}>{client.sector}</span>
+              {client.siret && client.siret !== "N/C" && <><span style={{ color: "#46443D" }}>·</span><span style={{ fontSize: 15, color: "#9A9684" }}>{client.siret}</span></>}
             </div>
 
-            {/* Ligne 2: Email, Phone, City */}
-            <div style={{ display: "flex", gap: 16, fontSize: "10.5px", color: "#A6A498", marginBottom: 3, lineHeight: 1.1 }}>
-              <span style={{ display: "flex", gap: 3 }}>
-                <span>📧</span>
-                <span>{client.email}</span>
-              </span>
-              <span style={{ display: "flex", gap: 3 }}>
-                <span>☎️</span>
-                <span>{client.phone}</span>
-              </span>
-              <span style={{ display: "flex", gap: 3 }}>
-                <span>📍</span>
-                <span>{client.city}</span>
-              </span>
-            </div>
-
-            {/* Ligne 3: Client depuis */}
-            <div style={{ fontSize: "10.5px", color: "#A6A498", lineHeight: 1.1, display: "flex", gap: 3 }}>
-              <span>📅</span>
-              <span>Client depuis {client.joinDate}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 22, marginTop: 13, flexWrap: "wrap", fontSize: 15, color: "#AEA890" }}>
+              {client.email && <span style={{ display: "flex", alignItems: "center", gap: 7 }}><IconEmail />{client.email}</span>}
+              {client.phone && <span style={{ display: "flex", alignItems: "center", gap: 7 }}><IconPhone />{client.phone}</span>}
+              {client.city  && <span style={{ display: "flex", alignItems: "center", gap: 7 }}><IconPin />{client.city}</span>}
+              {client.joinDate && <span style={{ display: "flex", alignItems: "center", gap: 7 }}><IconCalendar />Client depuis {client.joinDate}</span>}
             </div>
           </div>
 
           {/* Boutons */}
-          <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-            <button style={{ padding: "6px 12px", background: "#ECEBE4", border: "none", borderRadius: 5, fontSize: 10, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16", whiteSpace: "nowrap" }}>
-              ☎️ Contacter
-            </button>
-            <button style={{ padding: "6px 12px", background: "#B08D32", border: "none", borderRadius: 5, fontSize: 10, fontWeight: 600, color: "#fff", cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", whiteSpace: "nowrap" }}>
-              📊 + Nouveau projet
-            </button>
-          </div>
-        </div>
-
-        {/* KPIs */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-          {kpis.map((kpi, i) => (
-            <div key={i} style={{ background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 11, padding: "16px 14px" }}>
-              {/* Header: Label + Icon */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                <span style={{ fontSize: "7px", textTransform: "uppercase", color: "#9A988F", fontWeight: 900, letterSpacing: "0.12em", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-                  {kpi.label}
-                </span>
-                <span style={{ fontSize: 14, color: "#E4C77B", opacity: 0.5 }}>
-                  {kpi.icon}
-                </span>
-              </div>
-
-              {/* Value */}
-              <div style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1C1B16", marginBottom: 8, lineHeight: 1 }}>
-                {kpi.value}
-              </div>
-
-              {/* Sub */}
-              <div style={{ fontSize: "9px", color: "#8C8B83", lineHeight: 1.3, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-                {kpi.sub}
-              </div>
+          {client.email && (
+            <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
+              <a href={`mailto:${client.email}`} style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,.06)", border: "1px solid #2A2825", color: "#E7E4DA", fontSize: 15, fontWeight: 600, padding: "9px 15px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", textDecoration: "none" }}>
+                <IconEmail stroke="#E7E4DA" />Contacter
+              </a>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
-      {/* Section 2: Projets + Contacts + Documents */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, marginBottom: 24 }}>
-        {/* Projets */}
-        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
-              Projets du client
-            </h3>
-            <span style={{ fontSize: 12, color: "#8C8B83", fontWeight: 600 }}>{projects.length} projets</span>
-          </div>
+      {/* ── DEUX COLONNES ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.62fr 1fr", gap: 16, marginBottom: 16 }}>
 
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, paddingBottom: 12, borderBottom: "1px solid #ECEBE4", marginBottom: 12 }}>
-            <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>PROJET</span>
-            <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>STATUT</span>
-            <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>MONTANT</span>
-            <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>DATE</span>
-          </div>
+        {/* COLONNE GAUCHE */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-          {projects.length > 0 ? (
-            projects.map((proj, i) => {
-              const colors = getStatusColor(proj.status);
+          {/* Projets */}
+          <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, padding: "22px 24px", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <h3 style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 19, fontWeight: 700, color: "#16150F", margin: 0 }}>Projets du client</h3>
+              <span style={{ fontSize: 14.5, color: "#9A998F" }}>{projects.length} projet{projects.length !== 1 ? "s" : ""}</span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1.3fr 1fr", gap: 14, paddingBottom: 11, borderBottom: "1px solid #EEEDE6" }}>
+              {["Projet", "Statut", "Date"].map((h, i) => (
+                <span key={h} style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, textAlign: i === 2 ? "right" : "left" }}>{h}</span>
+              ))}
+            </div>
+
+            {projects.length > 0 ? projects.map(proj => {
+              const s = getStatusStyle(proj.status);
               return (
-                <div key={proj.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 12, padding: "12px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
+                <div key={proj.id} style={{ display: "grid", gridTemplateColumns: "2.5fr 1.3fr 1fr", gap: 14, alignItems: "center", padding: "14px 0", borderBottom: "1px solid #F2F1EB" }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{proj.name}</div>
-                    <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 2 }}>{proj.id}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#1C1B16" }}>{proj.name}</div>
+                    <div style={{ fontSize: 14, color: "#A6A498", marginTop: 3 }}>{proj.id}</div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: colors.dot }} />
-                    <span style={{ fontSize: 12, color: colors.text }}>{proj.status}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: s.dot, display: "inline-block" }} />
+                    <span style={{ fontSize: 15, color: "#5C5A52", fontWeight: 500 }}>{proj.status}</span>
                   </div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#1C1B16" }}>{proj.amount}</div>
-                  <div style={{ fontSize: 12, color: "#8C8B83" }}>{proj.date}</div>
+                  <div style={{ fontSize: 15, color: "#8C8B83", textAlign: "right" }}>{proj.date}</div>
                 </div>
               );
-            })
-          ) : (
-            <div style={{ textAlign: "center", padding: "20px", color: "#8C8B83" }}>Aucun projet pour ce client</div>
+            }) : (
+              <div style={{ padding: "24px", textAlign: "center", color: "#A6A498", fontSize: 15 }}>
+                Aucun projet pour ce client
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          {client.description && (
+            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, padding: "22px 24px", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+              <h3 style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 19, fontWeight: 700, color: "#16150F", margin: "0 0 12px" }}>À propos</h3>
+              <p style={{ fontSize: 15.5, color: "#5C5A52", lineHeight: 1.65, margin: 0 }}>{client.description}</p>
+            </div>
           )}
         </div>
 
-        {/* Contacts + Documents */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+        {/* COLONNE DROITE */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
           {/* Contact référent */}
           {contact && (
-            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
-              <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
-                Contact référent
-              </h3>
-              <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: "50%", background: contact.color, color: "#fff", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, padding: "22px 24px", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+              <h3 style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18, fontWeight: 700, color: "#16150F", margin: "0 0 16px" }}>Contact référent</h3>
+              <div style={{ display: "flex", alignItems: "center", gap: 13, paddingBottom: 16, borderBottom: "1px solid #F0EFEA" }}>
+                <span style={{ width: 46, height: 46, borderRadius: "50%", background: contact.color, color: "#fff", fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   {contact.avatar}
-                </div>
+                </span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16" }}>{contact.name}</div>
-                  <div style={{ fontSize: 11, color: "#8C8B83" }}>{contact.role}</div>
+                  <div style={{ fontSize: 16.5, fontWeight: 700, color: "#1C1B16" }}>{contact.name}</div>
+                  <div style={{ fontSize: 14.5, color: "#8C8B83", marginTop: 2 }}>{contact.role}</div>
                 </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12, color: "#8C8B83" }}>
-                <div>📧 {contact.email}</div>
-                <div>☎️ {contact.phone}</div>
-                <div>🌐 {client.website || "N/A"}</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 13, marginTop: 16 }}>
+                {contact.email && <div style={{ display: "flex", alignItems: "center", gap: 11, fontSize: 15, color: "#4A483F" }}><IconEmail stroke="#B08D32" />{contact.email}</div>}
+                {contact.phone && <div style={{ display: "flex", alignItems: "center", gap: 11, fontSize: 15, color: "#4A483F" }}><IconPhone stroke="#B08D32" />{contact.phone}</div>}
+                {client.website && <div style={{ display: "flex", alignItems: "center", gap: 11, fontSize: 15, color: "#4A483F" }}><IconGlobe />{client.website}</div>}
               </div>
             </div>
           )}
 
-          {/* Documents commerciaux */}
-          <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
-                Documents commerciaux
-              </h3>
-              <span style={{ fontSize: 12, color: "#8C8B83", cursor: "pointer" }}>Tout voir</span>
-            </div>
-            <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-              {documents.map((doc, i) => (
-                <button key={i} style={{ padding: "6px 12px", background: "#F5F4EF", border: "1px solid #ECEBE4", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-plus-jakarta), sans-serif", color: "#1C1B16" }}>
-                  {doc.name} <span style={{ fontWeight: 700 }}>{doc.count}</span>
-                </button>
-              ))}
-            </div>
-            <div style={{ fontSize: 12, color: "#8C8B83", textAlign: "center", padding: "16px" }}>
-              Aucun document pour le moment
-            </div>
-          </div>
         </div>
       </div>
-
-      {/* Section 3: Activité récente + Documents partagés */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-        {/* Activité */}
-        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
-          <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: "0 0 16px", color: "#1C1B16" }}>
-            Activité récente
-          </h3>
-          {activities.map((act, i) => (
-            <div key={i} style={{ paddingBottom: 16, marginBottom: 16, borderBottom: i < activities.length - 1 ? "1px solid #F5F4EF" : "none", display: "flex", gap: 12 }}>
-              <div style={{ width: 32, height: 32, borderRadius: "50%", background: act.color, color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                {act.avatar}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#1C1B16" }}>{act.author}</div>
-                <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 2 }}>{act.time}</div>
-                <div style={{ fontSize: 12, color: "#56544C", marginTop: 4 }}>{act.content}</div>
-                {act.count && <div style={{ fontSize: 11, color: "#8C8B83", marginTop: 4, cursor: "pointer" }}>⭐ {act.count}</div>}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Documents partagés */}
-        <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 20, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
-              Documents partagés
-            </h3>
-            <span style={{ fontSize: 12, color: "#8C8B83", cursor: "pointer" }}>Tout voir</span>
-          </div>
-          <div style={{ fontSize: 12, color: "#8C8B83", textAlign: "center", padding: "32px 16px" }}>
-            Aucun document partagé
-          </div>
-        </div>
-      </div>
-
-      {/* Section 4: Suivi client */}
-      <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: 24, fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h3 style={{ fontFamily: "var(--font-playfair), Georgia, serif", fontSize: 24, fontWeight: 700, margin: 0, color: "#1C1B16" }}>
-            Suivi client
-          </h3>
-
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <div style={{ display: "flex", gap: 8, background: "#F5F4EF", padding: "6px 8px", borderRadius: 8 }}>
-              {[
-                { label: "Opportunités", count: 3 },
-                { label: "Tâches", count: 5 },
-                { label: "Tickets", count: 2 },
-              ].map((tab) => (
-                <button
-                  key={tab.label}
-                  onClick={() => setFollowupTab(tab.label as any)}
-                  style={{
-                    background: followupTab === tab.label ? "#fff" : "transparent",
-                    border: followupTab === tab.label ? "1px solid #ECEBE4" : "none",
-                    color: followupTab === tab.label ? "#1C1B16" : "#8C8B83",
-                    padding: "6px 12px",
-                    borderRadius: 6,
-                    fontSize: "12px",
-                    fontWeight: followupTab === tab.label ? 700 : 600,
-                    cursor: "pointer",
-                    fontFamily: "var(--font-plus-jakarta), sans-serif",
-                  }}
-                >
-                  {tab.label} <span style={{ fontWeight: 700 }}>{tab.count}</span>
-                </button>
-              ))}
-            </div>
-
-            <button onClick={() => setShowAddTicket(true)} style={{ padding: "8px 16px", background: "#0F0E0A", border: "none", color: "#E9D7A6", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer", marginLeft: "auto", fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-              ➕ Nouveau {followupTab === "Tickets" ? "ticket" : followupTab === "Tâches" ? "tâche" : "opportunité"}
-            </button>
-          </div>
-        </div>
-
-        {followupTab === "Tickets" && (
-          <div>
-            <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, paddingBottom: 12, borderBottom: "1px solid #ECEBE4", marginBottom: 12 }}>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>RÉF.</span>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>SUJET</span>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>PRIORITÉ</span>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>STATUT</span>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>AFFECTÉ À</span>
-            </div>
-
-            {tickets.map((ticket, i) => {
-              const priColor = getPriorityColor(ticket.priority);
-              const statColor = getStatusBadgeColor(ticket.status);
-              return (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "0.8fr 1.5fr 1fr 0.8fr 0.8fr 1fr", gap: 16, padding: "16px 0", borderBottom: "1px solid #F5F4EF", alignItems: "center" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#8C8B83" }}>{ticket.ref}</div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16", marginBottom: 4 }}>{ticket.title}</div>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {ticket.tags.map((tag, j) => (
-                        <span key={j} style={{ fontSize: 11, color: "#2563EB", background: "#DBEAFE", padding: "2px 8px", borderRadius: 4 }}>
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ background: priColor.bg, color: priColor.text, fontSize: 12, fontWeight: 600, padding: "4px 8px", borderRadius: 6, display: "inline-block" }}>
-                    🔴 {ticket.priority}
-                  </div>
-                  <div style={{ background: statColor.bg, color: statColor.text, fontSize: 12, fontWeight: 600, padding: "4px 8px", borderRadius: 6, display: "inline-block" }}>
-                    {ticket.status}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: "50%", background: ticket.assigned.color, color: "#fff", fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {ticket.assigned.initials}
-                    </div>
-                    <span style={{ fontSize: 12, fontWeight: 500, color: "#1C1B16" }}>{ticket.assigned.name}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {followupTab === "Opportunités" && (
-          <div style={{ textAlign: "center", padding: "32px", color: "#8C8B83" }}>
-            Aucune opportunité pour le moment
-          </div>
-        )}
-
-        {followupTab === "Tâches" && (
-          <div style={{ textAlign: "center", padding: "32px", color: "#8C8B83" }}>
-            Aucune tâche pour le moment
-          </div>
-        )}
-      </div>
-
-      <Modal isOpen={showAddTicket} onClose={() => setShowAddTicket(false)} />
     </div>
   );
 }

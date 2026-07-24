@@ -18,7 +18,7 @@ export default function StatutBadge({ statut, type = "projet" }: Props) {
         display: "inline-flex", alignItems: "center", gap: 6,
         padding: "4px 12px", borderRadius: 20,
         background: colors.bg, color: colors.text,
-        fontSize: 12, fontWeight: 600, letterSpacing: 0.2,
+        fontSize: 14, fontWeight: 600, letterSpacing: 0.2,
         whiteSpace: "nowrap",
       }}
     >

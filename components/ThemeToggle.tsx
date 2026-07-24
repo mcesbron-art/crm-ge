@@ -13,7 +13,7 @@ export function ThemeToggle() {
         background: mode === "dark" ? "#FFF8F0" : "#1A1A1A",
         border: "none",
         borderRadius: 8,
-        fontSize: 13,
+        fontSize: 15,
         fontWeight: 600,
         color: mode === "dark" ? "#1A1A1A" : "#FFE0B2",
         cursor: "pointer",

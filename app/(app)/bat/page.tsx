@@ -91,7 +91,7 @@ export default function BatPage() {
           fontFamily: "var(--font-dm-serif-display), Georgia, serif",
           fontSize: 30, color: COLORS.noir, margin: "0 0 4px", fontWeight: 400,
         }}>BAT — Bons à tirer</h1>
-        <p style={{ color: COLORS.grisMoyen, fontSize: 14, margin: 0 }}>
+        <p style={{ color: COLORS.grisMoyen, fontSize: 16, margin: 0 }}>
           Upload des PDF · génération de lien public client · validation par signature
         </p>
       </div>
@@ -100,7 +100,7 @@ export default function BatPage() {
         <div style={{
           padding: "12px 16px", marginBottom: 16,
           background: COLORS.rougeBg, border: `1px solid ${COLORS.rouge}44`,
-          borderRadius: 10, color: COLORS.rouge, fontSize: 13, fontWeight: 600,
+          borderRadius: 10, color: COLORS.rouge, fontSize: 15, fontWeight: 600,
           display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12,
         }}>
           <span>{error || storageError}</span>
@@ -125,7 +125,7 @@ export default function BatPage() {
             border: kpi.accent ? "none" : `1px solid ${COLORS.grisBorder}`,
           }}>
             <div style={{
-              fontSize: 11, color: kpi.accent ? "#888" : COLORS.grisMoyen,
+              fontSize: 13, color: kpi.accent ? "#888" : COLORS.grisMoyen,
               textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6,
             }}>{kpi.label}</div>
             <div style={{
@@ -143,7 +143,7 @@ export default function BatPage() {
           background: COLORS.dorePale, border: `1px solid ${COLORS.dore}55`,
           borderRadius: 14, padding: "16px 20px", marginBottom: 24,
         }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.dore, marginBottom: 10 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: COLORS.dore, marginBottom: 10 }}>
             ▲ Tâches en attente d&apos;envoi de BAT ({PENDING_TASKS.length})
           </div>
           {PENDING_TASKS.map((task) => {
@@ -151,7 +151,7 @@ export default function BatPage() {
             return (
               <div key={task.id} style={{
                 display: "flex", alignItems: "center", gap: 12,
-                padding: "8px 0", fontSize: 13,
+                padding: "8px 0", fontSize: 15,
               }}>
                 <Avatar collab={collab} size={26} />
                 <div style={{ flex: 1 }}>
@@ -161,7 +161,7 @@ export default function BatPage() {
                 <label style={{
                   padding: "6px 14px", borderRadius: 8,
                   background: COLORS.noir, color: COLORS.dore,
-                  fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  fontSize: 14, fontWeight: 600, cursor: "pointer",
                 }}>
                   + Uploader le BAT
                   <input
@@ -197,7 +197,7 @@ export default function BatPage() {
               border: `1px solid ${filter === f.id ? COLORS.dore : COLORS.grisBorder}`,
               background: filter === f.id ? COLORS.dorePale : COLORS.blanc,
               color:      filter === f.id ? COLORS.dore     : COLORS.grisMoyen,
-              fontSize: 12, fontWeight: 600, cursor: "pointer",
+              fontSize: 14, fontWeight: 600, cursor: "pointer",
             }}
           >{f.label}</button>
         ))}
@@ -258,15 +258,15 @@ function BatRow({
             <span style={{
               padding: "2px 8px", borderRadius: 4,
               background: COLORS.gris, color: COLORS.grisMoyen,
-              fontSize: 10, fontWeight: 700,
+              fontSize: 12, fontWeight: 700,
             }}>v{bat.version}</span>
             <span style={{
               padding: "3px 10px", borderRadius: 12,
               background: stat.bg, color: stat.color,
-              fontSize: 11, fontWeight: 700,
+              fontSize: 13, fontWeight: 700,
             }}>{stat.label}</span>
           </div>
-          <div style={{ fontSize: 12, color: COLORS.grisMoyen, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ fontSize: 14, color: COLORS.grisMoyen, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <span><strong>Projet :</strong> {bat.projet}</span>
             <span>·</span>
             <span><strong>Client :</strong> {bat.client}</span>
@@ -285,7 +285,7 @@ function BatRow({
           style={{
             padding: "8px 14px", borderRadius: 8,
             background: COLORS.blanc, border: `1px solid ${COLORS.grisBorder}`,
-            color: COLORS.noir, fontSize: 12, fontWeight: 600, cursor: "pointer",
+            color: COLORS.noir, fontSize: 14, fontWeight: 600, cursor: "pointer",
           }}
         >{isExpanded ? "Fermer" : "Ouvrir ▾"}</button>
       </div>

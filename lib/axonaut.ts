@@ -182,6 +182,41 @@ export type AxonautContract = {
  * Si les résultats semblent inversés, remplacer `updated_after` par
  * `updated_before` dans le chemin ci-dessous.
  */
+// ---------------------------------------------------------------------------
+// Tickets support
+// ---------------------------------------------------------------------------
+
+export type AxonautTicketComment = {
+  date: string;
+  author: string;
+  text: string;
+};
+
+export type AxonautTicket = {
+  id: number;
+  title: string;
+  reference: string;
+  status: string;    // ex: "0. Ouvert" | "X. Fermé"
+  priority: string;  // "Basse" | "Normale" | "Haute" | "Urgente"
+  is_closed: boolean;
+  company_id: number | null;
+  project_id: number | null;
+  creation_date: string;
+  last_update_date: string;
+  comments?: AxonautTicketComment[];
+};
+
+/**
+ * Récupère les tickets Axonaut modifiés après une date donnée.
+ * Format date : DD/MM/YYYY (slashes littéraux, non encodés).
+ */
+export async function listTicketsSince(updatedAfterDDMMYYYY?: string): Promise<AxonautTicket[]> {
+  const path = updatedAfterDDMMYYYY
+    ? `/tickets?updated_after=${updatedAfterDDMMYYYY}`
+    : "/tickets";
+  return axonautFetchAll<AxonautTicket>(path);
+}
+
 export async function listContractsSince(updatedAfterDDMMYYYY?: string): Promise<AxonautContract[]> {
   // Les slashes du format DD/MM/YYYY ne doivent PAS être encodés en %2F :
   // Axonaut ne peut pas parser "01%2F01%2F2026" comme date et ignore silencieusement le filtre.

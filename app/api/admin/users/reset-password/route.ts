@@ -6,24 +6,24 @@ import {
 
 /**
  * POST /api/admin/users/reset-password
- * RÉSERVÉ DIRECTION — propose 2 modes :
+ * RÉSERVÉ ADMIN — propose 2 modes :
  *
  * Mode A — { email, sendEmail: true }   (recommandé)
  *   Supabase envoie un email de réinitialisation à l'utilisateur.
  *   L'utilisateur définit lui-même son nouveau mot de passe.
  *
  * Mode B — { email, newPassword: "..." }
- *   La Direction définit directement un mot de passe (à transmettre en main propre).
+ *   L'admin définit directement un mot de passe (à transmettre en main propre).
  *   L'utilisateur peut ensuite le changer via "Mot de passe oublié" s'il le souhaite.
  */
 export async function POST(req: Request) {
-  // 1. Vérifie que l'appelant est Direction
+  // 1. Vérifie que l'appelant est Admin
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
-  if (profile.role !== "direction") {
-    return NextResponse.json({ error: "Accès réservé à la Direction" }, { status: 403 });
+  if (profile.role !== "admin") {
+    return NextResponse.json({ error: "Accès réservé aux administrateurs" }, { status: 403 });
   }
 
   // 2. Validation

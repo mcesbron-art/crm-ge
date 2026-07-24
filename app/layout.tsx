@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { BatProvider } from "@/lib/bat-context";
 import { OpportunitiesProvider } from "@/lib/opportunities-context";
@@ -15,12 +15,6 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-plus-jakarta",
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-playfair",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -41,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${inter.variable} ${plusJakartaSans.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <ThemeProvider>
           <BatProvider>

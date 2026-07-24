@@ -14,13 +14,8 @@ export function InteractiveChart({
 }: {
   height?: number;
 }) {
-  let isDark = false;
-  try {
-    const { mode } = useTheme();
-    isDark = mode === "dark";
-  } catch {
-    isDark = false;
-  }
+  const { mode } = useTheme();
+  const isDark = mode === "dark";
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
     null
@@ -301,12 +296,12 @@ export function InteractiveChart({
             transform: "translateX(-50%)",
           }}
         >
-          <div style={{ fontSize: "11px", color: textColor, marginBottom: "4px" }}>
+          <div style={{ fontSize: "13px", color: textColor, marginBottom: "4px" }}>
             {data[0].date} – {data[data.length - 1].date}
           </div>
           <div
             style={{
-              fontSize: "14px",
+              fontSize: "16px",
               fontWeight: "700",
               color: goldColor,
             }}

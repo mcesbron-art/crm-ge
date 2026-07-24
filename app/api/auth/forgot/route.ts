@@ -6,8 +6,11 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
  * Body : { email }
  *
  * Demande à Supabase d'envoyer un email de réinitialisation à l'utilisateur.
- * Le lien dans l'email pointe vers /reset-password (à configurer dans
- * Supabase Authentication > URL Configuration > Redirect URLs).
+ * Le lien dans l'email pointe vers /auth/reset-callback (à configurer dans
+ * Supabase Authentication > URL Configuration > Redirect URLs), qui échange
+ * le code PKCE côté serveur avant de rediriger vers /reset-password — voir
+ * app/auth/reset-callback/route.ts pour le pourquoi (le faire côté
+ * navigateur cassait avec "PKCE code verifier not found in storage").
  *
  * Réponse toujours 200 (anti-enumeration) — le message ne révèle pas si l'email existe.
  */
@@ -29,7 +32,7 @@ export async function POST(req: Request) {
 
   // resetPasswordForEmail envoie un email avec un lien magique vers redirectTo
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${appUrl}/reset-password`,
+    redirectTo: `${appUrl}/auth/reset-callback`,
   });
 
   // Message neutre — pas d'erreur même si l'email n'existe pas (anti-enum)

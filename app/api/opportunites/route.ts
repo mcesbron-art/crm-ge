@@ -3,11 +3,14 @@ import {
   createSupabaseServerClient,
   getServerSession,
 } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 import type { OpportunityStatus } from "@/lib/opportunites-types";
 
 /**
  * GET  /api/opportunites
  * Renvoie toutes les opportunités enrichies (avec client, commercial, demandeur).
+ * Un collaborateur ne voit que celles qu'il a créées (demandeur_id) —
+ * jamais un filtre envoyé par le client.
  *
  * POST /api/opportunites
  * Crée une nouvelle opportunité. Le demandeur est automatiquement l'utilisateur connecté.
@@ -20,7 +23,7 @@ export async function GET() {
   }
 
   const supabase = createSupabaseServerClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("opportunites")
     .select(
       `
@@ -31,8 +34,13 @@ export async function GET() {
       commercial:commerciaux(id, nom, email),
       demandeur:collaborateurs!opportunites_demandeur_id_fkey(id, nom, email)
     `,
-    )
-    .order("updated_at", { ascending: false });
+    );
+
+  if (!can(profile.role, "view_all_opportunities")) {
+    query = query.eq("demandeur_id", profile.id);
+  }
+
+  const { data, error } = await query.order("updated_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -44,6 +52,9 @@ export async function POST(req: Request) {
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+  if (!can(profile.role, "create_opportunity")) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
 
   let body: Record<string, unknown>;

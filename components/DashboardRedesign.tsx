@@ -1,672 +1,349 @@
 "use client";
 
-import { InteractiveChart } from "@/components/InteractiveChart";
-import { useTheme } from "@/lib/theme-context";
-import {
-  PROJETS,
-  getRentabiliteColor,
-} from "@/lib/mock-data";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
+import { typography } from "@/lib/typography";
 
-function KPICard({
-  label,
-  value,
-  sub,
-  icon,
-  isBlack = false,
-  subColor,
-  iconColor,
-  iconBg,
-  iconBlur = false,
-  isDarkMode = false,
-}: {
-  label: string;
-  value: React.ReactNode;
-  sub?: React.ReactNode;
-  icon: string | React.ReactNode;
-  isBlack?: boolean;
-  subColor?: string;
-  iconColor?: string;
-  iconBg?: string;
-  iconBlur?: boolean;
-  isDarkMode?: boolean;
-}) {
-  const bgColor = isBlack
-    ? (isDarkMode ? "#C5A55A" : "#0F0F0F")
-    : (isDarkMode ? "#1F1F1F" : "#FFFFFF");
-  const textColor = isBlack
-    ? (isDarkMode ? "#000000" : "#FFFFFF")
-    : (isDarkMode ? "#E0E0E0" : "#1A1A1A");
-  const labelColor = isBlack
-    ? (isDarkMode ? "#000000" : "#C5A55A")
-    : (isDarkMode ? "#999999" : "#666666");
-  const borderColor = isDarkMode ? "#2F2F2F" : (isBlack ? "#2F2F2F" : "#E8E8E8");
-  const finalIconColor = iconColor || (isBlack ? "#C5A55A" : "#C5A55A");
+/* ─── Types API ─── */
+type PersonalWidgets = {
+  weekLabel: string;
+  weekTotal: string;
+  timeDays: { label: string; date: string; hours: string; hoursColor: string; statusDot: string; statusColor: string; statusLabel: string; dash: number; ringColor: string }[];
+  hasMissingDays: boolean;
+  missingCount: number;
+  overtime: {
+    balance: string; pending: string; refused: string;
+    rows: { id: string; project: string; client: string; accent: string; hours: string; statusLabel: string; statusColor: string; statusBg: string }[];
+  };
+};
+type TaskItem = {
+  id: string; ref: string; priority: string; prioColor: string; prioBg: string;
+  title: string; project: string; due: string; dueColor: string; dueWeight: number;
+  ownerName: string; ownerColor: string;
+};
+type TicketItem = {
+  id: string; ref: string; status: string; statusColor: string; statusBg: string; statusDot: string;
+  title: string; client: string; due: string; dueColor: string; dueWeight: number;
+  ownerName: string; ownerColor: string;
+};
+type DashboardData = {
+  kpi: { tasksCount: number; ticketsOpen: number; dueToday: number };
+  tasks: TaskItem[];
+  moreTasks: number;
+  tickets: TicketItem[];
+  moreTickets: number;
+  personal: PersonalWidgets;
+};
 
+function getInitials(nom: string): string {
+  return nom.split(" ").map(w => w[0] ?? "").join("").slice(0, 2).toUpperCase();
+}
+
+/* Circonférence utilisée côté serveur pour calculer `dash` (anneau, avant
+   refonte) — reconvertie ici en pourcentage pour la barre horizontale, sans
+   toucher à /api/dashboard. */
+const RING_CIRC = 2 * Math.PI * 27;
+function pctFromDash(dash: number): number {
+  return Math.max(0, Math.min(100, Math.round((dash / RING_CIRC) * 100)));
+}
+
+/* Style commun des grands nombres de KPI — Inter (pas Playfair, cf. la
+   harmonisation typographique du reste du CRM) mais volontairement plus
+   grand/gras que le corps de texte pour rester le point focal des cartes. */
+const statNumber = (color: string, size = 28): React.CSSProperties => ({
+  fontFamily: typography.pageTitle.fontFamily,
+  fontSize: size,
+  fontWeight: 800,
+  lineHeight: 1,
+  color,
+});
+const eyebrow = (color: string): React.CSSProperties => ({
+  fontSize: 10,
+  letterSpacing: ".1em",
+  textTransform: "uppercase",
+  fontWeight: 700,
+  color,
+});
+
+/* ─── Icônes ─── */
+const IconTicket = () => (
+  <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="5.5" width="14" height="9" rx="2" /><line x1="10" y1="5.5" x2="10" y2="14.5" strokeDasharray="1.6 1.6" />
+  </svg>
+);
+const IconClock = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="10" r="7" /><path d="M10 6v4l3 2" />
+  </svg>
+);
+const IconOvertime = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" />
+  </svg>
+);
+
+// Ligne cliquable — renvoie directement vers la tâche (Mes tâches, avec
+// deep-link ?open=) ou le ticket (sa page de détail dédiée), avec un effet
+// de survol. Extrait en composant à part car un Hook (useState du survol) ne
+// peut pas être appelé dans un callback .map().
+function TaskRow({ t }: { t: TaskItem }) {
+  const [hover, setHover] = useState(false);
   return (
-    <div
-      style={{
-        background: bgColor,
-        borderRadius: 20,
-        padding: "24px 20px",
-        border: `1px solid ${borderColor}`,
-        position: "relative",
-        overflow: "hidden",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-        minHeight: "120px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
+    <Link
+      href={`/mes-taches?open=${t.id}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ display: "flex", flexDirection: "column", gap: 8, padding: "14px 20px", borderBottom: "1px solid #F2F1EB", textDecoration: "none", color: "inherit", background: hover ? "#FBFAF6" : "transparent", cursor: "pointer" }}
     >
-      <div>
-        <div
-          style={{
-            fontSize: 10,
-            color: isBlack ? "#C5A55A" : labelColor,
-            fontWeight: 600,
-            letterSpacing: 0.5,
-            textTransform: "uppercase",
-            marginBottom: 8,
-          }}
-        >
-          {label}
-        </div>
-        <div
-          style={{
-            fontSize: 50,
-            fontWeight: 700,
-            color: textColor,
-            lineHeight: 1.1,
-            fontFamily: "Georgia, serif",
-          }}
-        >
-          {value}
-        </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: t.prioColor, background: t.prioBg, borderRadius: 99, padding: "3px 10px", whiteSpace: "nowrap" }}>{t.priority}</span>
+        <span style={{ fontSize: 12, color: "#A6A498" }}>{t.ref}</span>
       </div>
-      {sub && typeof sub === "string" ? (
-        <div style={{ fontSize: 12, color: subColor || labelColor, marginTop: 8, fontWeight: 400 }}>
-          {sub}
-        </div>
-      ) : (
-        <div style={{ fontSize: 12, marginTop: 8, fontWeight: 400 }}>
-          {sub}
-        </div>
-      )}
-      <div
-        style={{
-          position: "absolute",
-          top: 16,
-          right: 16,
-          fontSize: 20,
-          opacity: iconBlur ? 0.2 : (isBlack ? 0.5 : 0.6),
-          color: iconBg === "#e5d1a2" ? "#9B8340" : iconBg === "#C5A55A" ? "#9B8340" : iconBg === "#FF9966" ? "#D85A3A" : finalIconColor,
-          background: iconBg,
-          width: iconBg ? 48 : "auto",
-          height: iconBg ? 48 : "auto",
-          borderRadius: iconBg ? 12 : "auto",
-          display: iconBg ? "flex" : "block",
-          alignItems: iconBg ? "center" : "auto",
-          justifyContent: iconBg ? "center" : "auto",
-          filter: iconBlur ? "blur(2px)" : "none",
-        }}
-      >
-        {icon}
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: "#1C1B16", lineHeight: 1.35 }}>{t.title}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        <span style={{ fontSize: 12, color: "#8C8B83", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.project}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, flex: "none" }}>
+          <span style={{ fontSize: 11.5, fontWeight: t.dueWeight, color: t.dueColor }}>{t.due}</span>
+          <span title={t.ownerName} style={{ width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8.5, fontWeight: 700, color: "#fff", background: t.ownerColor }}>{getInitials(t.ownerName)}</span>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
+function TicketRow({ tk }: { tk: TicketItem }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <Link
+      href={`/tickets/${tk.id}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ display: "flex", flexDirection: "column", gap: 8, padding: "14px 20px", borderBottom: "1px solid #F2F1EB", textDecoration: "none", color: "inherit", background: hover ? "#FBFAF6" : "transparent", cursor: "pointer" }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700, color: tk.statusColor, background: tk.statusBg, borderRadius: 99, padding: "3px 10px", whiteSpace: "nowrap" }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: tk.statusDot }} />{tk.status}
+        </span>
+        <span style={{ fontSize: 12, color: "#A6A498" }}>{tk.ref}</span>
+      </div>
+      <div style={{ fontSize: 13.5, fontWeight: 700, color: "#1C1B16", lineHeight: 1.35 }}>{tk.title}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        <span style={{ fontSize: 12, color: "#8C8B83", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{tk.client}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, flex: "none" }}>
+          <span style={{ fontSize: 11.5, fontWeight: tk.dueWeight, color: tk.dueColor }}>{tk.due}</span>
+          <span title={tk.ownerName} style={{ width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8.5, fontWeight: 700, color: "#fff", background: tk.ownerColor }}>{getInitials(tk.ownerName)}</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+/* ─── Composant principal ─── */
+// Dashboard unique — identique pour Admin et Collaborateur : chacun voit ses
+// propres tâches/tickets assignés, son temps passé et ses heures
+// supplémentaires. Pas de vue "indicateurs globaux" séparée pour l'Admin
+// (remplacement complet demandé par l'utilisateur, cf. historique de la
+// page /dashboard).
 export default function DashboardRedesign() {
-  const { mode, toggleMode } = useTheme();
-  const isDark = mode === "dark";
+  const { currentUser } = useAuth();
 
-  const totalCA = PROJETS.reduce((s, p) => s + p.montantHT, 0);
-  const totalTaches = PROJETS.reduce((s, p) => s + p.taches.length, 0);
-  const tachesEnCours = PROJETS.reduce(
-    (s, p) => s + p.taches.filter((t) => t.statut === "En cours").length,
-    0
-  );
-  const alertes = PROJETS.reduce(
-    (s, p) =>
-      s +
-      p.taches.filter(
-        (t) => t.tempsAlloue > 0 && t.tempsConsomme / t.tempsAlloue >= 0.75
-      ).length,
-    0
-  );
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const tachesAlerte = PROJETS.flatMap((p) =>
-    p.taches
-      .filter(
-        (t) => t.tempsAlloue > 0 && t.tempsConsomme / t.tempsAlloue >= 0.75
-      )
-      .map((t, idx) => ({
-        ...t,
-        projet: p.nom,
-        id: `${p.id}-${idx}`,
-      }))
-  );
+  const load = useCallback(() => {
+    setLoading(true);
+    return fetch("/api/dashboard")
+      .then(r => r.json())
+      .then((d: DashboardData) => setData(d))
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, []);
 
-  // Theme colors
-  const bgColor = isDark ? "#0A0A0A" : "transparent";
-  const cardBg = isDark ? "#1F1F1F" : "transparent";
-  const sectionCardBg = isDark ? "#1F1F1F" : "#FFFFFF";
-  const textColor = isDark ? "#E0E0E0" : "#1A1A1A";
-  const subtextColor = isDark ? "#999999" : "#666666";
-  const borderColor = isDark ? "#2F2F2F" : "#E8E8E8";
+  useEffect(() => { load(); }, [load]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: bgColor,
-        color: textColor,
-        transition: "background 0.3s ease, color 0.3s ease",
-      }}
-    >
-      {/* INTEGRATED HEADER - Vos Direction + Dashboard + Buttons */}
-      <div
-        style={{
-          borderBottom: `1px solid ${borderColor}`,
-          marginBottom: 24,
-          paddingBottom: 16,
-        }}
-      >
-        {/* Dashboard Title + Buttons */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                fontFamily: "Georgia, serif",
-                fontSize: 40,
-                color: textColor,
-                margin: "0 0 2px",
-                fontWeight: 700,
-              }}
-            >
-              Dashboard
-            </h1>
-            <p style={{ color: subtextColor, fontSize: 12, margin: 0 }}>
-              Semaine du 10 au 16 mars 2026
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 12 }}>
-            <button
-              onClick={toggleMode}
-              style={{
-                padding: "10px 18px",
-                background: isDark ? "#2F2F2F" : "#FFFFFF",
-                border: `1px solid ${borderColor}`,
-                borderRadius: 20,
-                fontSize: 13,
-                fontWeight: 600,
-                color: textColor,
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
-              {isDark ? "☀️ Clair" : "🌙 Nuit"}
-            </button>
-            <button
-              style={{
-                padding: "10px 18px",
-                background: "#FFFFFF",
-                border: `1px solid ${borderColor}`,
-                borderRadius: 20,
-                fontSize: 13,
-                fontWeight: 600,
-                color: textColor,
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
-              ↓ Exporter PDF
-            </button>
-            <button
-              style={{
-                padding: "10px 18px",
-                background: "#000000",
-                border: "none",
-                borderRadius: 20,
-                fontSize: 13,
-                fontWeight: 600,
-                color: "#e9bf5b",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-            >
-              + Nouveau projet
-            </button>
-          </div>
-        </div>
-      </div>
+    <div style={{ margin: "-32px -40px", minHeight: "100vh", background: "#F5F5F2", position: "relative" }}>
 
-      {/* KPI ROW - 4 CARDS */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
-        <KPICard
-          label="Projets actifs"
-          value={PROJETS.filter((p) => p.statut !== "Clôturé").length}
-          sub={`${totalTaches} tâches au total`}
-          icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-          }
-          isBlack={true}
-          iconBg="#e5d1a2"
-          isDarkMode={isDark}
-        />
-        <KPICard
-          label="CA en production"
-          value={`${(totalCA / 1000).toFixed(1)}k€`}
-          sub={
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: isDark ? "#5FB981" : "#10B981", fontWeight: 600, background: isDark ? "#1a3a2a" : "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>↑ 12.4%</span>
-              <span style={{ color: isDark ? "#666666" : "#999999" }}>Marge 25.4€</span>
-            </div>
-          }
-          icon="€"
-          iconBg="#e5d1a2"
-          isDarkMode={isDark}
-        />
-        <KPICard
-          label="Tâches en cours"
-          value={tachesEnCours}
-          sub={
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: isDark ? "#5FB981" : "#10B981", fontWeight: 600, background: isDark ? "#1a3a2a" : "#E6F7F0", padding: "4px 8px", borderRadius: 6 }}>{totalTaches > 0 ? Math.round((tachesEnCours / totalTaches) * 100) : 0}%</span>
-              <span style={{ color: isDark ? "#666666" : "#999999" }}>sur {totalTaches} tâches</span>
-            </div>
-          }
-          icon="▶"
-          iconBg="#e5d1a2"
-          isDarkMode={isDark}
-        />
-        <KPICard
-          label="Alertes rentabilité"
-          value={alertes}
-          sub={
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ color: isDark ? "#FF9966" : "#E65100", fontWeight: 600, background: isDark ? "#2a1a1a" : "#FFE6E6", padding: "4px 8px", borderRadius: 6 }}>À surveiller</span>
-              <span style={{ color: isDark ? "#666666" : "#999999" }}>temps de prod.</span>
-            </div>
-          }
-          icon="⚠"
-          iconBg="#FF9966"
-          isDarkMode={isDark}
-        />
-      </div>
+      {/* Content */}
+      <div style={{ padding: "24px 30px 40px", display: "flex", flexDirection: "column", gap: 20 }}>
 
-      {/* TWO COLUMN LAYOUT - CA + OPPORTUNITÉS */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, width: "100%" }}>
-        {/* LEFT COLUMN */}
+        {/* Title row */}
         <div>
-          {/* CA SECTION */}
-          <div
-            style={{
-              background: sectionCardBg,
-              borderRadius: 20,
-              border: `1px solid ${borderColor}`,
-              padding: 20,
-              marginBottom: 24,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: 16,
-              }}
-            >
-              <div>
-                <h3
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: subtextColor,
-                    margin: "0 0 12px",
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                  }}
-                >
-                  CA EN PRODUCTION
-                </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 16,
-                    alignItems: "center",
-                    marginBottom: 12,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 32,
-                      fontWeight: 700,
-                      color: textColor,
-                      fontFamily: "Georgia, serif",
-                    }}
-                  >
-                    34.7 k€
-                  </span>
-                  <span style={{
-                    color: "#10B981",
-                    fontWeight: 600,
-                    fontSize: 13,
-                    background: "#E6F7F0",
-                    padding: "4px 10px",
-                    borderRadius: 6,
-                    display: "inline-block"
-                  }}>
-                    ↑ 12,4 %
-                  </span>
-                </div>
-                <div style={{ display: "flex", gap: 12 }}>
-                  <button
-                    style={{
-                      padding: "6px 12px",
-                      background: "#F5F5F5",
-                      border: "1px solid #E0E0E0",
-                      borderRadius: 20,
-                      fontSize: 12,
-                      color: textColor,
-                      cursor: "pointer",
-                      fontWeight: 500,
-                    }}
-                  >
-                    Vue globale ▾
-                  </button>
-                  <button
-                    style={{
-                      padding: "6px 12px",
-                      background: "#F5F5F5",
-                      border: "1px solid #E0E0E0",
-                      borderRadius: 20,
-                      fontSize: 12,
-                      color: textColor,
-                      cursor: "pointer",
-                      fontWeight: 500,
-                    }}
-                  >
-                    Tous clients ▾
-                  </button>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 12, fontSize: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 12, height: 12, background: "#C5A55A", borderRadius: 2 }} />
-                  <span style={{ color: textColor }}>Cette période</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 12, height: 12, background: "#CCCCCC", borderRadius: 2 }} />
-                  <span style={{ color: subtextColor }}>Période préc.</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ height: "320px" }}>
-              <InteractiveChart height={320} />
-            </div>
-          </div>
+          <h1 style={typography.pageTitle}>
+            Bonjour {currentUser.nom.split(" ")[0]}
+          </h1>
+          <div style={{ ...typography.description, marginTop: 5 }}>Voici un aperçu rapide de vos tâches et tickets en cours</div>
         </div>
 
-        {/* RIGHT COLUMN - OPPORTUNITIES */}
-        <div
-          style={{
-            background: sectionCardBg,
-            borderRadius: 20,
-            border: `1px solid ${borderColor}`,
-            padding: 20,
-            height: "500px",
-            overflow: "auto",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: 18,
-              fontWeight: 600,
-              color: textColor,
-              margin: "0 0 16px",
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-            }}
-          >
-            Opportunités
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[
-              { label: "Devis envoyés", value: 24, percentage: 90 },
-              { label: "Devis signés", value: 16, percentage: 65 },
-              { label: "Devis signés", value: 9, percentage: 35 },
-              { label: "En production", value: 5, percentage: 20 },
-              { label: "Facturés", value: 3, percentage: 12 },
-            ].map((item, idx) => (
-              <div key={idx}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 6,
-                  }}
-                >
-                  <span style={{ fontSize: 16, fontWeight: 600, color: subtextColor }}>
-                    {item.label}
+        {loading || !data ? (
+          <div style={{ textAlign: "center", padding: 60, color: "#A6A498", fontSize: 18.5 }}>Chargement…</div>
+        ) : (
+          <>
+            {/* Stat cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+              <div style={{ background: "#0A0A0A", borderRadius: 16, padding: "18px 20px", color: "#EFE9DA", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: -36, right: -26, width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle,rgba(201,162,78,.28),transparent 70%)" }} />
+                <span style={{ ...eyebrow("#B79B5E"), position: "relative" }}>Tâches en cours</span>
+                <div style={{ ...statNumber("#F4ECD7", 31), marginTop: 12, position: "relative" }}>{data.kpi.tasksCount}</div>
+              </div>
+              <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: "18px 20px", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+                <span style={eyebrow("#9A998F")}>Tickets ouverts</span>
+                <div style={{ ...statNumber("#16150F", 29), marginTop: 12 }}>{data.kpi.ticketsOpen}</div>
+              </div>
+              <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 16, padding: "18px 20px", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+                <span style={eyebrow("#9A998F")}>Échéances aujourd&apos;hui</span>
+                <div style={{ ...statNumber("#C2410C", 29), marginTop: 12 }}>{data.kpi.dueToday}</div>
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
+              {/* Tâches widget */}
+              <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, overflow: "hidden", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: "rgba(201,162,78,.07)", borderBottom: "1px solid #F0EFEA" }}>
+                  <span style={{ width: 42, height: 42, borderRadius: 12, background: "rgba(201,162,78,.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "#B0892B", flex: "none" }}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M6.5 10.2 8.7 12.5 13.5 7.5" /></svg>
                   </span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: textColor }}>
-                    {item.value}
-                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={typography.cardTitle}>Tâches</div>
+                    <div style={{ display: "flex", gap: 10, marginTop: 2 }}>
+                      <Link href="/mes-taches" className="link-underline-hover" style={{ fontSize: 12, fontWeight: 600, color: "#B0892B" }}>Tout voir</Link>
+                    </div>
+                  </div>
                 </div>
-                <div
-                  style={{
-                    height: "4px",
-                    background: "#E5E5E3",
-                    borderRadius: 2,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${item.percentage}%`,
-                      height: "100%",
-                      background: "#C5A55A",
-                      borderRadius: 2,
-                      transition: "width 0.3s ease",
-                    }}
-                  />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {data.tasks.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "30px 0", color: "#A6A498", fontSize: 15 }}>Aucune tâche en cours</div>
+                  ) : data.tasks.map(t => <TaskRow key={t.id} t={t} />)}
+                </div>
+                {data.moreTasks > 0 && (
+                  <Link href="/mes-taches" className="link-underline-hover" style={{ display: "block", padding: "13px 20px", textAlign: "center", fontSize: 12.5, fontWeight: 600, color: "#B0892B", background: "#FBFAF6" }}>
+                    Voir {data.moreTasks} tâche(s) supplémentaire(s)
+                  </Link>
+                )}
+              </div>
+
+              {/* Tickets widget */}
+              <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, overflow: "hidden", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: "rgba(37,99,235,.06)", borderBottom: "1px solid #F0EFEA" }}>
+                  <span style={{ width: 42, height: 42, borderRadius: 12, background: "#E6EEFB", display: "flex", alignItems: "center", justifyContent: "center", color: "#2563EB", flex: "none" }}>
+                    <IconTicket />
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={typography.cardTitle}>Tickets</div>
+                    <div style={{ display: "flex", gap: 10, marginTop: 2 }}>
+                      <Link href="/tickets" className="link-underline-hover" style={{ fontSize: 12, fontWeight: 600, color: "#B0892B" }}>Tout voir</Link>
+                      <span style={{ color: "#D2D0C7" }}>|</span>
+                      <Link href="/tickets" className="link-underline-hover" style={{ fontSize: 12, fontWeight: 600, color: "#B0892B" }}>Ajouter</Link>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {data.tickets.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "30px 0", color: "#A6A498", fontSize: 15 }}>Aucun ticket ouvert</div>
+                  ) : data.tickets.map(tk => <TicketRow key={tk.id} tk={tk} />)}
+                </div>
+                {data.moreTickets > 0 && (
+                  <Link href="/tickets" className="link-underline-hover" style={{ display: "block", padding: "13px 20px", textAlign: "center", fontSize: 12.5, fontWeight: 600, color: "#B0892B", background: "#FBFAF6" }}>
+                    Voir {data.moreTickets} ticket(s) supplémentaire(s)
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
+            {/* ── TEMPS PASSÉ WIDGET ── */}
+            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, overflow: "hidden", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "16px 20px", background: "rgba(31,138,91,.06)", borderBottom: "1px solid #F0EFEA" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <span style={{ width: 42, height: 42, borderRadius: 12, background: "#E7F3EB", display: "flex", alignItems: "center", justifyContent: "center", color: "#1F8A5B", flex: "none" }}><IconClock /></span>
+                  <div>
+                    <div style={typography.cardTitle}>Temps passé</div>
+                    <div style={{ ...typography.description, marginTop: 2 }}>Semaine du {data.personal.weekLabel}</div>
+                  </div>
+                </div>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: "#33322C", background: "#F0EFEA", borderRadius: 99, padding: "5px 12px", whiteSpace: "nowrap" }}>{data.personal.weekTotal}</span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, padding: "16px 20px 6px" }}>
+                {data.personal.timeDays.map((d, i) => (
+                  <div key={i} title={`${d.label} ${d.date} · ${d.hours} · ${d.statusLabel}`} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0" }}>
+                    <div style={{ width: 34, flex: "none", fontSize: 12.5, fontWeight: 700, color: "#1C1B16" }}>{d.label}</div>
+                    <div style={{ flex: 1, height: 9, borderRadius: 99, background: "#F0EEE6", position: "relative", overflow: "hidden" }}>
+                      <div style={{ height: "100%", borderRadius: 99, width: `${pctFromDash(d.dash)}%`, background: d.ringColor, transition: "width 0.4s ease" }} />
+                    </div>
+                    <span style={{ width: 40, flex: "none", textAlign: "right", ...statNumber(d.hoursColor, 12.5) }}>{d.hours}</span>
+                    <span style={{ width: 14, flex: "none", display: "flex", justifyContent: "center" }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: d.statusDot, display: "block" }} />
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 20px 16px", justifyContent: "center" }}>
+                <span style={typography.help}>Barre pleine = objectif journalier de {Math.round((currentUser.base || 35) / 5)}h atteint</span>
+              </div>
+              {data.personal.hasMissingDays && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 20px", borderTop: "1px solid #F0EFEA", background: "#FBF3EC" }}>
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#C2410C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flex: "none" }}><path d="M10 3.5 17 16H3z" /><line x1="10" y1="8.4" x2="10" y2="11.6" /><circle cx="10" cy="13.8" r="0.5" fill="#C2410C" /></svg>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: "#B7501A" }}>{data.personal.missingCount} jour(s) sans saisie de temps cette semaine</span>
+                </div>
+              )}
+              <div style={{ padding: "14px 20px 18px", borderTop: "1px solid #F0EFEA", display: "flex", justifyContent: "center" }}>
+                <Link href="/mes-taches" className="btn btn-primary">Saisir mon temps</Link>
+              </div>
+            </div>
+
+            {/* ── HEURES SUPPLÉMENTAIRES WIDGET ── */}
+            <div style={{ background: "#fff", border: "1px solid #ECEBE4", borderRadius: 18, overflow: "hidden", boxShadow: "0 1px 2px rgba(20,20,15,.04)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "16px 20px", background: "rgba(201,162,78,.07)", borderBottom: "1px solid #F0EFEA" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <span style={{ width: 42, height: 42, borderRadius: 12, background: "rgba(201,162,78,.18)", display: "flex", alignItems: "center", justifyContent: "center", color: "#B0892B", flex: "none" }}><IconOvertime /></span>
+                  <div>
+                    <div style={typography.cardTitle}>Heures supplémentaires</div>
+                    <div style={{ ...typography.description, marginTop: 2 }}>Solde disponible et détail par projet</div>
+                  </div>
+                </div>
+                <Link href="/absences" className="link-underline-hover" style={{ fontSize: 12, fontWeight: 600, color: "#B0892B", whiteSpace: "nowrap" }}>Tout voir</Link>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, padding: "18px 20px 6px" }}>
+                <div style={{ background: "#0A0A0A", borderRadius: 14, padding: 16, color: "#EFE9DA", position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", top: -30, right: -22, width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle,rgba(201,162,78,.28),transparent 70%)" }} />
+                  <span style={{ ...eyebrow("#B79B5E"), position: "relative" }}>Solde validé</span>
+                  <div style={{ ...statNumber("#F4ECD7", 27), marginTop: 10, position: "relative" }}>{data.personal.overtime.balance}</div>
+                </div>
+                <div style={{ background: "#F7F6F2", border: "1px solid #ECEBE4", borderRadius: 14, padding: 16 }}>
+                  <span style={eyebrow("#9A998F")}>En attente</span>
+                  <div style={{ ...statNumber("#B0892B", 25), marginTop: 10 }}>{data.personal.overtime.pending}</div>
+                </div>
+                <div style={{ background: "#F7F6F2", border: "1px solid #ECEBE4", borderRadius: 14, padding: 16 }}>
+                  <span style={eyebrow("#9A998F")}>Refusées</span>
+                  <div style={{ ...statNumber("#5C5A52", 25), marginTop: 10 }}>{data.personal.overtime.refused}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+
+              <div style={{ display: "flex", flexDirection: "column", padding: "6px 20px 4px" }}>
+                <div style={{ padding: "12px 0 6px" }}>
+                  <span style={eyebrow("#A6A498")}>Détail par projet</span>
+                </div>
+                {data.personal.overtime.rows.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "20px 0", color: "#A6A498", fontSize: 15 }}>Aucune déclaration d&apos;heures supplémentaires</div>
+                ) : data.personal.overtime.rows.map(o => (
+                  <div key={o.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "11px 0", borderBottom: "1px solid #F2F1EB" }}>
+                    <span style={{ width: 8, height: 8, borderRadius: 2, background: o.accent, flex: "none" }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#1C1B16", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{o.project}</div>
+                      <div style={{ fontSize: 11.5, color: "#A6A498", marginTop: 1 }}>{o.client}</div>
+                    </div>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700, color: o.statusColor, background: o.statusBg, borderRadius: 99, padding: "3px 10px", whiteSpace: "nowrap" }}>{o.statusLabel}</span>
+                    <span style={{ ...statNumber("#16150F", 13.5), width: 56, textAlign: "right" }}>{o.hours}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            </div>
+          </>
+        )}
       </div>
-
-      {/* ALERTES SECTION - FULL WIDTH */}
-      <div
-        style={{
-          background: isDark ? "#1F1F1F" : "#FFF8F0",
-          borderRadius: 20,
-          border: `1px solid ${isDark ? "#3F3F3F" : "#FFE0B2"}`,
-          padding: 16,
-          marginBottom: 24,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: "#E65100",
-            marginBottom: 12,
-          }}
-        >
-          ⚠ Alertes temps de production
-        </div>
-        {tachesAlerte.slice(0, 5).map((t, idx) => {
-          const ratio = Math.round(
-            (t.tempsConsomme / t.tempsAlloue) * 100
-          );
-          const info = getRentabiliteColor(ratio);
-          const colors = ["#6366F1", "#EC4899", "#10B981", "#8B5CF6", "#F59E0B"];
-          return (
-            <div
-              key={t.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "8px 0",
-                fontSize: 12,
-                borderBottom: `1px solid rgba(0,0,0,0.1)`,
-              }}
-            >
-              <span
-                style={{
-                  fontWeight: 600,
-                  color: info.color,
-                  minWidth: 30,
-                }}
-              >
-                {ratio}%
-              </span>
-              <span style={{ color: textColor, flex: 1 }}>
-                {t.nom.substring(0, 30)}
-              </span>
-              <span style={{ color: subtextColor, fontSize: 11 }}>
-                — {t.projet}
-              </span>
-              <div
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: "50%",
-                  background: colors[idx % colors.length],
-                  flexShrink: 0,
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
-
-      {/* PROJETS SECTION - FULL WIDTH */}
-      <div
-        style={{
-          background: sectionCardBg,
-          borderRadius: 20,
-          border: `1px solid ${borderColor}`,
-          overflow: "hidden",
-        }}
-      >
-        <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
-          <h3
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: textColor,
-              margin: 0,
-            }}
-          >
-            Projets en cours
-          </h3>
-        </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr",
-            padding: "10px 16px",
-            background: cardBg,
-            borderBottom: `1px solid ${borderColor}`,
-            fontSize: 10,
-            fontWeight: 600,
-            color: subtextColor,
-            textTransform: "uppercase",
-          }}
-        >
-          <div>Projet</div>
-          <div style={{ textAlign: "right" }}>Montant</div>
-          <div style={{ textAlign: "right" }}>Temps</div>
-          <div style={{ textAlign: "right" }}>Rentabilité</div>
-        </div>
-        {PROJETS.slice(0, 5).map((p) => {
-          const marge = p.montantHT - p.coutRevient;
-          const margePercent = Math.round((marge / p.montantHT) * 100);
-          const totalAlloue = p.taches.reduce((s, t) => s + t.tempsAlloue, 0);
-          const totalConsomme = p.taches.reduce(
-            (s, t) => s + t.tempsConsomme,
-            0
-          );
-
-          return (
-            <div
-              key={p.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 1fr 1fr 1fr",
-                alignItems: "center",
-                padding: "12px 16px",
-                borderBottom: `1px solid ${borderColor}`,
-                fontSize: 12,
-              }}
-            >
-              <div>
-                <div style={{ fontWeight: 600, color: textColor }}>
-                  {p.nom}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: subtextColor,
-                  }}
-                >
-                  {p.client}
-                </div>
-              </div>
-              <div
-                style={{
-                  textAlign: "right",
-                  color: textColor,
-                }}
-              >
-                {p.montantHT.toLocaleString("fr-FR")} €
-              </div>
-              <div
-                style={{
-                  textAlign: "right",
-                  color: textColor,
-                }}
-              >
-                {totalConsomme}h / {totalAlloue}h
-              </div>
-              <div
-                style={{
-                  textAlign: "right",
-                  color: "#C5A55A",
-                  fontWeight: 600,
-                }}
-              >
-                {margePercent}%
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
     </div>
   );
 }

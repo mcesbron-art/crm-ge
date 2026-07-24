@@ -6,7 +6,7 @@ import {
 
 /**
  * POST /api/admin/users/create
- * RÉSERVÉ DIRECTION — crée un compte utilisateur dans Supabase Auth + un
+ * RÉSERVÉ ADMIN — crée un compte utilisateur dans Supabase Auth + un
  * profil collaborateur dans la table `collaborateurs`.
  *
  * Body :
@@ -16,20 +16,20 @@ import {
  *     pole?: string,
  *     avatar?: string,
  *     color?: string,
- *     role: "direction" | "admin" | "collaborateur",
+ *     role: "admin" | "collaborateur",
  *     base?: number,
  *     sendInvite?: boolean   // si true : Supabase envoie un email d'invitation au lieu de définir un mot de passe
  *     password?: string      // si sendInvite === false : mot de passe initial
  *   }
  */
 export async function POST(req: Request) {
-  // 1. Vérifie que l'appelant est Direction
+  // 1. Vérifie que l'appelant est Admin
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
-  if (profile.role !== "direction") {
-    return NextResponse.json({ error: "Accès réservé à la Direction" }, { status: 403 });
+  if (profile.role !== "admin") {
+    return NextResponse.json({ error: "Accès réservé aux administrateurs" }, { status: 403 });
   }
 
   // 2. Validation du body
@@ -42,11 +42,11 @@ export async function POST(req: Request) {
 
   const email = (body.email as string)?.trim().toLowerCase();
   const nom = (body.nom as string)?.trim();
-  const role = body.role as "direction" | "admin" | "collaborateur";
+  const role = body.role as "admin" | "collaborateur";
   const sendInvite = body.sendInvite !== false; // par défaut: envoi d'invite
   const password = body.password as string | undefined;
 
-  if (!email || !nom || !["direction", "admin", "collaborateur"].includes(role)) {
+  if (!email || !nom || !["admin", "collaborateur"].includes(role)) {
     return NextResponse.json(
       { error: "Champs manquants ou invalides (email, nom, role)" },
       { status: 400 },

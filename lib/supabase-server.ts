@@ -95,8 +95,9 @@ export type SessionProfile = {
   nom: string;
   pole: string | null;
   avatar: string | null;
+  avatarUrl: string | null;
   color: string | null;
-  role: "direction" | "admin" | "collaborateur";
+  role: "admin" | "collaborateur";
   base: number;
   actif: boolean;
 };
@@ -119,6 +120,16 @@ export async function getServerSession(): Promise<SessionProfile | null> {
 
   if (error || !profile) return null;
 
+  // Colonne ajoutée par la migration 012 : requête séparée pour ne jamais
+  // bloquer l'authentification si elle n'existe pas encore (avant exécution
+  // de la migration) — une erreur ici laisse simplement avatarUrl à null.
+  const { data: avatarRow } = await supabase
+    .from("collaborateurs")
+    .select("avatar_url")
+    .eq("id", profile.id)
+    .maybeSingle();
+  const avatarUrl = (avatarRow as { avatar_url?: string } | null)?.avatar_url ?? null;
+
   return {
     authId: user.id,
     id: profile.id,
@@ -126,8 +137,9 @@ export async function getServerSession(): Promise<SessionProfile | null> {
     nom: profile.nom,
     pole: profile.pole,
     avatar: profile.avatar,
+    avatarUrl,
     color: profile.color,
-    role: profile.role as "direction" | "admin" | "collaborateur",
+    role: profile.role as "admin" | "collaborateur",
     base: Number(profile.base_heures),
     actif: profile.actif,
   };

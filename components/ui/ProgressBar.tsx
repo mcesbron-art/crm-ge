@@ -34,7 +34,7 @@ export default function ProgressBar({ consumed, allocated, height = 8, showPct =
       {showPct && (
         <span
           style={{
-            fontSize: 12, fontWeight: 600,
+            fontSize: 14, fontWeight: 600,
             color: info.color, minWidth: 40, textAlign: "right",
           }}
         >

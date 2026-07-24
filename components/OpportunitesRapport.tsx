@@ -39,7 +39,7 @@ export default function OpportunitesRapport() {
       <section style={{
         background: COLORS.blanc, borderRadius: 16,
         border: `1px solid ${COLORS.grisBorder}`, padding: 20, marginTop: 20,
-        color: COLORS.grisMoyen, fontSize: 12, fontStyle: "italic", textAlign: "center",
+        color: COLORS.grisMoyen, fontSize: 14, fontStyle: "italic", textAlign: "center",
       }}>
         Module Opportunités non disponible : {error}
       </section>
@@ -127,7 +127,7 @@ export default function OpportunitesRapport() {
                   <td style={tdStyle}>{o.commercial?.nom ?? "—"}</td>
                   <td style={tdStyle}>
                     <span style={{
-                      padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700,
+                      padding: "2px 8px", borderRadius: 10, fontSize: 12, fontWeight: 700,
                       background: STATUT_COLORS[o.statut].bg,
                       color: STATUT_COLORS[o.statut].color,
                     }}>{STATUT_LABELS[o.statut]}</span>
@@ -205,23 +205,23 @@ function KpiBox({
       borderRadius: 12, padding: 16,
     }}>
       <div style={{
-        fontSize: 10, color: COLORS.grisMoyen, textTransform: "uppercase",
+        fontSize: 12, color: COLORS.grisMoyen, textTransform: "uppercase",
         letterSpacing: 0.5, marginBottom: 4,
       }}>{label}</div>
       <div style={{
         fontSize: 24, fontWeight: 700, color: color ?? COLORS.noir,
         fontFamily: "var(--font-dm-serif-display), Georgia, serif", lineHeight: 1.1,
       }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: COLORS.grisMoyen, marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
 
 const thStyle: React.CSSProperties = {
   padding: "8px 10px", textAlign: "left",
-  fontSize: 10, fontWeight: 700, color: COLORS.grisMoyen,
+  fontSize: 12, fontWeight: 700, color: COLORS.grisMoyen,
   textTransform: "uppercase", letterSpacing: 0.5,
 };
 const tdStyle: React.CSSProperties = {
-  padding: "8px 10px", fontSize: 12, color: COLORS.noir,
+  padding: "8px 10px", fontSize: 14, color: COLORS.noir,
 };

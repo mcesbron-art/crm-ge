@@ -15,5 +15,15 @@
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/axonaut/contracts-sync",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/axonaut/tickets-sync",
+      "schedule": "0 6 * * *"
+    }
   ]
 }

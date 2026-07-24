@@ -72,7 +72,7 @@ export default function OpportunitesSection({ collabId }: Props) {
             fontFamily: "var(--font-dm-serif-display), Georgia, serif",
             fontSize: 17, color: COLORS.noir, margin: "0 0 2px", fontWeight: 400,
           }}>Opportunités commerciales</h3>
-          <p style={{ fontSize: 11, color: COLORS.grisMoyen, margin: 0 }}>
+          <p style={{ fontSize: 13, color: COLORS.grisMoyen, margin: 0 }}>
             {opportunities.length} opportunité{opportunities.length > 1 ? "s" : ""} ·
             {" "}{opportunities.filter((o) => o.statut === "gagne").length} gagnée{opportunities.filter((o) => o.statut === "gagne").length > 1 ? "s" : ""} ·
             {" "}{opportunities.filter((o) => o.statut === "perdu").length} perdue{opportunities.filter((o) => o.statut === "perdu").length > 1 ? "s" : ""}
@@ -84,7 +84,7 @@ export default function OpportunitesSection({ collabId }: Props) {
             style={{
               padding: "8px 14px", borderRadius: 8, border: "none",
               background: COLORS.noir, color: COLORS.dore,
-              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              fontSize: 14, fontWeight: 700, cursor: "pointer",
             }}
           >+ Nouvelle opportunité</button>
         )}
@@ -120,11 +120,11 @@ export default function OpportunitesSection({ collabId }: Props) {
                 marginBottom: 10, padding: "4px 8px",
                 background: col.bg, borderRadius: 6,
               }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: col.color, letterSpacing: 0.3 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: col.color, letterSpacing: 0.3 }}>
                   {col.icon} {col.label}
                 </span>
                 <span style={{
-                  fontSize: 10, fontWeight: 700, color: col.color,
+                  fontSize: 12, fontWeight: 700, color: col.color,
                   background: COLORS.blanc, padding: "1px 7px", borderRadius: 10,
                 }}>{colOpps.length}</span>
               </div>
@@ -133,7 +133,7 @@ export default function OpportunitesSection({ collabId }: Props) {
                 {colOpps.length === 0 && (
                   <div style={{
                     padding: "16px 8px", textAlign: "center",
-                    color: COLORS.grisMoyen, fontSize: 11, fontStyle: "italic",
+                    color: COLORS.grisMoyen, fontSize: 13, fontStyle: "italic",
                   }}>—</div>
                 )}
                 {colOpps.map((opp) => (
@@ -199,12 +199,12 @@ function OpportunityCard({
     }}>
       {/* Titre + montant */}
       <div style={{
-        fontWeight: 600, fontSize: 13, color: COLORS.noir, lineHeight: 1.3,
+        fontWeight: 600, fontSize: 15, color: COLORS.noir, lineHeight: 1.3,
         marginBottom: 4,
       }}>{opp.title}</div>
 
       {/* Client */}
-      <div style={{ fontSize: 11, color: COLORS.grisMoyen, marginBottom: 8 }}>
+      <div style={{ fontSize: 13, color: COLORS.grisMoyen, marginBottom: 8 }}>
         {opp.clientName}
         {canSeeMoney && opp.estimatedAmount !== undefined && opp.estimatedAmount > 0 && (
           <span style={{ marginLeft: 6, color: COLORS.dore, fontWeight: 700 }}>
@@ -217,7 +217,7 @@ function OpportunityCard({
       <div style={{
         padding: 8, marginBottom: 8,
         background: COLORS.gris, borderRadius: 6,
-        fontSize: 11, lineHeight: 1.5,
+        fontSize: 13, lineHeight: 1.5,
       }}>
         <div style={{ fontWeight: 600, color: COLORS.noir, marginBottom: 2 }}>
           ◉ {opp.contactName}
@@ -243,7 +243,7 @@ function OpportunityCard({
         <div style={{
           padding: "6px 8px", marginBottom: 8,
           background: "#FFFCF0", border: "1px solid #FFE082",
-          borderRadius: 4, fontSize: 10, color: COLORS.noir,
+          borderRadius: 4, fontSize: 12, color: COLORS.noir,
           lineHeight: 1.4, fontStyle: "italic",
         }}>
           « {opp.notes} »
@@ -257,11 +257,11 @@ function OpportunityCard({
       }}>
         {isFinal ? (
           <span style={{
-            padding: "3px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700,
+            padding: "3px 8px", borderRadius: 10, fontSize: 12, fontWeight: 700,
             background: finalStyle.bg, color: finalStyle.color,
           }}>{finalStyle.label}</span>
         ) : (
-          <span style={{ fontSize: 10, color: COLORS.grisMoyen }}>
+          <span style={{ fontSize: 12, color: COLORS.grisMoyen }}>
             MAJ {new Date(opp.updatedAt).toLocaleDateString("fr-FR")}
           </span>
         )}
@@ -298,7 +298,7 @@ function ActionBtn({ onClick, label, color }: { onClick: () => void; label: stri
         padding: "3px 6px", borderRadius: 4,
         border: `1px solid ${COLORS.grisBorder}`,
         background: COLORS.blanc, color: color ?? COLORS.grisMoyen,
-        fontSize: 10, fontWeight: 600, cursor: "pointer",
+        fontSize: 12, fontWeight: 600, cursor: "pointer",
         whiteSpace: "nowrap", lineHeight: 1.2,
       }}
     >{label}</button>
@@ -361,7 +361,7 @@ function OpportunityForm({
         <Field label="Montant estimé (€)" type="number" value={estimatedAmount} onChange={setEstimatedAmount} placeholder="3500" />
         <div>
           <label style={{
-            display: "block", fontSize: 9, fontWeight: 600, color: COLORS.grisMoyen,
+            display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
             textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3,
           }}>Statut</label>
           <select
@@ -370,7 +370,7 @@ function OpportunityForm({
             style={{
               width: "100%", padding: "6px 8px",
               border: `1px solid ${COLORS.grisBorder}`, borderRadius: 5,
-              fontSize: 12, color: COLORS.noir, background: COLORS.blanc,
+              fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
               outline: "none", fontFamily: "inherit", cursor: "pointer",
             }}
           >
@@ -384,7 +384,7 @@ function OpportunityForm({
       </div>
       <div style={{ marginBottom: 10 }}>
         <label style={{
-          display: "block", fontSize: 9, fontWeight: 600, color: COLORS.grisMoyen,
+          display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
           textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3,
         }}>Notes</label>
         <textarea
@@ -395,7 +395,7 @@ function OpportunityForm({
           style={{
             width: "100%", padding: "6px 8px",
             border: `1px solid ${COLORS.grisBorder}`, borderRadius: 5,
-            fontSize: 12, color: COLORS.noir, background: COLORS.blanc,
+            fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
             outline: "none", fontFamily: "inherit", resize: "vertical",
           }}
         />
@@ -406,7 +406,7 @@ function OpportunityForm({
           style={{
             padding: "6px 12px", borderRadius: 6,
             background: "transparent", border: `1px solid ${COLORS.grisBorder}`,
-            color: COLORS.grisMoyen, fontSize: 12, fontWeight: 600, cursor: "pointer",
+            color: COLORS.grisMoyen, fontSize: 14, fontWeight: 600, cursor: "pointer",
           }}
         >Annuler</button>
         <button
@@ -416,7 +416,7 @@ function OpportunityForm({
             padding: "6px 12px", borderRadius: 6, border: "none",
             background: valid ? COLORS.noir : COLORS.gris,
             color: valid ? COLORS.dore : COLORS.grisMoyen,
-            fontSize: 12, fontWeight: 700,
+            fontSize: 14, fontWeight: 700,
             cursor: valid ? "pointer" : "not-allowed",
           }}
         >{existing ? "Enregistrer" : "Créer"}</button>
@@ -435,7 +435,7 @@ function Field({
   return (
     <div>
       <label style={{
-        display: "block", fontSize: 9, fontWeight: 600, color: COLORS.grisMoyen,
+        display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
         textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3,
       }}>{label}</label>
       <input
@@ -446,7 +446,7 @@ function Field({
         style={{
           width: "100%", padding: "6px 8px",
           border: `1px solid ${COLORS.grisBorder}`, borderRadius: 5,
-          fontSize: 12, color: COLORS.noir, background: COLORS.blanc,
+          fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
           outline: "none", fontFamily: "inherit",
         }}
       />

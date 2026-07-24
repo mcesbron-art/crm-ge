@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { can, type Role } from "@/lib/permissions";
 
-export type Role = "direction" | "admin" | "collaborateur";
+export type { Role };
 
 export type AppUser = {
   id: number;
@@ -10,47 +11,28 @@ export type AppUser = {
   email: string;
   pole: string;
   avatar: string;
+  avatarUrl?: string | null;
   color: string;
   role: Role;
   base: number;
   actif: boolean;
 };
 
-/**
- * Liste des collaborateurs visibles dans la page Administration et l'équipe.
- * Sert pour l'UI uniquement — la liste réelle des users autorisés à se connecter
- * est définie côté serveur dans lib/auth-server.ts (SERVER_USERS).
- *
- * Pour ajouter un VRAI utilisateur autorisé à se connecter, il faut :
- *   1. L'ajouter ici (UI) ET dans SERVER_USERS (serveur)
- *   2. Générer son hash via `node scripts/hash-passwords.mjs`
- *   3. L'ajouter à USER_PASSWORDS_JSON (Vercel env var)
- */
-const KNOWN_USERS: AppUser[] = [
-  { id: 0, nom: "Maryline",  email: "m.cesbron@groupe-echo.fr", pole: "Direction",                      avatar: "MC", color: "#C5A55A", role: "direction",     base: 35, actif: true },
-  { id: 1, nom: "Noémie",    email: "noemie@groupe-echo.fr",    pole: "Graphisme / Photo / Vidéo",      avatar: "N",  color: "#8E24AA", role: "collaborateur", base: 35, actif: true },
-  { id: 2, nom: "Amandine",  email: "amandine@groupe-echo.fr",  pole: "Web / SEO / Contenu",            avatar: "A",  color: "#1E88E5", role: "collaborateur", base: 35, actif: true },
-  { id: 3, nom: "Jérémy",    email: "jeremy@groupe-echo.fr",    pole: "Social Media / Vidéo",           avatar: "J",  color: "#43A047", role: "collaborateur", base: 35, actif: true },
-  { id: 4, nom: "Marcellin", email: "marcellin@groupe-echo.fr", pole: "SEO / SEA / Sites standards",    avatar: "M",  color: "#FB8C00", role: "collaborateur", base: 35, actif: true },
-  { id: 5, nom: "Arthur",    email: "arthur@groupe-echo.fr",    pole: "Sites complexes / Ads",          avatar: "Ar", color: "#E53935", role: "collaborateur", base: 39, actif: true },
-  { id: 6, nom: "Fanny",     email: "fanny@groupe-echo.fr",     pole: "Planning / Production",          avatar: "F",  color: "#00897B", role: "admin",         base: 35, actif: true },
-];
-
 type AuthContextValue = {
   /** Utilisateur connecté (depuis la session serveur — read-only) */
   currentUser: AppUser;
-  /** Liste des utilisateurs visibles dans la page Administration */
-  users: AppUser[];
-  /** Ajoute un utilisateur (UI uniquement — ne crée pas un compte authentifié) */
-  addUser: (u: Omit<AppUser, "id">) => void;
-  updateUser: (id: number, patch: Partial<AppUser>) => void;
-  toggleActif: (id: number) => void;
-  /** Mode aperçu pour Direction/Admin (voir l'UI comme un collab) */
+  /** Mode aperçu pour Admin (voir l'UI comme un collab) */
   previewMode: "real" | "collab";
   setPreviewMode: (m: "real" | "collab") => void;
   // Helpers calculés (tiennent compte du previewMode)
   canSeeMoney: boolean;
   canAccessAdmin: boolean;
+  /** Rôle à utiliser pour lib/permissions.ts::can() côté client — currentUser.role
+   *  en temps normal, "collaborateur" en mode aperçu. Utiliser CE rôle (jamais
+   *  currentUser.role directement) pour toute vérification de permission dans
+   *  l'UI, sous peine de garder des actions Admin visibles pendant l'aperçu
+   *  collaborateur. */
+  effectiveRole: Role;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -62,43 +44,27 @@ export function AuthProvider({
   children: ReactNode;
   initialUser: AppUser;
 }) {
-  // Liste des collaborateurs visibles : on commence par les users hardcodés
-  // + on remplace l'entrée correspondant à initialUser par les valeurs serveur.
-  const baseList = KNOWN_USERS.some((u) => u.id === initialUser.id)
-    ? KNOWN_USERS.map((u) => (u.id === initialUser.id ? initialUser : u))
-    : [...KNOWN_USERS, initialUser];
-
-  const [users, setUsers] = useState<AppUser[]>(baseList);
+  const [currentUser, setCurrentUser] = useState<AppUser>(initialUser);
   const [previewMode, setPreviewMode] = useState<"real" | "collab">("real");
 
-  const currentUser = users.find((u) => u.id === initialUser.id) ?? initialUser;
+  // initialUser vient du layout serveur : après un router.refresh() (ex. mise
+  // à jour du profil), une nouvelle valeur arrive ici mais useState() ne la
+  // reprend pas automatiquement.
+  useEffect(() => {
+    setCurrentUser(initialUser);
+  }, [initialUser]);
 
-  const addUser: AuthContextValue["addUser"] = (u) => {
-    setUsers((prev) => {
-      const nextId = Math.max(...prev.map((p) => p.id)) + 1;
-      return [...prev, { ...u, id: nextId }];
-    });
-  };
-
-  const updateUser: AuthContextValue["updateUser"] = (id, patch) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...patch } : u)));
-  };
-
-  const toggleActif: AuthContextValue["toggleActif"] = (id) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, actif: !u.actif } : u)));
-  };
-
-  // Mode aperçu actif uniquement si le vrai rôle de l'user est ≥ admin
-  const realCanSeeMoney    = currentUser.role !== "collaborateur";
-  const realCanAccessAdmin = currentUser.role === "direction";
+  // Dérivés de la matrice centralisée (lib/permissions.ts) — admin a
+  // toutes les permissions donc les deux valent simplement
+  // currentUser.role === "admin", mais on passe par can() pour rester
+  // cohérent avec le reste de l'app si la matrice évolue.
+  // Mode aperçu actif uniquement si le vrai rôle de l'user est admin.
+  const realCanSeeMoney    = can(currentUser.role, "view_billing");
+  const realCanAccessAdmin = can(currentUser.role, "manage_users");
   const isPreview          = previewMode === "collab" && realCanSeeMoney;
 
   const value: AuthContextValue = {
     currentUser,
-    users,
-    addUser,
-    updateUser,
-    toggleActif,
     previewMode,
     setPreviewMode: (m) => {
       if (!realCanSeeMoney && m === "collab") return;
@@ -106,6 +72,7 @@ export function AuthProvider({
     },
     canSeeMoney:    isPreview ? false : realCanSeeMoney,
     canAccessAdmin: isPreview ? false : realCanAccessAdmin,
+    effectiveRole:  isPreview ? "collaborateur" : currentUser.role,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

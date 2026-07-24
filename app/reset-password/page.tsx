@@ -6,12 +6,14 @@ import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 /**
- * Page de réinitialisation du mot de passe — appelée via le lien magique
- * envoyé par Supabase à la suite d'une demande "mot de passe oublié".
- *
- * Supporte deux formats de retour Supabase :
- *   1. Flow PKCE (récent) : ?code=xxxxx → on appelle exchangeCodeForSession(code)
- *   2. Flow legacy (hash) : #access_token=...&type=recovery → géré par getSession()
+ * Page de réinitialisation du mot de passe — atteinte APRÈS l'échange du
+ * code PKCE, déjà effectué côté serveur par app/auth/reset-callback/route.ts
+ * (le lien de l'email pointe vers ce callback, qui redirige ici une fois la
+ * session posée). Cette page n'a donc qu'à vérifier qu'une session existe
+ * via getSession() — elle ne reçoit plus jamais de ?code= à échanger
+ * elle-même : le faire côté navigateur cassait avec "PKCE code verifier not
+ * found in storage" (le client navigateur ne retrouve pas toujours, via
+ * document.cookie, le code verifier posé par l'appel serveur initial).
  */
 
 export default function ResetPasswordPage() {
@@ -34,39 +36,24 @@ function ResetPasswordInner() {
   const [debugInfo, setDebugInfo] = useState<string>("");
 
   useEffect(() => {
+    const callbackError = searchParams.get("error");
+    if (callbackError) {
+      setHasSession(false);
+      setDebugInfo(
+        callbackError === "missing_code"
+          ? "Lien incomplet (aucun code de réinitialisation)."
+          : "L'échange du code de réinitialisation a échoué côté serveur."
+      );
+      return;
+    }
+
     const supabase = createSupabaseBrowserClient();
-    const code = searchParams.get("code");
-
-    async function init() {
-      // 1. Si on a un ?code=... → flow PKCE : échange le code contre une session
-      if (code) {
-        try {
-          const { data, error: exErr } = await supabase.auth.exchangeCodeForSession(code);
-          if (exErr) {
-            setHasSession(false);
-            setDebugInfo(`Échange du code échoué : ${exErr.message}`);
-            return;
-          }
-          if (data?.session) {
-            setHasSession(true);
-            return;
-          }
-        } catch (e) {
-          setHasSession(false);
-          setDebugInfo(`Erreur : ${e instanceof Error ? e.message : String(e)}`);
-          return;
-        }
-      }
-
-      // 2. Sinon, vérifie s'il y a déjà une session active (flow hash legacy)
-      const { data } = await supabase.auth.getSession();
+    supabase.auth.getSession().then(({ data }) => {
       setHasSession(!!data.session);
       if (!data.session) {
         setDebugInfo("Aucune session de réinitialisation détectée. Lien expiré ou invalide.");
       }
-    }
-
-    init();
+    });
   }, [searchParams]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -106,7 +93,7 @@ function ResetPasswordInner() {
     <Shell>
       {hasSession === false ? (
         <>
-          <h1 className="mb-3 font-display text-2xl text-white">Lien expiré ou invalide</h1>
+          <h1 className="mb-3 text-2xl text-white" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 800 }}>Lien expiré ou invalide</h1>
           <p className="mb-4 text-sm text-[#aaa] leading-relaxed">
             Le lien de réinitialisation a expiré (ils sont valides 1h) ou a déjà été utilisé.
           </p>
@@ -122,14 +109,14 @@ function ResetPasswordInner() {
         </>
       ) : done ? (
         <>
-          <h1 className="mb-3 font-display text-2xl text-white">Mot de passe mis à jour ✓</h1>
+          <h1 className="mb-3 text-2xl text-white" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 800 }}>Mot de passe mis à jour ✓</h1>
           <p className="mb-2 text-sm text-[#aaa]">
             Vous allez être redirigé(e) vers votre Dashboard…
           </p>
         </>
       ) : (
         <>
-          <h1 className="mb-1 font-display text-2xl text-white">Nouveau mot de passe</h1>
+          <h1 className="mb-1 text-2xl text-white" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 800 }}>Nouveau mot de passe</h1>
           <p className="mb-6 text-sm text-[#888]">
             Choisissez un mot de passe d&apos;au moins 8 caractères.
           </p>
@@ -201,9 +188,10 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-noir-deep via-noir to-[#2a1f10] px-4">
       <div className="w-full max-w-md rounded-2xl border border-[#2a2a2a] bg-[#181818] p-10 shadow-[0_24px_60px_rgba(0,0,0,0.4)]">
-        <div className="mb-8 text-center">
-          <div className="font-display text-3xl tracking-wider text-dore">GROUPE ÉCHO</div>
-          <div className="mt-1 text-[11px] uppercase tracking-[1.5px] text-[#666]">
+        <div className="mb-8 flex flex-col items-center text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-groupe-echo.png" alt="Groupe Écho" style={{ width: 160, height: "auto", display: "block" }} />
+          <div className="mt-2 text-[11px] uppercase tracking-[1.5px] text-[#666]">
             CRM Production
           </div>
         </div>

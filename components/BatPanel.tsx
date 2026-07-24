@@ -129,7 +129,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
       {/* === PDF PREVIEW + LIEN CLIENT === */}
       <div>
         <div style={{
-          fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+          fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
           textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8,
         }}>Document PDF</div>
 
@@ -150,22 +150,22 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
             borderRadius: 10,
           }}>
             <div style={{ fontSize: 36, marginBottom: 8, color: COLORS.grisMoyen }}>📄</div>
-            <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.noir, marginBottom: 4 }}>
+            <div style={{ fontWeight: 600, fontSize: 16, color: COLORS.noir, marginBottom: 4 }}>
               {bat.pdfName ?? "(aucun fichier)"}
             </div>
             {bat.pdfSize && (
-              <div style={{ fontSize: 12, color: COLORS.grisMoyen }}>
+              <div style={{ fontSize: 14, color: COLORS.grisMoyen }}>
                 {formatSize(bat.pdfSize)}
               </div>
             )}
-            <div style={{ fontSize: 11, color: COLORS.grisMoyen, marginTop: 8, fontStyle: "italic" }}>
+            <div style={{ fontSize: 13, color: COLORS.grisMoyen, marginTop: 8, fontStyle: "italic" }}>
               Aperçu indisponible (BAT de démo, sans contenu binaire)
             </div>
           </div>
         )}
 
         {bat.uploadedAt && (
-          <div style={{ fontSize: 11, color: COLORS.grisMoyen, marginTop: 8 }}>
+          <div style={{ fontSize: 13, color: COLORS.grisMoyen, marginTop: 8 }}>
             Envoyé par <strong>{bat.uploadedBy}</strong> le {formatDate(bat.uploadedAt)}
           </div>
         )}
@@ -178,7 +178,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
             borderRadius: 10,
           }}>
             <div style={{
-              fontSize: 11, fontWeight: 700, color: COLORS.dore,
+              fontSize: 13, fontWeight: 700, color: COLORS.dore,
               textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6,
             }}>📧 Lien de validation à envoyer au client</div>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
@@ -190,7 +190,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                 style={{
                   flex: 1, minWidth: 180, padding: "7px 10px",
                   border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
-                  fontSize: 11, fontFamily: "monospace", color: COLORS.noir,
+                  fontSize: 13, fontFamily: "monospace", color: COLORS.noir,
                   background: COLORS.blanc, outline: "none",
                 }}
               />
@@ -200,7 +200,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   padding: "7px 12px", borderRadius: 6, border: "none",
                   background: linkCopied ? COLORS.vert : COLORS.noir,
                   color: linkCopied ? COLORS.blanc : COLORS.dore,
-                  fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+                  fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
                   transition: "all 0.15s",
                 }}
               >{linkCopied ? "✓ Copié" : "Copier"}</button>
@@ -210,7 +210,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   padding: "7px 12px", borderRadius: 6, border: "none",
                   background: showEmailForm ? COLORS.dore : COLORS.noir,
                   color: showEmailForm ? COLORS.noir : COLORS.dore,
-                  fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+                  fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
                   transition: "all 0.15s",
                 }}
               >✉ Email</button>
@@ -221,7 +221,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                 style={{
                   padding: "7px 12px", borderRadius: 6,
                   background: COLORS.blanc, border: `1px solid ${COLORS.grisBorder}`,
-                  color: COLORS.noir, fontSize: 11, fontWeight: 600,
+                  color: COLORS.noir, fontSize: 13, fontWeight: 600,
                   textDecoration: "none", whiteSpace: "nowrap",
                 }}
               >Ouvrir ↗</a>
@@ -235,7 +235,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                 border: `1px solid ${COLORS.grisBorder}`,
               }}>
                 <label style={{
-                  display: "block", fontSize: 10, fontWeight: 600, color: COLORS.grisMoyen,
+                  display: "block", fontSize: 12, fontWeight: 600, color: COLORS.grisMoyen,
                   textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
                 }}>Email du client *</label>
                 <div style={{ display: "flex", gap: 6 }}>
@@ -248,7 +248,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                     style={{
                       flex: 1, padding: "7px 10px",
                       border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
-                      fontSize: 12, color: COLORS.noir, background: COLORS.blanc,
+                      fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
                       outline: "none", fontFamily: "inherit",
                     }}
                   />
@@ -259,13 +259,13 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                       padding: "7px 14px", borderRadius: 6, border: "none",
                       background: clientEmail.trim() ? COLORS.dore : COLORS.gris,
                       color: clientEmail.trim() ? COLORS.noir : COLORS.grisMoyen,
-                      fontSize: 11, fontWeight: 700,
+                      fontSize: 13, fontWeight: 700,
                       cursor: clientEmail.trim() ? "pointer" : "not-allowed",
                       whiteSpace: "nowrap",
                     }}
                   >Ouvrir le mail</button>
                 </div>
-                <div style={{ fontSize: 10, color: COLORS.grisMoyen, marginTop: 6, lineHeight: 1.4 }}>
+                <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 6, lineHeight: 1.4 }}>
                   Ouvre votre client de messagerie (Outlook, Gmail web, Mail…) avec un brouillon
                   prérempli (objet + corps + lien). Vous n&apos;avez plus qu&apos;à cliquer
                   &quot;Envoyer&quot;.
@@ -273,7 +273,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
               </div>
             )}
 
-            <div style={{ fontSize: 10, color: COLORS.grisMoyen, marginTop: 6, lineHeight: 1.4 }}>
+            <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 6, lineHeight: 1.4 }}>
               Envoyez ce lien par email au client. Il accède à la page de validation publique
               (sans connexion). Le statut se met à jour automatiquement.
             </div>
@@ -284,7 +284,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
       {/* === ACTIONS === */}
       <div>
         <div style={{
-          fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+          fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
           textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8,
         }}>Validation</div>
 
@@ -296,13 +296,13 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 18, color: COLORS.vert }}>✓</span>
-              <span style={{ fontWeight: 700, fontSize: 14, color: "#1B5E20" }}>BAT validé et signé</span>
+              <span style={{ fontWeight: 700, fontSize: 16, color: "#1B5E20" }}>BAT validé et signé</span>
             </div>
-            <div style={{ fontSize: 12, color: "#1B5E20" }}>
+            <div style={{ fontSize: 14, color: "#1B5E20" }}>
               Signé par <strong>{bat.signedBy}</strong>
             </div>
             {bat.signedAt && (
-              <div style={{ fontSize: 11, color: "#2E7D32", marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: "#2E7D32", marginTop: 2 }}>
                 le {formatDate(bat.signedAt)}
               </div>
             )}
@@ -315,13 +315,13 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
             padding: "16px", background: COLORS.rougeBg,
             border: `1px solid ${COLORS.rouge}55`, borderRadius: 10,
           }}>
-            <div style={{ fontWeight: 700, fontSize: 13, color: COLORS.rouge, marginBottom: 6 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: COLORS.rouge, marginBottom: 6 }}>
               BAT renvoyé en production
             </div>
             {bat.commentaire && (
               <div style={{
                 padding: 10, background: COLORS.blanc, borderRadius: 6,
-                fontSize: 12, color: COLORS.noir, lineHeight: 1.5,
+                fontSize: 14, color: COLORS.noir, lineHeight: 1.5,
                 borderLeft: `3px solid ${COLORS.rouge}`,
               }}>
                 « {bat.commentaire} »
@@ -333,7 +333,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   display: "block", marginTop: 12,
                   padding: "10px", borderRadius: 8,
                   background: COLORS.noir, color: COLORS.dore,
-                  fontSize: 13, fontWeight: 600, cursor: "pointer", textAlign: "center",
+                  fontSize: 15, fontWeight: 600, cursor: "pointer", textAlign: "center",
                 }}>
                   Renvoyer en validation (v{bat.version + 1}) — choisir un PDF
                   <input
@@ -348,7 +348,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   />
                 </label>
                 {reuploadError && (
-                  <div style={{ fontSize: 11, color: COLORS.rouge, marginTop: 6 }}>{reuploadError}</div>
+                  <div style={{ fontSize: 13, color: COLORS.rouge, marginTop: 6 }}>{reuploadError}</div>
                 )}
               </>
             )}
@@ -365,7 +365,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
             }}>
               {/* Champ signature */}
               <label style={{
-                display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+                display: "block", fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
                 textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
               }}>Nom du signataire *</label>
               <input
@@ -376,7 +376,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                 style={{
                   width: "100%", padding: "8px 10px", marginBottom: 12,
                   border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
-                  fontSize: 13, color: COLORS.noir, background: COLORS.blanc,
+                  fontSize: 15, color: COLORS.noir, background: COLORS.blanc,
                   outline: "none", fontFamily: "inherit",
                 }}
               />
@@ -393,10 +393,10 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   }}
                 />
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: 13, color: COLORS.noir }}>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: COLORS.noir }}>
                     Je valide ce BAT
                   </div>
-                  <div style={{ fontSize: 11, color: COLORS.grisMoyen, marginTop: 2, lineHeight: 1.4 }}>
+                  <div style={{ fontSize: 13, color: COLORS.grisMoyen, marginTop: 2, lineHeight: 1.4 }}>
                     En cochant cette case, j&apos;atteste avoir consulté le document et valide
                     définitivement son contenu pour mise en production.
                   </div>
@@ -412,7 +412,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   background: (signatureChecked && signerName.trim()) ? COLORS.vert : COLORS.gris,
                   border: "none",
                   color: (signatureChecked && signerName.trim()) ? COLORS.blanc : COLORS.grisMoyen,
-                  fontSize: 13, fontWeight: 700,
+                  fontSize: 15, fontWeight: 700,
                   cursor: (signatureChecked && signerName.trim()) ? "pointer" : "not-allowed",
                 }}
               >✓ Signer et valider le BAT</button>
@@ -423,7 +423,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
               style={{
                 width: "100%", padding: "10px", borderRadius: 8,
                 background: COLORS.blanc, border: `1px solid ${COLORS.rouge}55`,
-                color: COLORS.rouge, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                color: COLORS.rouge, fontSize: 15, fontWeight: 600, cursor: "pointer",
               }}
             >Demander des modifications</button>
           </>
@@ -436,7 +436,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
             border: `1px solid ${COLORS.rouge}55`, borderRadius: 10,
           }}>
             <label style={{
-              display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+              display: "block", fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
               textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6,
             }}>Commentaire (obligatoire) *</label>
             <textarea
@@ -447,7 +447,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
               style={{
                 width: "100%", padding: "8px 10px",
                 border: `1px solid ${COLORS.grisBorder}`, borderRadius: 6,
-                fontSize: 13, color: COLORS.noir, background: COLORS.blanc,
+                fontSize: 15, color: COLORS.noir, background: COLORS.blanc,
                 outline: "none", fontFamily: "inherit", resize: "vertical",
               }}
             />
@@ -457,7 +457,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                 style={{
                   flex: 1, padding: "9px", borderRadius: 8,
                   background: "transparent", border: `1px solid ${COLORS.grisBorder}`,
-                  color: COLORS.grisMoyen, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  color: COLORS.grisMoyen, fontSize: 15, fontWeight: 600, cursor: "pointer",
                 }}
               >Annuler</button>
               <button
@@ -468,7 +468,7 @@ export default function BatPanel({ bat, canManageBat, layout = "horizontal" }: P
                   background: comment.trim() ? COLORS.rouge : COLORS.gris,
                   border: "none",
                   color: comment.trim() ? COLORS.blanc : COLORS.grisMoyen,
-                  fontSize: 13, fontWeight: 600,
+                  fontSize: 15, fontWeight: 600,
                   cursor: comment.trim() ? "pointer" : "not-allowed",
                 }}
               >Envoyer</button>

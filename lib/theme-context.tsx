@@ -13,21 +13,19 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>("light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme-mode") as ThemeMode | null;
-    const initial = saved || "light";
-    setMode(initial);
-    setMounted(true);
+    if (saved) setMode(saved);
   }, []);
 
   const toggleMode = () => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
-    localStorage.setItem("theme-mode", mode === "light" ? "dark" : "light");
+    setMode((prev) => {
+      const next = prev === "light" ? "dark" : "light";
+      localStorage.setItem("theme-mode", next);
+      return next;
+    });
   };
-
-  if (!mounted) return <>{children}</>;
 
   return (
     <ThemeContext.Provider value={{ mode, toggleMode }}>

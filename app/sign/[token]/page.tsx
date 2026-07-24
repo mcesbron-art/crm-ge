@@ -69,7 +69,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 24, color: COLORS.noir, margin: "0 0 8px",
             }}>Document introuvable</h1>
-            <p style={{ color: COLORS.grisMoyen, fontSize: 14, margin: 0 }}>
+            <p style={{ color: COLORS.grisMoyen, fontSize: 16, margin: 0 }}>
               Ce lien a expiré ou n&apos;est plus valide.<br />
               Contactez votre interlocuteur Groupe Écho pour obtenir un nouveau lien.
             </p>
@@ -111,17 +111,17 @@ export default function PublicSignPage({ params }: { params: { token: string } }
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 28, color: COLORS.noir, margin: "0 0 8px",
             }}>BAT validé avec succès</h1>
-            <p style={{ color: COLORS.grisMoyen, fontSize: 14, marginBottom: 20 }}>
+            <p style={{ color: COLORS.grisMoyen, fontSize: 16, marginBottom: 20 }}>
               Merci, votre validation a bien été enregistrée.<br />
               Une copie horodatée sera archivée pour vous et notre équipe.
             </p>
             <div style={{
               display: "inline-block", padding: "12px 18px",
               background: COLORS.gris, borderRadius: 10,
-              fontSize: 13, color: COLORS.noir,
+              fontSize: 15, color: COLORS.noir,
             }}>
               Signé par <strong>{fullSigner}</strong><br />
-              <span style={{ color: COLORS.grisMoyen, fontSize: 12 }}>le {formatDate(new Date().toISOString())}</span>
+              <span style={{ color: COLORS.grisMoyen, fontSize: 14 }}>le {formatDate(new Date().toISOString())}</span>
             </div>
           </div>
         </Card>
@@ -144,7 +144,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 28, color: COLORS.noir, margin: "0 0 8px",
             }}>Demande envoyée</h1>
-            <p style={{ color: COLORS.grisMoyen, fontSize: 14 }}>
+            <p style={{ color: COLORS.grisMoyen, fontSize: 16 }}>
               Vos remarques ont été transmises à notre équipe.<br />
               Nous reviendrons vers vous dans les meilleurs délais avec une nouvelle version.
             </p>
@@ -170,7 +170,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 24, color: COLORS.noir, margin: "0 0 8px",
             }}>Ce BAT a déjà été validé</h1>
-            <p style={{ color: COLORS.grisMoyen, fontSize: 13 }}>
+            <p style={{ color: COLORS.grisMoyen, fontSize: 15 }}>
               Signé par <strong>{bat.signedBy}</strong>
               {bat.signedAt && <> le {formatDate(bat.signedAt)}</>}
             </p>
@@ -189,7 +189,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 24, color: COLORS.noir, margin: "0 0 8px",
             }}>BAT en cours de révision</h1>
-            <p style={{ color: COLORS.grisMoyen, fontSize: 14 }}>
+            <p style={{ color: COLORS.grisMoyen, fontSize: 16 }}>
               Une demande de modifications a déjà été envoyée à notre équipe.<br />
               Vous recevrez bientôt une nouvelle version.
             </p>
@@ -213,7 +213,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
             fontSize: 22, color: COLORS.dore, letterSpacing: 1,
           }}>GROUPE ÉCHO</div>
           <div style={{
-            fontSize: 11, color: "#888", letterSpacing: 1.5,
+            fontSize: 13, color: "#888", letterSpacing: 1.5,
             textTransform: "uppercase", marginTop: 2,
           }}>Validation de BAT</div>
         </div>
@@ -225,18 +225,18 @@ export default function PublicSignPage({ params }: { params: { token: string } }
           <div style={{
             padding: "20px 24px", borderBottom: `1px solid ${COLORS.grisBorder}`,
           }}>
-            <div style={{ fontSize: 11, color: COLORS.grisMoyen, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>
+            <div style={{ fontSize: 13, color: COLORS.grisMoyen, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>
               Bon à tirer · v{bat.version}
             </div>
             <h1 style={{
               fontFamily: "var(--font-dm-serif-display), Georgia, serif",
               fontSize: 26, color: COLORS.noir, margin: 0,
             }}>{bat.taskName}</h1>
-            <div style={{ fontSize: 13, color: COLORS.grisMoyen, marginTop: 4 }}>
+            <div style={{ fontSize: 15, color: COLORS.grisMoyen, marginTop: 4 }}>
               <strong>{bat.projet}</strong> · {bat.client}
             </div>
             {bat.uploadedAt && (
-              <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 8 }}>
+              <div style={{ fontSize: 14, color: COLORS.grisMoyen, marginTop: 8 }}>
                 Document transmis le {formatDate(bat.uploadedAt)}
               </div>
             )}
@@ -245,7 +245,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
           {/* PDF preview */}
           <div style={{ padding: 24 }}>
             <div style={{
-              fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+              fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
               textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10,
             }}>Document à valider</div>
 
@@ -266,10 +266,10 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                 borderRadius: 10,
               }}>
                 <div style={{ fontSize: 36, marginBottom: 8, color: COLORS.grisMoyen }}>📄</div>
-                <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.noir, marginBottom: 6 }}>
+                <div style={{ fontWeight: 600, fontSize: 16, color: COLORS.noir, marginBottom: 6 }}>
                   {bat.pdfName ?? "(document)"}
                 </div>
-                <div style={{ fontSize: 12, color: COLORS.grisMoyen, marginTop: 12, lineHeight: 1.5, fontStyle: "italic" }}>
+                <div style={{ fontSize: 14, color: COLORS.grisMoyen, marginTop: 12, lineHeight: 1.5, fontStyle: "italic" }}>
                   Le PDF n&apos;est pas accessible depuis ce navigateur (démo locale).<br />
                   En production, il serait servi depuis Supabase Storage.
                 </div>
@@ -291,7 +291,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
                   <div>
                     <label style={{
-                      display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+                      display: "block", fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
                       textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
                     }}>Votre nom *</label>
                     <input
@@ -302,14 +302,14 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                       style={{
                         width: "100%", padding: "10px 12px",
                         border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-                        fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
+                        fontSize: 16, color: COLORS.noir, background: COLORS.blanc,
                         outline: "none", fontFamily: "inherit",
                       }}
                     />
                   </div>
                   <div>
                     <label style={{
-                      display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+                      display: "block", fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
                       textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4,
                     }}>Société (optionnel)</label>
                     <input
@@ -320,7 +320,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                       style={{
                         width: "100%", padding: "10px 12px",
                         border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-                        fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
+                        fontSize: 16, color: COLORS.noir, background: COLORS.blanc,
                         outline: "none", fontFamily: "inherit",
                       }}
                     />
@@ -342,10 +342,10 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                     }}
                   />
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: COLORS.noir, marginBottom: 4 }}>
+                    <div style={{ fontWeight: 700, fontSize: 16, color: COLORS.noir, marginBottom: 4 }}>
                       Je valide définitivement ce BAT
                     </div>
-                    <div style={{ fontSize: 12, color: COLORS.grisMoyen, lineHeight: 1.5 }}>
+                    <div style={{ fontSize: 14, color: COLORS.grisMoyen, lineHeight: 1.5 }}>
                       En cochant cette case, je confirme avoir consulté le document
                       <strong style={{ color: COLORS.noir }}> « {bat.taskName} »</strong>
                       {" "}et j&apos;atteste que son contenu est conforme à mes attentes.
@@ -373,7 +373,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                     onClick={() => setIsRequestingMods(true)}
                     style={{
                       background: "none", border: "none", cursor: "pointer",
-                      color: COLORS.rouge, fontSize: 13, fontWeight: 600,
+                      color: COLORS.rouge, fontSize: 15, fontWeight: 600,
                       textDecoration: "underline", padding: 0,
                     }}
                   >Demander des modifications →</button>
@@ -389,7 +389,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                 }}>Demander des modifications</h2>
 
                 <label style={{
-                  display: "block", fontSize: 11, fontWeight: 600, color: COLORS.grisMoyen,
+                  display: "block", fontSize: 13, fontWeight: 600, color: COLORS.grisMoyen,
                   textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6,
                 }}>Vos remarques *</label>
                 <textarea
@@ -400,7 +400,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                   style={{
                     width: "100%", padding: "12px",
                     border: `1px solid ${COLORS.grisBorder}`, borderRadius: 8,
-                    fontSize: 14, color: COLORS.noir, background: COLORS.blanc,
+                    fontSize: 16, color: COLORS.noir, background: COLORS.blanc,
                     outline: "none", fontFamily: "inherit", resize: "vertical",
                   }}
                 />
@@ -410,7 +410,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                     style={{
                       flex: 1, padding: "12px", borderRadius: 10,
                       background: "transparent", border: `1px solid ${COLORS.grisBorder}`,
-                      color: COLORS.grisMoyen, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                      color: COLORS.grisMoyen, fontSize: 16, fontWeight: 600, cursor: "pointer",
                     }}
                   >Retour</button>
                   <button
@@ -421,7 +421,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
                       background: comment.trim() ? COLORS.rouge : COLORS.gris,
                       border: "none",
                       color: comment.trim() ? COLORS.blanc : COLORS.grisMoyen,
-                      fontSize: 14, fontWeight: 700,
+                      fontSize: 16, fontWeight: 700,
                       cursor: comment.trim() ? "pointer" : "not-allowed",
                     }}
                   >Envoyer ma demande</button>
@@ -431,7 +431,7 @@ export default function PublicSignPage({ params }: { params: { token: string } }
           )}
         </div>
 
-        <p style={{ textAlign: "center", fontSize: 11, color: COLORS.grisMoyen, marginTop: 24 }}>
+        <p style={{ textAlign: "center", fontSize: 13, color: COLORS.grisMoyen, marginTop: 24 }}>
           Lien sécurisé · Une copie horodatée sera archivée
         </p>
       </div>

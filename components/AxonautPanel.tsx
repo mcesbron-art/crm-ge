@@ -84,7 +84,7 @@ export default function AxonautPanel() {
           fontFamily: "var(--font-dm-serif-display), Georgia, serif",
           fontSize: 18, color: COLORS.noir, margin: "0 0 2px", fontWeight: 400,
         }}>Intégration Axonaut</h2>
-        <p style={{ fontSize: 12, color: COLORS.grisMoyen, margin: 0 }}>
+        <p style={{ fontSize: 14, color: COLORS.grisMoyen, margin: 0 }}>
           Synchronisation des devis validés et création des factures
         </p>
       </header>
@@ -94,7 +94,7 @@ export default function AxonautPanel() {
         <div style={{
           padding: "10px 14px", marginBottom: 16,
           background: "#FFF8E1", border: "1px solid #FFE082",
-          borderRadius: 8, fontSize: 12, color: COLORS.noir, lineHeight: 1.5,
+          borderRadius: 8, fontSize: 14, color: COLORS.noir, lineHeight: 1.5,
         }}>
           <strong>⚠ Sécurité :</strong> la clé API est lue côté serveur uniquement
           (variable d&apos;environnement <code style={{ background: COLORS.blanc, padding: "1px 5px", borderRadius: 3 }}>AXONAUT_API_KEY</code>).
@@ -104,10 +104,10 @@ export default function AxonautPanel() {
         {/* Test connexion */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, marginBottom: 12, alignItems: "center" }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.noir, marginBottom: 2 }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.noir, marginBottom: 2 }}>
               1. Tester la connexion
             </div>
-            <div style={{ fontSize: 11, color: COLORS.grisMoyen }}>
+            <div style={{ fontSize: 13, color: COLORS.grisMoyen }}>
               Vérifie que la clé API est valide en faisant un appel léger à Axonaut.
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function AxonautPanel() {
               padding: "8px 16px", borderRadius: 8,
               border: `1px solid ${COLORS.grisBorder}`,
               background: COLORS.blanc, color: COLORS.noir,
-              fontSize: 12, fontWeight: 600, cursor: "pointer",
+              fontSize: 14, fontWeight: 600, cursor: "pointer",
               opacity: testStatus.state === "loading" ? 0.6 : 1,
             }}
           >
@@ -135,10 +135,10 @@ export default function AxonautPanel() {
         {/* Synchro projets */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, marginBottom: 12, alignItems: "center" }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.noir, marginBottom: 2 }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.noir, marginBottom: 2 }}>
               2. Synchroniser les projets
             </div>
-            <div style={{ fontSize: 11, color: COLORS.grisMoyen }}>
+            <div style={{ fontSize: 13, color: COLORS.grisMoyen }}>
               Importe tous les devis validés / acceptés depuis Axonaut.
               Chaque ligne devient une tâche, le temps alloué est calculé via
               <code style={{ margin: "0 4px", background: COLORS.gris, padding: "1px 5px", borderRadius: 3 }}>marge ÷ 83€</code>.
@@ -150,7 +150,7 @@ export default function AxonautPanel() {
             style={{
               padding: "8px 16px", borderRadius: 8, border: "none",
               background: COLORS.noir, color: COLORS.dore,
-              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              fontSize: 14, fontWeight: 700, cursor: "pointer",
               opacity: syncStatus.state === "loading" ? 0.6 : 1, whiteSpace: "nowrap",
             }}
           >
@@ -165,7 +165,7 @@ export default function AxonautPanel() {
         <div style={{
           marginTop: 20, padding: "10px 14px",
           background: COLORS.gris, borderRadius: 8,
-          fontSize: 11, color: COLORS.grisMoyen, lineHeight: 1.5,
+          fontSize: 13, color: COLORS.grisMoyen, lineHeight: 1.5,
         }}>
           ℹ Pour l&apos;instant les projets synchronisés ne sont pas persistés (logs uniquement).
           Une fois Supabase branché, ils seront upserts dans la table <code style={{ background: COLORS.blanc, padding: "1px 4px", borderRadius: 3 }}>projets</code>.
@@ -182,13 +182,13 @@ function StatusLine({ status }: { status: SyncStatus }) {
       padding: "8px 12px", borderRadius: 8,
       background: isError ? "#FFEBEE" : "#E8F5E9",
       border: `1px solid ${isError ? "#FFCDD2" : "#C8E6C9"}`,
-      fontSize: 12, color: isError ? "#C62828" : "#2E7D32",
+      fontSize: 14, color: isError ? "#C62828" : "#2E7D32",
       display: "flex", alignItems: "center", gap: 8,
     }}>
       <span>{isError ? "✗" : "✓"}</span>
       <span>{status.message}</span>
       {status.syncedAt && (
-        <span style={{ marginLeft: "auto", fontSize: 10, color: "#999" }}>
+        <span style={{ marginLeft: "auto", fontSize: 12, color: "#999" }}>
           {new Date(status.syncedAt).toLocaleTimeString("fr-FR")}
         </span>
       )}

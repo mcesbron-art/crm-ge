@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createInvoice, getInvoice, AxonautError } from "@/lib/axonaut";
 import { buildInvoicePayload } from "@/lib/axonaut-mapper";
+import { getServerSession } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 
 /**
  * POST /api/axonaut/invoice
@@ -23,6 +25,17 @@ import { buildInvoicePayload } from "@/lib/axonaut-mapper";
  *   502 { ok: false, error: "..." } si erreur Axonaut
  */
 export async function POST(req: Request) {
+  // Aucune vérification n'existait ici — n'importe qui, même non connecté,
+  // pouvait créer une vraie facture Axonaut en appelant cette route
+  // directement. Non appelée depuis l'app aujourd'hui (aucun appelant
+  // trouvé — probablement prévue pour le futur mécanisme d'abonnements),
+  // mais corrigée dès maintenant vu la sensibilité de l'action.
+  const session = await getServerSession();
+  if (!session) return NextResponse.json({ ok: false, error: "Non authentifié" }, { status: 401 });
+  if (!can(session.role, "manage_billing")) {
+    return NextResponse.json({ ok: false, error: "Accès refusé" }, { status: 403 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -98,6 +111,12 @@ export async function POST(req: Request) {
  * on bloque la création des tâches du mois suivant).
  */
 export async function GET(req: Request) {
+  const session = await getServerSession();
+  if (!session) return NextResponse.json({ ok: false, error: "Non authentifié" }, { status: 401 });
+  if (!can(session.role, "view_billing")) {
+    return NextResponse.json({ ok: false, error: "Accès refusé" }, { status: 403 });
+  }
+
   const { searchParams } = new URL(req.url);
   const id = Number(searchParams.get("id"));
   if (!id || isNaN(id)) {

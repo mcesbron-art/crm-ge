@@ -6,7 +6,7 @@ import {
 
 /**
  * GET  /api/commerciaux   — liste tous les commerciaux actifs
- * POST /api/commerciaux   — crée un nouveau commercial (Direction uniquement)
+ * POST /api/commerciaux   — crée un nouveau commercial (Admin uniquement)
  */
 
 export async function GET() {
@@ -30,9 +30,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const profile = await getServerSession();
-  if (!profile || profile.role !== "direction") {
+  if (!profile || profile.role !== "admin") {
     return NextResponse.json(
-      { error: "Réservé à la Direction" },
+      { error: "Réservé aux administrateurs" },
       { status: 403 },
     );
   }

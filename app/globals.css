@@ -2,6 +2,269 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Filet de sécurité générique : ombre + accentuation au survol pour tout
+   <button> qui n'utilise pas encore les classes .btn-* ci-dessous (pages
+   hors périmètre de l'harmonisation). Un style inline existant reste
+   toujours prioritaire, donc rien n'est cassé pour un bouton déjà
+   personnalisé. Les boutons .btn-* définissent leurs propres états et
+   ignorent ce filet (voir règle .btn:not(:disabled) plus bas qui neutralise
+   le double effet). */
+button:not(:disabled) {
+  box-shadow: 0 1px 2px rgba(16, 15, 11, 0.08), 0 2px 7px rgba(16, 15, 11, 0.12);
+  transition: box-shadow 0.15s ease, filter 0.15s ease, transform 0.1s ease;
+}
+button:not(:disabled):hover {
+  box-shadow: 0 2px 5px rgba(16, 15, 11, 0.12), 0 7px 18px rgba(16, 15, 11, 0.18);
+  filter: brightness(1.05);
+}
+button:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(16, 15, 11, 0.1);
+  filter: brightness(0.98);
+}
+
+/* ==========================================================================
+   BOUTONS — système partagé (.btn + variantes)
+   Voir components/ui/Button.tsx pour le composant React qui applique ces
+   classes. Les <Link> stylés en bouton (ex. équipe) peuvent aussi prendre
+   directement `className="btn btn-secondary"` sans passer par le composant.
+   Le focus clavier (:focus-visible) reste distinct du hover — jamais la
+   même règle — comme demandé pour l'accessibilité clavier.
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+.btn:focus-visible {
+  outline: 2px solid #C5A55A;
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: #0A0A0A;
+  border-color: #0A0A0A;
+  color: #E9D7A6;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #1A1A1A;
+  border-color: #1A1A1A;
+  box-shadow: 0 4px 14px rgba(10, 10, 10, 0.22);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  border-color: #E2E1DA;
+  color: #33322C;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #F7F6F2;
+  border-color: #C9C7BC;
+}
+
+.btn-tertiary {
+  background: transparent;
+  border-color: transparent;
+  color: #5C5A52;
+  padding: 10px 12px;
+}
+.btn-tertiary:hover:not(:disabled) {
+  background: #F2F1EC;
+  color: #33322C;
+}
+
+.btn-danger {
+  background: #E53935;
+  border-color: #E53935;
+  color: #FFFFFF;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #C62828;
+  border-color: #C62828;
+  box-shadow: 0 4px 14px rgba(229, 57, 53, 0.25);
+}
+
+.btn-danger-outline {
+  background: #FFFFFF;
+  border-color: #F5B5B3;
+  color: #C62828;
+}
+.btn-danger-outline:hover:not(:disabled) {
+  background: #FFF1F0;
+  border-color: #E53935;
+}
+
+.btn-link {
+  background: transparent;
+  border-color: transparent;
+  color: #16A89C;
+  padding: 4px 2px;
+  border-radius: 4px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn-link:hover:not(:disabled) {
+  color: #0D6B5F;
+}
+
+/* Liens texte type "Tout voir"/"Ajouter"/"Voir plus" — pas de soulignement
+   par défaut (bruite la lecture des listes), seulement au survol, comme les
+   autres liens du CRM. Utilisé notamment par le dashboard. */
+.link-underline-hover {
+  text-decoration: none;
+}
+.link-underline-hover:hover {
+  text-decoration: underline;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 9px;
+  background: transparent;
+  border-color: transparent;
+  color: #5C5A52;
+}
+.btn-icon:hover:not(:disabled) {
+  background: #F2F1EC;
+  color: #1A1A1A;
+}
+
+.btn-sm {
+  font-size: 13.5px;
+  padding: 7px 14px;
+}
+.btn-sm.btn-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* prefers-reduced-motion — couvre aussi les animations déclarées en style
+   inline (ex. timerGlow/pulse du chrono sidebar) : !important dans une
+   feuille de style l'emporte sur un style inline non-important. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .btn:active:not(:disabled),
+  button:not(:disabled):active {
+    transform: none !important;
+  }
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Chrono actif dans la sidebar — anneau lumineux respirant, pour que le
+   collaborateur/admin le remarque même du coin de l'œil sur les autres
+   pages (avant : simple petit point clignotant, peu visible). */
+@keyframes timerGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(228, 169, 58, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(228, 169, 58, 0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: pageEnter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Ouverture des popups/modales — appliquées aux deux éléments de chaque
+   modale (overlay + panneau) partout dans l'app, cf. modal-overlay-in /
+   modal-panel-in / modal-slide-in. */
+@keyframes modalOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPanelIn {
+  from { opacity: 0; transform: scale(0.97) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.modal-overlay-in {
+  animation: modalOverlayIn 0.16s ease both;
+}
+
+.modal-panel-in {
+  animation: modalPanelIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.modal-slide-in {
+  animation: modalSlideIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Variante pour les panneaux centrés via top/left 50% + transform:
+   translate(-50%,-50%) — le transform de positionnement doit être conservé
+   dans le keyframe, sinon l'animation l'écrase et décentre le panneau. */
+@keyframes modalPanelCenteredIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.97) translateY(6px); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
+}
+
+.modal-panel-centered-in {
+  animation: modalPanelCenteredIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Font compatibility variables */
 :root {
   --font-dm-serif-display: var(--font-inter);
@@ -17,6 +280,11 @@
   h1, h2, h3, h4 {
     @apply font-sans font-semibold;
   }
+}
+
+/* Sidebar search placeholder */
+.app-sidebar input::placeholder {
+  color: #6E6A5E;
 }
 
 @layer utilities {
@@ -43,8 +311,8 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 240px;
-  background: #000000;
+  width: 248px;
+  background: #0A0A0A;
   z-index: 30;
   display: flex;
   flex-direction: column;
@@ -72,6 +340,18 @@
     inset: 0;
     background: rgba(0,0,0,.5);
     z-index: 25;
+  }
+}
+
+/* Mini-player chrono mobile — voir components/MobileActiveTimerBar.tsx.
+   Masqué sur desktop (la sidebar fixe suffit) ; affiché sous 1024px, seuil où
+   .app-sidebar passe hors écran et rendrait sinon le chrono actif invisible. */
+.mobile-timer-bar {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .mobile-timer-bar {
+    display: flex;
   }
 }
 
@@ -112,7 +392,7 @@
 }
 @media (min-width: 1024px) {
   .app-main {
-    margin-left: 240px;
+    margin-left: 248px;
   }
 }
 
@@ -196,14 +476,15 @@
   margin-bottom: 24px;
 }
 
-/* === Headings adaptatifs === */
+/* === Headings adaptatifs — aligné sur lib/typography.ts (pageTitle) === */
 .h-page {
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 30px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 32px;
   color: #1A1A1A;
   margin: 0 0 4px;
-  font-weight: 600;
-  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 @media (max-width: 600px) {
   .h-page { font-size: 24px; }
@@ -218,7 +499,7 @@
   padding: 10px 32px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   flex-wrap: wrap;
   transition: background 0.2s, border 0.2s;
@@ -227,7 +508,7 @@
   .preview-bar {
     margin: -64px -16px 16px;
     padding: 10px 16px 10px 64px;  /* 64px à gauche pour passer sous le hamburger */
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 
@@ -242,5 +523,28 @@
 @media (max-width: 1023px) {
   .kanban-columns {
     padding: 16px 12px;
+  }
+}
+
+/* === Export "PDF" via l'impression navigateur (window.print()) ===
+   Utilisé par /rapports (bouton "Exporter PDF") — masque la sidebar, le
+   hamburger mobile et toute zone marquée .no-print, et laisse le contenu
+   principal occuper toute la largeur de la page imprimée. */
+@media print {
+  .app-sidebar,
+  .app-hamburger,
+  .app-sidebar-backdrop,
+  .no-print {
+    display: none !important;
+  }
+  .app-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+  /* Les pages qui s'étendent en dehors du padding de .app-main (margin
+     négative -32px/-40px, cf. DashboardRedesign.tsx et rapports/page.tsx)
+     doivent revenir à zéro une fois ce padding supprimé à l'impression. */
+  .rapports-print-root {
+    margin: 0 !important;
   }
 }

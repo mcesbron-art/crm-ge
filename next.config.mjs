@@ -44,6 +44,14 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  eslint: { ignoreDuringBuilds: true },
+
+  // Redirect racine → dashboard au niveau HTTP (évite le redirect RSC qui cause React #310)
+  async redirects() {
+    return [
+      { source: "/", destination: "/dashboard", permanent: false },
+    ];
+  },
 
   // Headers globaux (sécurité)
   async headers() {

@@ -20,7 +20,7 @@ export default function AccessDenied({ message, user }: Props) {
           fontFamily: "var(--font-dm-serif-display), Georgia, serif",
           fontSize: 24, color: COLORS.noir, margin: "0 0 8px",
         }}>Accès restreint</h1>
-        <p style={{ color: COLORS.grisMoyen, fontSize: 14, margin: 0 }}>
+        <p style={{ color: COLORS.grisMoyen, fontSize: 16, margin: 0 }}>
           {message ?? "Cette page est réservée à la Direction et aux Admins."}
           {user && (
             <>

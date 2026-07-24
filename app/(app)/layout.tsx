@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Sidebar from "@/components/Sidebar";
 import PreviewBar from "@/components/PreviewBar";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
@@ -33,6 +32,7 @@ export default async function AppLayout({
     email: profile.email,
     pole: profile.pole ?? "",
     avatar: profile.avatar ?? profile.nom.slice(0, 2).toUpperCase(),
+    avatarUrl: profile.avatarUrl,
     color: profile.color ?? "#999999",
     role: profile.role,
     base: profile.base,

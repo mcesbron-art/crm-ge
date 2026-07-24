@@ -52,7 +52,7 @@ function KPICard({
       <div>
         <div
           style={{
-            fontSize: 10,
+            fontSize: 12,
             color: isBlack ? "#C5A55A" : labelColor,
             fontWeight: 600,
             letterSpacing: 0.5,
@@ -75,11 +75,11 @@ function KPICard({
         </div>
       </div>
       {sub && typeof sub === "string" ? (
-        <div style={{ fontSize: 12, color: subColor || labelColor, marginTop: 8, fontWeight: 400 }}>
+        <div style={{ fontSize: 14, color: subColor || labelColor, marginTop: 8, fontWeight: 400 }}>
           {sub}
         </div>
       ) : (
-        <div style={{ fontSize: 12, marginTop: 8, fontWeight: 400 }}>
+        <div style={{ fontSize: 14, marginTop: 8, fontWeight: 400 }}>
           {sub}
         </div>
       )}
@@ -175,7 +175,7 @@ export default function DashboardExact() {
             >
               Dashboard
             </h1>
-            <p style={{ color: subtextColor, fontSize: 12, margin: 0 }}>
+            <p style={{ color: subtextColor, fontSize: 14, margin: 0 }}>
               Semaine du 10 au 16 mars 2026
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function DashboardExact() {
                 background: "transparent",
                 border: `1px solid ${borderColor}`,
                 borderRadius: 20,
-                fontSize: 13,
+                fontSize: 15,
                 fontWeight: 600,
                 color: textColor,
                 cursor: "pointer",
@@ -201,7 +201,7 @@ export default function DashboardExact() {
                 background: "#000000",
                 border: "none",
                 borderRadius: 20,
-                fontSize: 13,
+                fontSize: 15,
                 fontWeight: 600,
                 color: "#FFFFFF",
                 cursor: "pointer",
@@ -294,7 +294,7 @@ export default function DashboardExact() {
               <div>
                 <h3
                   style={{
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: 600,
                     color: subtextColor,
                     margin: "0 0 12px",
@@ -325,7 +325,7 @@ export default function DashboardExact() {
                   <span style={{
                     color: "#10B981",
                     fontWeight: 600,
-                    fontSize: 13,
+                    fontSize: 15,
                     background: "#E6F7F0",
                     padding: "4px 10px",
                     borderRadius: 6,
@@ -341,7 +341,7 @@ export default function DashboardExact() {
                       background: "#F5F5F5",
                       border: "1px solid #E0E0E0",
                       borderRadius: 20,
-                      fontSize: 12,
+                      fontSize: 14,
                       color: textColor,
                       cursor: "pointer",
                       fontWeight: 500,
@@ -355,7 +355,7 @@ export default function DashboardExact() {
                       background: "#F5F5F5",
                       border: "1px solid #E0E0E0",
                       borderRadius: 20,
-                      fontSize: 12,
+                      fontSize: 14,
                       color: textColor,
                       cursor: "pointer",
                       fontWeight: 500,
@@ -365,7 +365,7 @@ export default function DashboardExact() {
                   </button>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 12, fontSize: 12 }}>
+              <div style={{ display: "flex", gap: 12, fontSize: 14 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <div style={{ width: 12, height: 12, background: "#C5A55A", borderRadius: 2 }} />
                   <span style={{ color: textColor }}>Cette période</span>
@@ -395,7 +395,7 @@ export default function DashboardExact() {
         >
           <h3
             style={{
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: 600,
               color: textColor,
               margin: "0 0 16px",
@@ -425,7 +425,7 @@ export default function DashboardExact() {
                   <span style={{ fontSize: 16, fontWeight: 600, color: subtextColor }}>
                     {item.label}
                   </span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: textColor }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: textColor }}>
                     {item.value}
                   </span>
                 </div>
@@ -465,7 +465,7 @@ export default function DashboardExact() {
       >
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 700,
             color: "#E65100",
             marginBottom: 12,
@@ -487,7 +487,7 @@ export default function DashboardExact() {
                 alignItems: "center",
                 gap: 10,
                 padding: "8px 0",
-                fontSize: 12,
+                fontSize: 14,
                 borderBottom: `1px solid rgba(0,0,0,0.1)`,
               }}
             >
@@ -503,7 +503,7 @@ export default function DashboardExact() {
               <span style={{ color: textColor, flex: 1 }}>
                 {t.nom.substring(0, 30)}
               </span>
-              <span style={{ color: subtextColor, fontSize: 11 }}>
+              <span style={{ color: subtextColor, fontSize: 13 }}>
                 — {t.projet}
               </span>
               <div
@@ -532,7 +532,7 @@ export default function DashboardExact() {
         <div style={{ padding: 16, borderBottom: `1px solid ${borderColor}` }}>
           <h3
             style={{
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: 600,
               color: textColor,
               margin: 0,
@@ -548,7 +548,7 @@ export default function DashboardExact() {
             padding: "10px 16px",
             background: "transparent",
             borderBottom: `1px solid ${borderColor}`,
-            fontSize: 10,
+            fontSize: 12,
             fontWeight: 600,
             color: subtextColor,
             textTransform: "uppercase",
@@ -577,7 +577,7 @@ export default function DashboardExact() {
                 alignItems: "center",
                 padding: "12px 16px",
                 borderBottom: `1px solid ${borderColor}`,
-                fontSize: 12,
+                fontSize: 14,
               }}
             >
               <div>
@@ -586,7 +586,7 @@ export default function DashboardExact() {
                 </div>
                 <div
                   style={{
-                    fontSize: 11,
+                    fontSize: 13,
                     color: subtextColor,
                   }}
                 >

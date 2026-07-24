@@ -3,19 +3,30 @@ import {
   createSupabaseServerClient,
   getServerSession,
 } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 import type { OpportunityStatus } from "@/lib/opportunites-types";
 
-const VALID_STATUS: OpportunityStatus[] = ["demande", "contacte", "devis", "gagne", "perdu"];
+const VALID_STATUS: OpportunityStatus[] = ["demande", "contacte", "devis", "negociation", "gagne", "perdu"];
 
 /**
- * PATCH /api/opportunites/[id]   — modifier (statut, montant, notes…)
- * DELETE /api/opportunites/[id]  — supprimer
+ * PATCH /api/opportunites/[id]   — modifier (statut, montant, notes…),
+ *   réservé à l'admin ou au créateur (demandeur_id) de l'opportunité.
+ * DELETE /api/opportunites/[id]  — supprimer, réservé à l'admin ou au
+ *   créateur (demandeur_id) — même règle que PATCH.
  */
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+
+  const supabaseCheck = createSupabaseServerClient();
+  if (!can(profile.role, "view_all_opportunities")) {
+    const { data: existing } = await supabaseCheck.from("opportunites").select("demandeur_id").eq("id", params.id).maybeSingle();
+    if (!existing || existing.demandeur_id !== profile.id) {
+      return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
+    }
   }
 
   let body: Record<string, unknown>;
@@ -41,7 +52,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // Date de résultat auto-renseignée pour gagne/perdu
     if (body.statut === "gagne" || body.statut === "perdu") {
       patch.resultat_date = new Date().toISOString().slice(0, 10);
-    } else {
+    } else if (body.statut !== "negociation") {
       patch.resultat_date = null;
     }
   }
@@ -80,6 +91,14 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   }
 
   const supabase = createSupabaseServerClient();
+
+  if (!can(profile.role, "view_all_opportunities")) {
+    const { data: existing } = await supabase.from("opportunites").select("demandeur_id").eq("id", params.id).maybeSingle();
+    if (!existing || existing.demandeur_id !== profile.id) {
+      return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
+    }
+  }
+
   const { error } = await supabase.from("opportunites").delete().eq("id", params.id);
 
   if (error) {

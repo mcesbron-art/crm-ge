@@ -98,7 +98,7 @@ function KPICard({
     >
       <div
         style={{
-          fontSize: 10,
+          fontSize: 12,
           color: labelColor,
           fontWeight: 600,
           letterSpacing: 0.5,
@@ -121,7 +121,7 @@ function KPICard({
         {value}
       </div>
       {sub && (
-        <div style={{ fontSize: 10, color: labelColor, marginTop: 3, fontWeight: 400 }}>
+        <div style={{ fontSize: 12, color: labelColor, marginTop: 3, fontWeight: 400 }}>
           {sub}
         </div>
       )}
@@ -214,7 +214,7 @@ export default function DashboardDemo() {
               background: isDark ? "#1F1F1F" : "#F5F5F3",
               border: `1px solid ${borderColor}`,
               borderRadius: 8,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: 600,
               color: textColor,
               cursor: "pointer",
@@ -235,7 +235,7 @@ export default function DashboardDemo() {
               background: "#C5A55A",
               border: "none",
               borderRadius: 8,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: 600,
               color: "#1A1A1A",
               cursor: "pointer",
@@ -309,7 +309,7 @@ export default function DashboardDemo() {
       >
         <h3
           style={{
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: 600,
             color: textColor,
             margin: "0 0 16px",
@@ -335,7 +335,7 @@ export default function DashboardDemo() {
             >
               <div
                 style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: 700,
                   color: isDark ? "#FFB366" : "#E65100",
                   marginBottom: 12,
@@ -356,7 +356,7 @@ export default function DashboardDemo() {
                       alignItems: "center",
                       gap: 10,
                       padding: "8px 0",
-                      fontSize: 12,
+                      fontSize: 14,
                       borderBottom: `1px solid ${
                         isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
                       }`,
@@ -372,7 +372,7 @@ export default function DashboardDemo() {
                       {ratio}%
                     </span>
                     <span style={{ color: textColor, flex: 1 }}>{t.nom}</span>
-                    <span style={{ color: subtextColor, fontSize: 11 }}>
+                    <span style={{ color: subtextColor, fontSize: 13 }}>
                       {t.projet}
                     </span>
                   </div>
@@ -401,7 +401,7 @@ export default function DashboardDemo() {
             >
               <h3
                 style={{
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: 600,
                   color: textColor,
                   margin: 0,
@@ -417,7 +417,7 @@ export default function DashboardDemo() {
                 padding: "10px 16px",
                 background: isDark ? "#141414" : "#F5F5F3",
                 borderBottom: `1px solid ${borderColor}`,
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: 600,
                 color: subtextColor,
                 textTransform: "uppercase",
@@ -451,7 +451,7 @@ export default function DashboardDemo() {
                     alignItems: "center",
                     padding: "12px 16px",
                     borderBottom: `1px solid ${borderColor}`,
-                    fontSize: 12,
+                    fontSize: 14,
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = isDark
@@ -467,12 +467,12 @@ export default function DashboardDemo() {
                       style={{
                         fontWeight: 600,
                         color: textColor,
-                        fontSize: 12,
+                        fontSize: 14,
                       }}
                     >
                       {p.nom}
                     </div>
-                    <div style={{ fontSize: 10, color: subtextColor }}>
+                    <div style={{ fontSize: 12, color: subtextColor }}>
                       {p.client}
                     </div>
                   </div>
@@ -523,7 +523,7 @@ export default function DashboardDemo() {
         >
           <h3
             style={{
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: 600,
               color: textColor,
               margin: "0 0 12px",
@@ -550,13 +550,13 @@ export default function DashboardDemo() {
                   <span
                     style={{
                       fontWeight: 600,
-                      fontSize: 11,
+                      fontSize: 13,
                       color: textColor,
                     }}
                   >
                     {c.nom}
                   </span>
-                  <span style={{ fontSize: 10, color: subtextColor }}>
+                  <span style={{ fontSize: 12, color: subtextColor }}>
                     {heures}h/35h
                   </span>
                 </div>
