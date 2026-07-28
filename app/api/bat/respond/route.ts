@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 import { sendBatResponseEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -143,6 +144,21 @@ export async function POST(req: NextRequest) {
     } else {
       console.log("[bat/respond] no notifyTo — skipping reject notification");
     }
+  }
+
+  if (project?.assigned_to) {
+    await createNotification({
+      recipientId: project.assigned_to,
+      type: action === "approve" ? "bat_approved" : "bat_rejected",
+      entityType: "project",
+      entityId: validation.project_id,
+      title: action === "approve" ? "BAT accepté par le client" : "BAT refusé par le client",
+      body:
+        action === "approve"
+          ? `Le BAT du projet « ${project?.name ?? ""} » a été accepté.`
+          : `Le BAT du projet « ${project?.name ?? ""} » a été refusé${comment?.trim() ? ` : ${comment.trim()}` : ""}.`,
+      link: `/projets?open=${validation.project_id}`,
+    });
   }
 
   console.log("[bat/respond] done, returning ok");

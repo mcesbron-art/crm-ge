@@ -4,7 +4,8 @@ import {
   getServerSession,
 } from "@/lib/supabase-server";
 import { can } from "@/lib/permissions";
-import type { OpportunityStatus } from "@/lib/opportunites-types";
+import { STATUT_LABELS, type OpportunityStatus } from "@/lib/opportunites-types";
+import { createNotification } from "@/lib/notifications";
 
 const VALID_STATUS: OpportunityStatus[] = ["demande", "contacte", "devis", "negociation", "gagne", "perdu"];
 
@@ -81,6 +82,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  if (typeof patch.statut === "string" && data.demandeur_id && data.demandeur_id !== profile.id) {
+    await createNotification({
+      recipientId: data.demandeur_id,
+      type: "opportunite_statut",
+      entityType: "opportunite",
+      entityId: params.id,
+      title: "Statut d'opportunité modifié",
+      body: `« ${data.titre} » est passée à « ${STATUT_LABELS[patch.statut as OpportunityStatus]} »`,
+      link: "/opportunites",
+    });
+  }
+
   return NextResponse.json({ opportunite: data });
 }
 

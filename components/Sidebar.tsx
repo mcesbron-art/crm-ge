@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useTimer } from "@/lib/timer-context";
 import { can, type Permission } from "@/lib/permissions";
 import Image from "next/image";
+import NotificationBell from "@/components/NotificationBell";
 
 type NavItem = {
   id: string;
@@ -359,6 +360,7 @@ export default function Sidebar() {
                 priority
                 style={{ width: 160, height: "auto", display: "block" }}
               />
+              <NotificationBell />
               <button
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Fermer"
@@ -416,7 +418,10 @@ export default function Sidebar() {
                   fontFamily: "inherit",
                 }}
               />
-              <span style={{ color: "#56544C", fontSize: 13, border: "1px solid #2A2825", borderRadius: 5, padding: "1px 6px" }}>⌘K</span>
+              <span
+                onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+                style={{ color: "#56544C", fontSize: 13, border: "1px solid #2A2825", borderRadius: 5, padding: "1px 6px", cursor: "pointer" }}
+              >⌘K</span>
             </div>
 
             {showSearchResults && searchResults.length > 0 && (

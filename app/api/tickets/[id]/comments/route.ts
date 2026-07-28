@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient, getServerSession } from "@/lib/supabase-server";
 import { canViewTicket } from "@/lib/ticket-access";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -90,6 +91,19 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { data: ticket } = await supabase.from("tickets").select("titre, assigned_to").eq("id", params.id).maybeSingle();
+  if (ticket?.assigned_to && ticket.assigned_to !== session.id) {
+    await createNotification({
+      recipientId: ticket.assigned_to,
+      type: "ticket_comment",
+      entityType: "ticket",
+      entityId: params.id,
+      title: "Nouveau commentaire sur un ticket",
+      body: `${session.nom} a commenté « ${ticket.titre ?? ""} »`,
+      link: `/tickets/${params.id}`,
+    });
+  }
 
   return NextResponse.json({ comment: formatComment(data as unknown as CommentRow, session.id) }, { status: 201 });
 }

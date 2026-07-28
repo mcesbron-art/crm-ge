@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient, getServerSession } from "@/lib/supabase-server";
 import { can } from "@/lib/permissions";
 import { canViewTicket } from "@/lib/ticket-access";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -149,6 +150,20 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       old_assignee_id: previousAssignee,
       new_assignee_id: (update.assigned_to as string | null) ?? null,
     });
+
+    const newAssignee = update.assigned_to as string | null;
+    if (newAssignee && newAssignee !== session.id) {
+      const { data: ticket } = await supabase.from("tickets").select("titre").eq("id", params.id).maybeSingle();
+      await createNotification({
+        recipientId: newAssignee,
+        type: "ticket_assigned",
+        entityType: "ticket",
+        entityId: params.id,
+        title: "Nouveau ticket assigné",
+        body: `${session.nom} vous a assigné le ticket « ${ticket?.titre ?? ""} »`,
+        link: `/tickets/${params.id}`,
+      });
+    }
   }
 
   if (collaborator_ids !== undefined) {

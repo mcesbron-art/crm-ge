@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient, getServerSession } from "@/lib/supabase-server";
 import { can } from "@/lib/permissions";
 import { canAccessTask } from "@/lib/task-access";
+import { createNotification } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -77,6 +78,20 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       old_value: previousAssignee,
       new_value: (update.assigned_to as string | null) ?? null,
     });
+
+    const newAssignee = update.assigned_to as string | null;
+    if (newAssignee && newAssignee !== session.id) {
+      const { data: task } = await supabase.from("tasks").select("label, project_id").eq("id", params.id).maybeSingle();
+      await createNotification({
+        recipientId: newAssignee,
+        type: "task_assigned",
+        entityType: "task",
+        entityId: params.id,
+        title: "Nouvelle tâche assignée",
+        body: `${session.nom} vous a assigné la tâche « ${task?.label ?? ""} »`,
+        link: task?.project_id ? `/projets?open=${task.project_id}` : "/mes-taches",
+      });
+    }
   }
 
   if (collaborator_ids !== undefined) {

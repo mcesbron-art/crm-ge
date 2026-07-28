@@ -2,11 +2,13 @@
 
 import Sidebar from "@/components/Sidebar";
 import MobileActiveTimerBar from "@/components/MobileActiveTimerBar";
+import CommandPalette from "@/components/CommandPalette";
 import PageTransition from "@/components/PageTransition";
 import { useTheme } from "@/lib/theme-context";
 import { ClientsProvider } from "@/lib/clients-store";
 import { TimerProvider } from "@/lib/timer-context";
 import { ToastProvider } from "@/lib/toast-context";
+import { NotificationsProvider } from "@/lib/notifications-context";
 import { ReactNode, useEffect, useState } from "react";
 
 export default function AppLayoutWrapper({
@@ -35,28 +37,31 @@ export default function AppLayoutWrapper({
   return (
     <ClientsProvider>
       <ToastProvider>
-        <TimerProvider>
-          <div
-            style={{
-              minHeight: "100vh",
-              background: isDark ? "#0A0A0A" : "#F5F5F5",
-              transition: "background 0.3s ease",
-            }}
-          >
-            <Sidebar />
-            <MobileActiveTimerBar />
-            <main
-              className="app-main"
+        <NotificationsProvider>
+          <TimerProvider>
+            <div
               style={{
-                marginLeft: isDesktop ? (sidebarCollapsed ? 64 : 248) : 0,
-                padding: isDesktop ? "32px 40px" : "64px 16px 24px",
-                transition: "margin-left 0.25s ease",
+                minHeight: "100vh",
+                background: isDark ? "#0A0A0A" : "#F5F5F5",
+                transition: "background 0.3s ease",
               }}
             >
-              <PageTransition>{children}</PageTransition>
-            </main>
-          </div>
-        </TimerProvider>
+              <Sidebar />
+              <MobileActiveTimerBar />
+              <CommandPalette />
+              <main
+                className="app-main"
+                style={{
+                  marginLeft: isDesktop ? (sidebarCollapsed ? 64 : 248) : 0,
+                  padding: isDesktop ? "32px 40px" : "64px 16px 24px",
+                  transition: "margin-left 0.25s ease",
+                }}
+              >
+                <PageTransition>{children}</PageTransition>
+              </main>
+            </div>
+          </TimerProvider>
+        </NotificationsProvider>
       </ToastProvider>
     </ClientsProvider>
   );
