@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { TASK_BILLING_TYPES, TASK_BILLING_TYPE_LABEL, TASK_BILLING_STATUSES, TASK_BILLING_STATUS_COLOR } from "@/lib/task-taxonomy";
 import BillingRequestDrawer, { BillingStatusBadge } from "@/components/BillingRequestDrawer";
+import { IconSearch, IconChevronDown as IconChevron } from "@/components/ui/icons";
 
 type BillingRequestRow = {
   id: string; taskId: string; taskLabel: string; taskDueDate: string | null;
@@ -41,10 +42,7 @@ function dueStyle(state: "over" | "soon" | "ok" | "none"): { color: string; weig
   return { color: "#5C5A52", weight: 500 };
 }
 
-const IconSearch = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6" /><line x1="13.5" y1="13.5" x2="18" y2="18" /></svg>);
-const IconChevron = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l4 4 4-4" /></svg>);
 const IconNote = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 4.5h14v9H8.5L5 16.5V13.5H3z" /></svg>);
-const IconEmpty = () => (<svg width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6" /><line x1="13.5" y1="13.5" x2="18" y2="18" /></svg>);
 
 type DropdownOption = { value: string; label: string; left?: React.ReactNode };
 
@@ -63,7 +61,7 @@ function Dropdown({ options, value, onChange }: { options: DropdownOption[]; val
         style={{ display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #E2E1DA", borderRadius: 10, padding: "9px 13px", whiteSpace: "nowrap" }}
       >
         <span style={{ fontSize: 15, color: "#33322C", fontWeight: 500 }}>{current.label}</span>
-        <IconChevron />
+        <IconChevron size={14} />
       </button>
       {open && (
         <>
@@ -215,7 +213,7 @@ export default function BillingRequestsTab() {
               <div style={{ padding: 40, textAlign: "center", color: "#9A998F" }}>Chargement…</div>
             ) : sorted.length === 0 ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 0", textAlign: "center" }}>
-                <span style={{ width: 44, height: 44, borderRadius: 12, background: "#F0EFEA", display: "flex", alignItems: "center", justifyContent: "center", color: "#B5B2A6" }}><IconEmpty /></span>
+                <span style={{ width: 44, height: 44, borderRadius: 12, background: "#F0EFEA", display: "flex", alignItems: "center", justifyContent: "center", color: "#B5B2A6" }}><IconSearch size={21} color="currentColor" strokeWidth={1.6} /></span>
                 <div style={{ fontSize: 16, fontWeight: 600, color: "#5C5A52", marginTop: 14 }}>Aucune demande ne correspond</div>
                 <div style={{ fontSize: 14.5, color: "#9A998F", marginTop: 4 }}>Essayez d&apos;ajuster la recherche ou les filtres.</div>
               </div>

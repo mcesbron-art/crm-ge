@@ -6,6 +6,7 @@ import { TASK_STAGES, TASK_BILLING_TYPE_LABEL, TASK_BILLING_STATUS_LABEL, TASK_B
 import { useTimer } from "@/lib/timer-context";
 import { useToast } from "@/lib/toast-context";
 import DatePickerField from "@/components/DatePickerField";
+import { IconX, IconPlayRounded as IconPlay } from "@/components/ui/icons";
 
 type BillingInfo = { id: string; billingType: string; billingStatus: string; adminComment: string | null; requestedAt: string } | null;
 type BatInfo = { id: string; version: number; status: string; sentAt: string; link: string | null; returnComment: string | null; rejectionReason: string | null } | null;
@@ -46,8 +47,6 @@ type Entry = {
   collaborateurNom: string; collaborateurColor: string; canDelete: boolean;
 };
 
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
-const IconPlay = () => (<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.2v11.6c0 .8.9 1.3 1.6.9l9-5.8c.6-.4.6-1.4 0-1.8l-9-5.8c-.7-.4-1.6.1-1.6.9z" /></svg>);
 const IconPause = () => (<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><rect x="5" y="4" width="3.4" height="12" rx="1" /><rect x="11.6" y="4" width="3.4" height="12" rx="1" /></svg>);
 
 function getInitials(nom: string): string {

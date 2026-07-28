@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TASK_BILLING_TYPES } from "@/lib/task-taxonomy";
+import { IconX } from "@/components/ui/icons";
 
 type Props = {
   taskLabel: string;
@@ -9,7 +10,6 @@ type Props = {
   onConfirm: (data: { billingType: string }) => Promise<void>;
 };
 
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
 
 /**
  * Ouverte au glisser-déposer d'une carte vers "Facturation", ou au clic sur

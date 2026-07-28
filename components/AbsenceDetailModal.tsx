@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ABSENCE_TYPE_LABEL, REQUEST_STATUS_LABEL, REQUEST_STATUS_COLOR } from "@/lib/absence-taxonomy";
+import { IconX } from "@/components/ui/icons";
 
 type Absence = {
   id: string; type: string; startDate: string; endDate: string; days: number; status: string;
@@ -21,7 +22,6 @@ type Props = {
   onDelete: () => Promise<void>;
 };
 
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
 const IconPencil = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 3.5l3 3L6 17H3v-3z" /></svg>);
 const IconTrash = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h12M8 6V4.5a1 1 0 011-1h2a1 1 0 011 1V6m-7 0 .6 10a1.4 1.4 0 001.4 1.3h4a1.4 1.4 0 001.4-1.3L15 6" /></svg>);
 

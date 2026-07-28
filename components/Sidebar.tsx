@@ -8,6 +8,7 @@ import { useTimer } from "@/lib/timer-context";
 import { can, type Permission } from "@/lib/permissions";
 import Image from "next/image";
 import NotificationBell from "@/components/NotificationBell";
+import { IconPlay, IconPause, IconStop } from "@/components/ui/icons";
 
 type NavItem = {
   id: string;
@@ -191,15 +192,6 @@ const ROLE_LABEL: Record<string, string> = {
   collaborateur: "Collaborateur",
 };
 
-const IconPlay = () => (
-  <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.5v11l9-5.5z" /></svg>
-);
-const IconPause = () => (
-  <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><rect x="5.5" y="4.5" width="3.2" height="11" rx="1" /><rect x="11.3" y="4.5" width="3.2" height="11" rx="1" /></svg>
-);
-const IconStop = () => (
-  <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><rect x="4.5" y="4.5" width="11" height="11" rx="2" /></svg>
-);
 const IconChevronRight = () => (
   <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 4 13 10 7 16" /></svg>
 );

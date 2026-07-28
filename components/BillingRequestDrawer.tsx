@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import {
   TASK_BILLING_TYPE_LABEL, TASK_BILLING_STATUSES, TASK_BILLING_STATUS_LABEL, TASK_BILLING_STATUS_COLOR,
 } from "@/lib/task-taxonomy";
+import { IconX } from "@/components/ui/icons";
 
 type BillingRequest = {
   id: string; taskId: string; taskLabel: string; taskDueDate: string | null;
@@ -25,8 +26,6 @@ type Props = {
   onClose: () => void;
   onUpdated: () => void;
 };
-
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
 
 function getInitials(nom: string): string {
   return nom.split(" ").map(w => w[0] ?? "").join("").slice(0, 2).toUpperCase();

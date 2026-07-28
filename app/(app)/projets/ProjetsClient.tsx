@@ -10,6 +10,7 @@ import { can } from "@/lib/permissions";
 import { typography } from "@/lib/typography";
 import Button from "@/components/ui/Button";
 import { PROJECT_TYPES, type ProjectType } from "@/lib/project-taxonomy";
+import { IconX, IconClock, IconChevronDown as IconChevDown, IconFolder, IconDownload, IconUpload } from "@/components/ui/icons";
 
 /* ─── Types ─── */
 export type Collab = { id: string; nom: string; color: string | null; avatar: string | null };
@@ -205,22 +206,16 @@ function progressStr(p: Project) {
 function progressColor(p: Project) { return progressPct(p) === 100 ? "#1F8A5B" : "#C9A24E"; }
 
 /* ─── Icônes SVG ─── */
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
 const IconKanban = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="3.6" height="12" rx="1.2" /><rect x="8.2" y="4" width="3.6" height="8.5" rx="1.2" /><rect x="13.4" y="4" width="3.6" height="12" rx="1.2" /></svg>);
 const IconList = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="6" y1="6" x2="16" y2="6" /><line x1="6" y1="10" x2="16" y2="10" /><line x1="6" y1="14" x2="16" y2="14" /><circle cx="3.5" cy="6" r="0.6" fill="currentColor" /><circle cx="3.5" cy="10" r="0.6" fill="currentColor" /><circle cx="3.5" cy="14" r="0.6" fill="currentColor" /></svg>);
 const IconCheck = ({ size = 13, stroke = "#fff" }: { size?: number; stroke?: string }) => (<svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><path d="M4 10.5 8 14l8-8.5" /></svg>);
 const IconHourglass = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3.5h8M6 16.5h8M6.5 3.5c0 3.5 7 3.5 7 7s-7 3.5-7 7" /><path d="M13.5 3.5c0 3.5-7 3.5-7 7s7 3.5 7 7" /></svg>);
 const IconDoc = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h5l3 3v11H6z" /><path d="M11 3v3h3" /></svg>);
-const IconClock = () => (<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" /></svg>);
 const IconWarning = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#D08A4A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3.5 17 16H3z" /><line x1="10" y1="8.4" x2="10" y2="11.6" /><circle cx="10" cy="13.8" r="0.5" fill="#D08A4A" /></svg>);
 const IconInvoice = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#C2410C" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="14" height="10" rx="1.6" /><path d="M3.5 6l6.5 5 6.5-5" /></svg>);
-const IconFolder = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6.5C3 5.7 3.6 5 4.4 5H8l1.6 1.8h6C16.4 6.8 17 7.4 17 8.2V14.6c0 .8-.6 1.4-1.4 1.4H4.4C3.6 16 3 15.4 3 14.6Z" /></svg>);
 const IconArrow = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10h12" /><path d="M11 5l5 5-5 5" /></svg>);
 const IconUser = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#9A9078" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="7" r="3" /><path d="M4 16.5c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2" /></svg>);
-const IconChevDown = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l4 4 4-4" /></svg>);
 const IconEdit = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M13 4l3 3-8 8-3.5.5.5-3.5z" /></svg>);
-const IconDownload = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9" /><path d="M6.5 9l3.5 3.5L13.5 9" /><path d="M4 15.5h12" /></svg>);
-const IconUpload = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14V5" /><path d="M6.5 8l3.5-3.5L13.5 8" /><path d="M4 15.5h12" /></svg>);
 const IconAxonaut = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M5.5 3.2h6L15 6.6V16.8h-9.5z" /><path d="M8 10l1.6 1.6L13 8.4" /></svg>);
 const IconExternal = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M8 5h7v7" /><path d="M15 5l-9 9" /><path d="M5 8v7h7" /></svg>);
 const IconOriginManual = () => (<svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M13 4l3 3-8 8-3.5.5.5-3.5z" /></svg>);
@@ -1594,7 +1589,7 @@ export default function ProjetsClient({
                             disabled={!batFile || batUploading}
                             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, background: batFile ? "#7C3AED" : "#C4BAED", color: "#fff", fontSize: 15, fontWeight: 700, padding: 11, borderRadius: 10, border: "none", fontFamily: "inherit" }}
                           >
-                            {batUploading ? <><IconSpinner />Envoi…</> : <><IconUpload />Envoyer la nouvelle version</>}
+                            {batUploading ? <><IconSpinner />Envoi…</> : <><IconUpload size={17} />Envoyer la nouvelle version</>}
                           </button>
                         </div>
                       </>
@@ -1636,7 +1631,7 @@ export default function ProjetsClient({
                               disabled={!batFile || batUploading}
                               style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, background: batFile ? "#7C3AED" : "#C4BAED", color: "#fff", fontSize: 15, fontWeight: 700, padding: 11, borderRadius: 10, cursor: batFile ? "pointer" : "default", border: "none", fontFamily: "inherit" }}
                             >
-                              {batUploading ? <><IconSpinner />Envoi…</> : <><IconUpload />Envoyer le BAT</>}
+                              {batUploading ? <><IconSpinner />Envoi…</> : <><IconUpload size={17} />Envoyer le BAT</>}
                             </button>
                           </>
                         )}
@@ -1650,7 +1645,7 @@ export default function ProjetsClient({
                       <div style={{ fontSize: 15, fontWeight: 700, color: "#1C1B16" }}>{dp.name.replace(/[^A-Za-zÀ-ÿ0-9]+/g, "_").slice(0, 22)}_BAT.pdf</div>
                       <div style={{ fontSize: 13.5, color: "#8C8B83", marginTop: 1 }}>BAT uploadé</div>
                     </div>
-                    <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 14, fontWeight: 600, color: "#B0892B", cursor: "pointer" }}><IconDownload />Télécharger</span>
+                    <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 14, fontWeight: 600, color: "#B0892B", cursor: "pointer" }}><IconDownload size={15} />Télécharger</span>
                   </div>
                 ) : (
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, border: "1.5px dashed #D2D0C7", borderRadius: 12, padding: 18, color: "#9A998F" }}>
@@ -1855,7 +1850,7 @@ export default function ProjetsClient({
           <div onClick={e => e.stopPropagation()} className="modal-panel-in" style={{ width: 600, maxWidth: "100%", maxHeight: "100%", background: "#fff", borderRadius: 18, boxShadow: "0 30px 70px -20px rgba(16,15,11,.5)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", background: "#0A0A0A", flex: "none" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(201,162,78,.16)", display: "flex", alignItems: "center", justifyContent: "center", color: "#E4C77B" }}><IconFolder /></span>
+                <span style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(201,162,78,.16)", display: "flex", alignItems: "center", justifyContent: "center", color: "#E4C77B" }}><IconFolder strokeWidth={1.6} /></span>
                 <div>
                   <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18, fontWeight: 700, color: "#F4ECD7" }}>Nouveau projet</span>
                   <span style={{ display: "block", fontSize: 13, color: "#9A9078", marginTop: 1 }}>Projet manuel · hors devis Axonaut</span>
@@ -1958,7 +1953,7 @@ export default function ProjetsClient({
                     download={`devis-${pdf.quotationId}.pdf`}
                     style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14.5, fontWeight: 600, color: "#C9A24E", background: "rgba(201,162,78,.12)", border: "1px solid rgba(201,162,78,.25)", borderRadius: 8, padding: "7px 12px", textDecoration: "none" }}
                   >
-                    <IconDownload />Télécharger
+                    <IconDownload size={15} />Télécharger
                   </a>
                 )}
                 <span onClick={closePdf} style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "#8E8876", cursor: "pointer" }}><IconX /></span>

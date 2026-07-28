@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import DatePickerField from "@/components/DatePickerField";
+import { IconX, IconChevronDown as IconChevron, IconClock } from "@/components/ui/icons";
 
 type ProjectOption = { id: string; name: string; clientName: string };
 
@@ -10,10 +11,6 @@ type Props = {
   onClose: () => void;
   onConfirm: (data: { projectId: string; date: string; hours: number }) => Promise<void>;
 };
-
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
-const IconChevron = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l4 4 4-4" /></svg>);
-const IconClock = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" /></svg>);
 
 function todayLocal(): string {
   const d = new Date();
@@ -75,7 +72,7 @@ export default function OvertimeFormModal({ projects, onClose, onConfirm }: Prop
       <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Déclarer des heures sup." className="modal-slide-in" style={{ width: 460, maxWidth: "100%", height: "100%", background: "#fff", display: "flex", flexDirection: "column", boxShadow: "-30px 0 70px -20px rgba(16,15,11,.5)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", background: "#0A0A0A", flex: "none" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(201,162,78,.16)", display: "flex", alignItems: "center", justifyContent: "center", color: "#E4C77B" }}><IconClock /></span>
+            <span style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(201,162,78,.16)", display: "flex", alignItems: "center", justifyContent: "center", color: "#E4C77B" }}><IconClock size={16} /></span>
             <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18, fontWeight: 700, color: "#F4ECD7" }}>Déclarer des heures sup.</span>
           </div>
           <span onClick={onClose} style={{ width: 28, height: 28, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "#8E8876", cursor: "pointer" }}><IconX /></span>

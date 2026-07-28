@@ -2,16 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTimer } from "@/lib/timer-context";
-
-const IconPlay = () => (
-  <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.5v11l9-5.5z" /></svg>
-);
-const IconPause = () => (
-  <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><rect x="5.5" y="4.5" width="3.2" height="11" rx="1" /><rect x="11.3" y="4.5" width="3.2" height="11" rx="1" /></svg>
-);
-const IconStop = () => (
-  <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><rect x="4.5" y="4.5" width="11" height="11" rx="2" /></svg>
-);
+import { IconPlay, IconPause, IconStop } from "@/components/ui/icons";
 
 /**
  * Mini-player mobile — le chrono actif est autrement invisible sur mobile dès
@@ -71,7 +62,7 @@ export default function MobileActiveTimerBar() {
           onClick={() => resumeTimer()}
           style={{ width: 30, height: 30, padding: 0, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, background: "rgba(31,138,91,.16)", border: "none", color: "#4ADE80", flexShrink: 0 }}
         >
-          <IconPlay />
+          <IconPlay size={13} />
         </button>
       ) : (
         <button
@@ -82,7 +73,7 @@ export default function MobileActiveTimerBar() {
           onClick={() => pauseTimer()}
           style={{ width: 30, height: 30, padding: 0, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, background: "rgba(194,65,12,.16)", border: "none", color: "#FB923C", flexShrink: 0 }}
         >
-          <IconPause />
+          <IconPause size={13} />
         </button>
       )}
       <button
@@ -93,7 +84,7 @@ export default function MobileActiveTimerBar() {
         onClick={() => stopTimer()}
         style={{ width: 30, height: 30, padding: 0, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, background: "rgba(220,38,38,.14)", border: "none", color: "#F87171", flexShrink: 0 }}
       >
-        <IconStop />
+        <IconStop size={12} />
       </button>
     </div>
   );

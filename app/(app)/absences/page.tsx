@@ -9,6 +9,7 @@ import OvertimeFormModal from "@/components/OvertimeFormModal";
 import AbsenceDetailModal from "@/components/AbsenceDetailModal";
 import OvertimeDetailModal from "@/components/OvertimeDetailModal";
 import { useToast } from "@/lib/toast-context";
+import { IconSearch } from "@/components/ui/icons";
 
 type Collab = { id: string; nom: string; color: string | null } | null;
 
@@ -33,8 +34,6 @@ function getInitials(nom: string): string {
 function fmtDate(d: string): string {
   return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
-
-const IconSearch = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6" /><line x1="13.5" y1="13.5" x2="18" y2="18" /></svg>);
 
 function StatusBadge({ status }: { status: string }) {
   const c = REQUEST_STATUS_COLOR[status] ?? REQUEST_STATUS_COLOR.attente;

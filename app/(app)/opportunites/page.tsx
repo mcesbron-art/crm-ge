@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import {
   type Opportunite, type Client, type Commercial, type OpportunityStatus,
 } from "@/lib/opportunites-types";
+import { IconX as IconClose, IconClock, IconChevronDown as IconChevDown } from "@/components/ui/icons";
 
 /* ─── Étapes du pipeline — couleurs propres à cette page (n'affecte pas
    lib/opportunites-types.ts, utilisé ailleurs par Rapports/StatutBadge) ─── */
@@ -36,15 +37,6 @@ function fmt(n: number | null | undefined) {
   return (n ?? 0).toLocaleString("fr-FR") + " €";
 }
 
-function IconClose() {
-  return <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>;
-}
-function IconClock({ size = 13 }: { size?: number }) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6.5v4l2.5 1.5"/></svg>;
-}
-function IconChevDown() {
-  return <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l4 4 4-4"/></svg>;
-}
 function IconDiamond() {
   return <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3l1.7 4.3L16 9l-4.3 1.7L10 15l-1.7-4.3L4 9l4.3-1.7z"/></svg>;
 }

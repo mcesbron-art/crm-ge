@@ -14,6 +14,7 @@ import TaskWaitModal from "@/components/TaskWaitModal";
 import TaskBillingModal from "@/components/TaskBillingModal";
 import TaskBatSendModal from "@/components/TaskBatSendModal";
 import TaskBatResultModal from "@/components/TaskBatResultModal";
+import { IconClock, IconSearch, IconStop, IconPlayRounded } from "@/components/ui/icons";
 
 const ACCENT = "#C9A24E";
 const GRID = "28px minmax(190px,1.4fr) 108px 92px 110px 120px 140px 96px 96px 96px 150px 150px 118px";
@@ -21,10 +22,6 @@ const PRIORITY_OPTIONS = ["Urgente", "Haute", "Normale", "Basse"] as const;
 
 const IconKanban = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="3.6" height="12" rx="1.2" /><rect x="8.2" y="4" width="3.6" height="8.5" rx="1.2" /><rect x="13.4" y="4" width="3.6" height="12" rx="1.2" /></svg>);
 const IconList = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="6" y1="6" x2="16" y2="6" /><line x1="6" y1="10" x2="16" y2="10" /><line x1="6" y1="14" x2="16" y2="14" /><circle cx="3.5" cy="6" r="0.6" fill="currentColor" /><circle cx="3.5" cy="10" r="0.6" fill="currentColor" /><circle cx="3.5" cy="14" r="0.6" fill="currentColor" /></svg>);
-const IconClock = () => (<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" /></svg>);
-const IconPlay = () => (<svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.2v11.6c0 .8.9 1.3 1.6.9l9-5.8c.6-.4.6-1.4 0-1.8l-9-5.8c-.7-.4-1.6.1-1.6.9z" /></svg>);
-const IconStop = () => (<svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor"><rect x="4.5" y="4.5" width="11" height="11" rx="2" /></svg>);
-const IconSearch = () => (<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6" /><line x1="13.5" y1="13.5" x2="18" y2="18" /></svg>);
 
 function taskDueState(t: Task): "ok" | "soon" | "over" | "done" {
   if (t.done) return "done";
@@ -457,7 +454,7 @@ export default function MesTachesPage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: "1px solid #E2E1DA", borderRadius: 99, padding: "6px 12px", color: "#A6A498" }}>
-            <IconSearch />
+            <IconSearch size={13} color="currentColor" strokeWidth={1.8} />
             <input
               value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher…"
               style={{ border: "none", outline: "none", fontFamily: "inherit", fontSize: 14.5, color: "#33322C", background: "transparent", width: 140 }}
@@ -767,7 +764,7 @@ function TaskStageCard({ task, accent, draggable, isDragging, running, elapsed, 
           </span>
         </div>
         <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13.5, fontWeight: due.fontWeight, color: due.color }}>
-          <IconClock />{fmtDate(task.dueDate)}
+          <IconClock size={12} />{fmtDate(task.dueDate)}
         </span>
       </div>
       {waiting && (
@@ -851,7 +848,7 @@ function TimerControl({ running, elapsed, onStart, onStop, fullWidth }: {
       >
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#DC2626", animation: "pulse 1.4s ease-in-out infinite", flex: "none" }} />
         {elapsed}
-        <IconStop />
+        <IconStop size={9} />
       </span>
     );
   }
@@ -865,7 +862,7 @@ function TimerControl({ running, elapsed, onStart, onStop, fullWidth }: {
         padding: "6px 11px", cursor: "pointer", whiteSpace: "nowrap", width: fullWidth ? "100%" : "fit-content", boxSizing: "border-box",
       }}
     >
-      <IconPlay />Démarrer
+      <IconPlayRounded size={10} />Démarrer
     </span>
   );
 }

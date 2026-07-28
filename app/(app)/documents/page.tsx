@@ -7,6 +7,7 @@ import { useToast } from "@/lib/toast-context";
 import { typography } from "@/lib/typography";
 import Button from "@/components/ui/Button";
 import { DOCUMENT_CATEGORIES, DOCUMENT_CATEGORY_LABEL, typeFromMime, formatFileSize, type DocType } from "@/lib/document-taxonomy";
+import { IconX, IconSearch, IconDownload, IconUpload } from "@/components/ui/icons";
 
 type Doc = {
   id: string; name: string; category: string; visibility: string;
@@ -23,7 +24,6 @@ function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
 }
 
-const IconSearch = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6" /><line x1="13.5" y1="13.5" x2="18" y2="18" /></svg>);
 const IconFolder = ({ color = "currentColor" }: { color?: string }) => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4.5" width="14" height="12" rx="2" /><path d="M7 4.5V3.4C7 2.9 7.4 2.5 8 2.5h4c.5 0 1 .4 1 1v1.1" /></svg>);
 const IconMegaphone = ({ color = "currentColor" }: { color?: string }) => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="14" height="10" rx="1.6" /><path d="M3.5 6l6.5 5 6.5-5" /></svg>);
 const IconProcess = ({ color = "currentColor" }: { color?: string }) => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="7" /><path d="M10 6.5v4l2.5 1.5" /></svg>);
@@ -31,9 +31,6 @@ const IconPersonal = ({ color = "currentColor" }: { color?: string }) => (<svg w
 const IconFile = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h5l3 3v11H6z" /><path d="M11 3v3h3" /></svg>);
 const IconCommon = () => (<svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="7" cy="7" r="2.6" /><circle cx="13" cy="7" r="2.6" /><path d="M3 16c0-2.4 1.8-3.8 4-3.8s4 1.4 4 3.8" /><path d="M9 16c0-2.4 1.8-3.8 4-3.8s4 1.4 4 3.8" /></svg>);
 const IconPersonalSmall = () => (<svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="7" r="3" /><path d="M4 16.5c0-3.2 2.7-5.2 6-5.2s6 2 6 5.2" /></svg>);
-const IconDownload = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9" /><path d="M6.5 9l3.5 3.5L13.5 9" /><path d="M4 15.5h12" /></svg>);
-const IconUpload = () => (<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14V5" /><path d="M6.5 8l3.5-3.5L13.5 8" /><path d="M4 15.5h12" /></svg>);
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
 const IconEye = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 10s2.8-5.5 8-5.5S18 10 18 10s-2.8 5.5-8 5.5S2 10 2 10z" /><circle cx="10" cy="10" r="2.4" /></svg>);
 const IconPencil = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 3.5 16.5 6.5 6.7 16.3 3 17l.7-3.7z" /></svg>);
 const IconTrash = () => (<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 5.5h11" /><path d="M8 5.5V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5" /><path d="M5.5 5.5 6.2 16a1 1 0 0 0 1 .9h5.6a1 1 0 0 0 1-.9l.7-10.5" /></svg>);

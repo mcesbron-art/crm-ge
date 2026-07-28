@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ABSENCE_TYPES } from "@/lib/absence-taxonomy";
 import DatePickerField from "@/components/DatePickerField";
+import { IconX, IconChevronDown as IconChevron } from "@/components/ui/icons";
 
 type Props = {
   onClose: () => void;
@@ -10,8 +11,6 @@ type Props = {
   initial?: { type: string; startDate: string; endDate: string; days: number };
 };
 
-const IconX = () => (<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" /></svg>);
-const IconChevron = () => (<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="#A6A498" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8l4 4 4-4" /></svg>);
 const IconCalendar = () => (<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4.5" width="14" height="12.5" rx="2" /><line x1="3" y1="8.4" x2="17" y2="8.4" /></svg>);
 
 function todayLocal(): string {
