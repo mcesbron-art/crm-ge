@@ -46,6 +46,12 @@ button:not(:disabled):active {
   cursor: pointer;
   white-space: nowrap;
   box-shadow: none;
+  /* Sans ça, un <button> avec background/border remis à "none" en style
+     inline (ex. en-têtes de colonnes triables) garde quand même le chrome
+     natif du navigateur (fond/bordure système), visible en pilule derrière
+     le texte. */
+  appearance: none;
+  -webkit-appearance: none;
   transition: background-color 0.15s ease, border-color 0.15s ease,
     box-shadow 0.15s ease, transform 0.1s ease, color 0.15s ease, opacity 0.15s ease;
 }
