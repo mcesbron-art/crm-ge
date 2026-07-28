@@ -40,6 +40,10 @@ export const E2E_OTHER_TICKET_TITLE = "[E2E] Ticket non assigné au collaborateu
 // justement le scénario que le scoping doit bloquer.
 export const E2E_TICKET_ID = "e2e00000-0000-4000-8000-000000000001";
 export const E2E_OTHER_TICKET_ID = "e2e00000-0000-4000-8000-000000000002";
+// Même société Axonaut sur les deux tickets — sert à vérifier que
+// GET /api/clients/[id]/tickets scope bien par assignation, pas seulement
+// par axonaut_company_id (role-separation-security.spec.ts).
+export const E2E_AXONAUT_COMPANY_ID = 999001;
 
 function adminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -180,14 +184,17 @@ export default async function globalSetup() {
   const { error: ticketErr } = await supabase.from("tickets").upsert({
     id: E2E_TICKET_ID, titre: E2E_TICKET_TITLE, client_name: "[E2E] Client test",
     statut: "ouvert", created_via: "manual", assigned_to: collabId,
+    axonaut_company_id: E2E_AXONAUT_COMPANY_ID,
   });
   if (ticketErr) throw ticketErr;
 
   // Ticket assigné à l'admin e2e (jamais au collaborateur, ni en
-  // ticket_collaborators) — vérifie l'étanchéité du scoping.
+  // ticket_collaborators), même société Axonaut que le ticket ci-dessus —
+  // vérifie l'étanchéité du scoping par assignation, pas seulement par société.
   const { error: otherTicketErr } = await supabase.from("tickets").upsert({
     id: E2E_OTHER_TICKET_ID, titre: E2E_OTHER_TICKET_TITLE, client_name: "[E2E] Autre client",
     statut: "ouvert", created_via: "manual", assigned_to: adminId,
+    axonaut_company_id: E2E_AXONAUT_COMPANY_ID,
   });
   if (otherTicketErr) throw otherTicketErr;
   await supabase.from("ticket_collaborators").delete().eq("ticket_id", E2E_OTHER_TICKET_ID).eq("collaborateur_id", collabId);

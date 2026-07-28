@@ -3,9 +3,6 @@
 import { useParams } from "next/navigation";
 import { useClientsStore } from "@/lib/clients-store";
 import { ClientProject } from "@/lib/clients-data";
-import { useAuth } from "@/lib/auth-context";
-import { can } from "@/lib/permissions";
-import AccessDenied from "@/components/AccessDenied";
 import { typography } from "@/lib/typography";
 
 /* ─── Icônes SVG ──────────────────────────────────────────────────────────── */
@@ -49,17 +46,7 @@ function getStatusStyle(status: string) {
 export default function ClientDetailPage() {
   const params = useParams();
   const clientId = params?.id as string;
-  const { currentUser, effectiveRole } = useAuth();
   const { getClientById, getProjects, getContact } = useClientsStore();
-
-  if (!can(effectiveRole, "view_all_pages")) {
-    return (
-      <AccessDenied
-        message="La page Clients est réservée aux administrateurs."
-        user={{ nom: currentUser.nom, role: currentUser.role }}
-      />
-    );
-  }
 
   const client  = getClientById(clientId);
   const projects: ClientProject[] = getProjects(clientId);

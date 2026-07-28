@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
-import { can } from "@/lib/permissions";
-import AccessDenied from "@/components/AccessDenied";
 import { typography } from "@/lib/typography";
 import Button from "@/components/ui/Button";
 import { TASK_PRIORITIES, TASK_PRIORITY_COLOR } from "@/lib/task-taxonomy";
+import { IconX as IconClose } from "@/components/ui/icons";
 
 /* ─── Types (miroir de app/api/equipe/route.ts) ─────────────────────────── */
 
@@ -56,17 +54,9 @@ function dispoOf(load: number) {
   return { text: left + "% libre", color: "#1F8A5B" };
 }
 
-const IconClose = () => (
-  <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="5" y1="5" x2="15" y2="15" /><line x1="15" y1="5" x2="5" y2="15" />
-  </svg>
-);
-
 /* ─── Page ─────────────────────────────────────────────────────────────────── */
 
 export default function EquipePage() {
-  const { currentUser, effectiveRole } = useAuth();
-
   const [weekDays, setWeekDays] = useState<WeekDay[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [teamStats, setTeamStats] = useState<TeamStats>({ avgLoad: 0, overdueTotal: 0, activeTasksTotal: 0, activeProjectsTotal: 0, overloadedCount: 0 });
@@ -78,10 +68,9 @@ export default function EquipePage() {
   const [tasksLoading, setTasksLoading] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
 
-  const canView = can(effectiveRole, "view_all_pages");
-
+  // Garde d'accès : app/(app)/equipe/layout.tsx (Server Component) redirige
+  // déjà tout non-admin avant que cette page ne soit rendue.
   useEffect(() => {
-    if (!canView) return;
     fetch("/api/equipe", { cache: "no-store" })
       .then(r => r.json())
       .then(d => {
@@ -92,16 +81,7 @@ export default function EquipePage() {
       .catch(() => null)
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canView]);
-
-  if (!canView) {
-    return (
-      <AccessDenied
-        message="La page Équipe est réservée aux administrateurs."
-        user={{ nom: currentUser.nom, role: currentUser.role }}
-      />
-    );
-  }
+  }, []);
 
   const mDetail = members.find(m => m.id === currentMemberId) ?? null;
 

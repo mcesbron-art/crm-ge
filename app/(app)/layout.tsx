@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import PreviewBar from "@/components/PreviewBar";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { getServerSession } from "@/lib/supabase-server";
@@ -43,7 +42,6 @@ export default async function AppLayout({
     <ThemeProvider>
       <AuthProvider initialUser={initialUser}>
         <AppLayoutWrapper>
-          <PreviewBar />
           {children}
         </AppLayoutWrapper>
       </AuthProvider>

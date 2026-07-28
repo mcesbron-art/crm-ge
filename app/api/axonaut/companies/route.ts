@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 import { AxonautError } from "@/lib/axonaut";
 
 const API_URL = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
@@ -9,6 +10,13 @@ export async function GET() {
   const profile = await getServerSession();
   if (!profile) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
+  // Données Axonaut (sociétés/factures/devis) réservées à view_billing, comme
+  // /api/billing et /api/axonaut/invoices — sans cette vérification, un
+  // collaborateur pourrait contourner la restriction facturation via la
+  // fiche société au lieu de la page Facturation.
+  if (!can(profile.role, "view_billing")) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
   }
 
   try {

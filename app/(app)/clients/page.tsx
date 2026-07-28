@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useClientsStore } from "@/lib/clients-store";
 import { Client } from "@/lib/clients-data";
-import { useAuth } from "@/lib/auth-context";
-import { can } from "@/lib/permissions";
-import AccessDenied from "@/components/AccessDenied";
 import { typography } from "@/lib/typography";
 import Button from "@/components/ui/Button";
 
@@ -377,20 +374,10 @@ function exportToCSV(clientList: Client[]) {
 /* ─── Page ─── */
 export default function ClientsPage() {
   const router = useRouter();
-  const { currentUser, effectiveRole } = useAuth();
   const { clients, addClient } = useClientsStore();
   const [filter, setFilter] = useState<FilterKey>("tous");
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  if (!can(effectiveRole, "view_all_pages")) {
-    return (
-      <AccessDenied
-        message="La page Clients est réservée aux administrateurs."
-        user={{ nom: currentUser.nom, role: currentUser.role }}
-      />
-    );
-  }
 
   const activeCount   = clients.filter(c => c.status === "Actif").length;
   const prospectCount = clients.filter(c => c.status === "Prospect").length;

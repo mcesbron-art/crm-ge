@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/supabase-server";
+import { can } from "@/lib/permissions";
 import { AxonautError } from "@/lib/axonaut";
 
 const API_URL = process.env.AXONAUT_API_URL ?? "https://axonaut.com/api/v2";
@@ -8,6 +9,9 @@ const API_KEY = process.env.AXONAUT_API_KEY ?? "";
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const profile = await getServerSession();
   if (!profile) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  if (!can(profile.role, "view_billing")) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+  }
 
   try {
     const res = await fetch(`${API_URL}/quotations?company_id=${params.id}`, {

@@ -21,17 +21,12 @@ export type AppUser = {
 type AuthContextValue = {
   /** Utilisateur connecté (depuis la session serveur — read-only) */
   currentUser: AppUser;
-  /** Mode aperçu pour Admin (voir l'UI comme un collab) */
-  previewMode: "real" | "collab";
-  setPreviewMode: (m: "real" | "collab") => void;
-  // Helpers calculés (tiennent compte du previewMode)
   canSeeMoney: boolean;
   canAccessAdmin: boolean;
-  /** Rôle à utiliser pour lib/permissions.ts::can() côté client — currentUser.role
-   *  en temps normal, "collaborateur" en mode aperçu. Utiliser CE rôle (jamais
-   *  currentUser.role directement) pour toute vérification de permission dans
-   *  l'UI, sous peine de garder des actions Admin visibles pendant l'aperçu
-   *  collaborateur. */
+  /** Alias de currentUser.role — le rôle authentifié est l'unique source de
+   *  vérité, il n'existe plus aucun mécanisme pour le faire diverger côté
+   *  client (pas de bascule de vue manuelle). Conservé sous ce nom pour ne
+   *  pas devoir toucher tous les fichiers qui l'utilisent déjà. */
   effectiveRole: Role;
 };
 
@@ -45,7 +40,6 @@ export function AuthProvider({
   initialUser: AppUser;
 }) {
   const [currentUser, setCurrentUser] = useState<AppUser>(initialUser);
-  const [previewMode, setPreviewMode] = useState<"real" | "collab">("real");
 
   // initialUser vient du layout serveur : après un router.refresh() (ex. mise
   // à jour du profil), une nouvelle valeur arrive ici mais useState() ne la
@@ -54,25 +48,13 @@ export function AuthProvider({
     setCurrentUser(initialUser);
   }, [initialUser]);
 
-  // Dérivés de la matrice centralisée (lib/permissions.ts) — admin a
-  // toutes les permissions donc les deux valent simplement
-  // currentUser.role === "admin", mais on passe par can() pour rester
-  // cohérent avec le reste de l'app si la matrice évolue.
-  // Mode aperçu actif uniquement si le vrai rôle de l'user est admin.
-  const realCanSeeMoney    = can(currentUser.role, "view_billing");
-  const realCanAccessAdmin = can(currentUser.role, "manage_users");
-  const isPreview          = previewMode === "collab" && realCanSeeMoney;
-
+  // Dérivés de la matrice centralisée (lib/permissions.ts) — on passe par
+  // can() pour rester cohérent avec le reste de l'app si la matrice évolue.
   const value: AuthContextValue = {
     currentUser,
-    previewMode,
-    setPreviewMode: (m) => {
-      if (!realCanSeeMoney && m === "collab") return;
-      setPreviewMode(m);
-    },
-    canSeeMoney:    isPreview ? false : realCanSeeMoney,
-    canAccessAdmin: isPreview ? false : realCanAccessAdmin,
-    effectiveRole:  isPreview ? "collaborateur" : currentUser.role,
+    canSeeMoney:    can(currentUser.role, "view_billing"),
+    canAccessAdmin: can(currentUser.role, "manage_users"),
+    effectiveRole:  currentUser.role,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

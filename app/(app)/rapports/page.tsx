@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "@/lib/auth-context";
-import AccessDenied from "@/components/AccessDenied";
 import { typography } from "@/lib/typography";
 import Button from "@/components/ui/Button";
 
@@ -90,7 +88,6 @@ function downloadCsv(filename: string, headers: string[], rows: string[][]) {
 }
 
 export default function RapportsPage() {
-  const { currentUser, canSeeMoney } = useAuth();
   const [period, setPeriod] = useState<PeriodKey>("semaine");
   const [tab, setTab] = useState<TabKey>("collab");
   const [data, setData] = useState<RapportsData | null>(null);
@@ -111,15 +108,6 @@ export default function RapportsPage() {
   }, [period]);
 
   useEffect(() => { load(); }, [load]);
-
-  if (!canSeeMoney) {
-    return (
-      <AccessDenied
-        message="Les rapports de temps sont réservés à la Direction et aux Admins."
-        user={{ nom: currentUser.nom, role: currentUser.role }}
-      />
-    );
-  }
 
   function exportExcel() {
     if (!data) return;

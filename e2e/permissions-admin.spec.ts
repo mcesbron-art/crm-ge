@@ -44,12 +44,14 @@ test.describe("Admin — permissions", () => {
     }
   });
 
-  test("accède aux pages réservées (Équipe, Administration)", async ({ page }) => {
+  test("accède aux pages réservées (Équipe, Administration, Clients, Facturation, Rapports)", async ({ page }) => {
     await login(page, E2E_ADMIN_EMAIL, E2E_PASSWORD);
-    await page.goto("/administration");
-    await expect(page.getByText("Accès refusé")).toHaveCount(0);
-    await page.goto("/equipe");
-    await expect(page.getByText(/réservée aux administrateurs/i)).toHaveCount(0);
+    // Les gardes serveur (app/(app)/*/layout.tsx) ne redirigent jamais un
+    // admin : il reste bien sur la page demandée, jamais renvoyé vers /dashboard.
+    for (const path of ["/administration", "/equipe", "/clients", "/facturation", "/rapports"]) {
+      await page.goto(path);
+      await expect(page).toHaveURL(new RegExp(path.replace("/", "\\/") + "$"));
+    }
   });
 
   test("Projets : voit tous les projets, peut créer/assigner", async ({ page }) => {

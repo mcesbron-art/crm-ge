@@ -38,13 +38,16 @@ test.describe("Collaborateur — permissions", () => {
     }
   });
 
-  test("accès direct à une page interdite refusé", async ({ page }) => {
+  test("accès direct à une page interdite redirige vers /dashboard", async ({ page }) => {
     await login(page, E2E_COLLAB_EMAIL, E2E_PASSWORD);
-    await page.goto("/administration");
-    await expect(page.getByText("Accès refusé")).toBeVisible();
 
-    await page.goto("/equipe");
-    await expect(page.getByText(/réservée aux administrateurs/i)).toBeVisible();
+    // Garde serveur (app/(app)/*/layout.tsx) : redirection avant tout rendu,
+    // pas un message affiché sur la même URL — donc aucun flash de contenu
+    // protégé possible, contrairement à l'ancien blocage purement client.
+    for (const path of ["/administration", "/equipe", "/clients", "/facturation", "/rapports"]) {
+      await page.goto(path);
+      await expect(page).toHaveURL(/\/dashboard/);
+    }
   });
 
   test("Projets : voit uniquement les projets où il a une tâche assignée, page en lecture seule", async ({ page }) => {

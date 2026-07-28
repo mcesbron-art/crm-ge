@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { can } from "@/lib/permissions";
 import AxonautPanel from "@/components/AxonautPanel";
+import { IconX as IconClose } from "@/components/ui/icons";
 
 /* ─── Rôles réels (lib/permissions.ts n'en connaît que 2) ──────────────── */
 
@@ -68,9 +69,6 @@ function genTempPassword() {
   return out;
 }
 
-function IconClose() {
-  return <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>;
-}
 function IconDiamond({ size = 11 }: { size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3l1.7 4.3L16 9l-4.3 1.7L10 15l-1.7-4.3L4 9l4.3-1.7z"/></svg>;
 }
@@ -96,7 +94,7 @@ function IconMail() {
 /* ─── Page principale ───────────────────────────────────────────────────── */
 
 export default function AdministrationPage() {
-  const { currentUser, canAccessAdmin } = useAuth();
+  const { currentUser } = useAuth();
 
   const [users, setUsers]     = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,21 +117,10 @@ export default function AdministrationPage() {
     } catch {}
     finally { setLoading(false); }
   }
-  useEffect(() => { if (canAccessAdmin) load(); }, [canAccessAdmin]);
-
-  if (!canAccessAdmin) {
-    return (
-      <div style={{ margin: "-32px -40px", background: "#F5F5F2", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif" }}>
-        <div style={{ textAlign: "center", maxWidth: 420 }}>
-          <div style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 26, fontWeight: 800, color: "#16150F", marginBottom: 8 }}>Accès refusé</div>
-          <p style={{ color: "#8C8B83", fontSize: 15, lineHeight: 1.6 }}>
-            Seuls les administrateurs peuvent accéder à la page Administration.<br />
-            Vous êtes connecté(e) en tant que <strong style={{ color: "#33322C" }}>{currentUser.nom}</strong>.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Garde d'accès : app/(app)/administration/layout.tsx (Server Component)
+  // redirige déjà tout non-admin avant que cette page ne soit rendue — pas
+  // besoin de revérifier ici.
+  useEffect(() => { load(); }, []);
 
   async function patchUser(id: string, patch: Record<string, unknown>) {
     const previous = users;
