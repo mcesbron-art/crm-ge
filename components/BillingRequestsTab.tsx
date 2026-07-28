@@ -4,6 +4,21 @@ import { useState, useEffect, useCallback } from "react";
 import { TASK_BILLING_TYPES, TASK_BILLING_TYPE_LABEL, TASK_BILLING_STATUSES, TASK_BILLING_STATUS_COLOR } from "@/lib/task-taxonomy";
 import BillingRequestDrawer, { BillingStatusBadge } from "@/components/BillingRequestDrawer";
 import { IconSearch, IconChevronDown as IconChevron } from "@/components/ui/icons";
+import type { CSSProperties } from "react";
+
+// Reset explicite et complet (pas juste background/border) — sans ça, le
+// <button> triable ("Date"/"Échéance"/"Statut") garde un fond/bordure natif
+// visible en pilule derrière le texte, contrairement aux en-têtes en <span>.
+const SORT_HEADER_STYLE: CSSProperties = {
+  display: "flex", alignItems: "center", gap: 4,
+  fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700,
+  fontFamily: "inherit", justifyContent: "flex-start", textAlign: "left",
+  margin: 0, padding: 0,
+  background: "transparent", backgroundColor: "transparent",
+  border: "none", borderRadius: 0, boxShadow: "none",
+  WebkitAppearance: "none", appearance: "none",
+  cursor: "pointer",
+};
 
 type BillingRequestRow = {
   id: string; taskId: string; taskLabel: string; taskDueDate: string | null;
@@ -202,10 +217,10 @@ export default function BillingRequestsTab() {
               <span style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>Tâche</span>
               <span style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>Client / Projet</span>
               <span style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>Demandeur</span>
-              <button type="button" className="btn" onClick={() => handleSort("date")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, background: "none", border: "none", padding: 0, justifyContent: "flex-start" }}>Date{sortKey === "date" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
-              <button type="button" className="btn" onClick={() => handleSort("echeance")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, background: "none", border: "none", padding: 0, justifyContent: "flex-start" }}>Échéance{sortKey === "echeance" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
+              <button type="button" className="sort-header-btn" onClick={() => handleSort("date")} style={SORT_HEADER_STYLE}>Date{sortKey === "date" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
+              <button type="button" className="sort-header-btn" onClick={() => handleSort("echeance")} style={SORT_HEADER_STYLE}>Échéance{sortKey === "echeance" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
               <span style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700 }}>Type demandé</span>
-              <button type="button" className="btn" onClick={() => handleSort("status")} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, background: "none", border: "none", padding: 0, justifyContent: "flex-start" }}>Statut{sortKey === "status" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
+              <button type="button" className="sort-header-btn" onClick={() => handleSort("status")} style={SORT_HEADER_STYLE}>Statut{sortKey === "status" ? (sortDir === 1 ? " ↑" : " ↓") : ""}</button>
               <span style={{ fontSize: 12.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#A6A498", fontWeight: 700, textAlign: "right" }}>Note</span>
             </div>
 
